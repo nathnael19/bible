@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../cubit/bible_reader_cubit.dart';
 import '../cubit/navigation_cubit.dart';
+import '../cubit/theme_cubit.dart';
 import 'library_screen.dart';
 import '../widgets/scripture_scrubber.dart';
 import '../widgets/version_selector_modal.dart';
@@ -109,7 +110,7 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
       },
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: SabaColors.surface,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           extendBodyBehindAppBar: true,
           appBar: _CustomReaderAppBar(state: state),
           body: Stack(
@@ -127,7 +128,10 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
                       children: [
                         const _FloatingControl(icon: 'TT'),
                         const SizedBox(height: 12),
-                        const _FloatingControl(iconData: Icons.dark_mode_outlined),
+                        _FloatingControl(
+                          iconData: Icons.dark_mode_outlined,
+                          onTap: () => context.read<ThemeCubit>().toggleTheme(),
+                        ),
                         const SizedBox(height: 12),
                         const _FloatingControl(
                           iconData: Icons.share_rounded,
@@ -231,7 +235,7 @@ class _ChapterHeader extends StatelessWidget {
             style: TextStyle(
               fontSize: 64,
               fontFamily: 'Noto Serif Ethiopic',
-              color: SabaColors.secondary.withValues(alpha: 0.2),
+              color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.2),
               fontWeight: FontWeight.w100,
             ),
           ),
@@ -239,7 +243,7 @@ class _ChapterHeader extends StatelessWidget {
           Text(
             'ምዕራፍ ${state.chapter}',
             style: tt.headlineMedium!.copyWith(
-              color: SabaColors.primary,
+              color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.bold,
               fontFamily: 'Noto Serif Ethiopic',
               letterSpacing: 1.2,
@@ -249,7 +253,7 @@ class _ChapterHeader extends StatelessWidget {
           Container(
             width: 60,
             height: 1,
-            color: SabaColors.outlineVariant.withValues(alpha: 0.3),
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
           ),
           const SizedBox(height: 20),
         ],
@@ -268,14 +272,15 @@ class _CustomReaderAppBar extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    final tt = Theme.of(context).textTheme;
+    final theme = Theme.of(context);
+    final tt = theme.textTheme;
 
     return AppBar(
-      backgroundColor: SabaColors.surface.withValues(alpha: 0.9),
+      backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.9),
       elevation: 0,
       centerTitle: true,
       leading: IconButton(
-        icon: const Icon(Icons.menu, color: SabaColors.onSurfaceVariant),
+        icon: Icon(Icons.menu, color: theme.colorScheme.onSurfaceVariant),
         onPressed: () => Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const LibraryScreen()),
@@ -307,14 +312,14 @@ class _CustomReaderAppBar extends StatelessWidget
           : const Text('...'),
       actions: [
         IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.compare_arrows_rounded,
-            color: SabaColors.onSurfaceVariant,
+            color: theme.colorScheme.onSurfaceVariant,
           ),
           onPressed: () => showVersionSelectorModal(context),
         ),
         IconButton(
-          icon: const Icon(Icons.search, color: SabaColors.onSurfaceVariant),
+          icon: Icon(Icons.search, color: theme.colorScheme.onSurfaceVariant),
           onPressed: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const SearchScreen()),
@@ -329,26 +334,37 @@ class _FloatingControl extends StatelessWidget {
   final String? icon;
   final IconData? iconData;
   final bool isPrimary;
+  final VoidCallback? onTap;
 
-  const _FloatingControl({this.icon, this.iconData, this.isPrimary = false});
+  const _FloatingControl({
+    this.icon,
+    this.iconData,
+    this.isPrimary = false,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 44,
-      height: 44,
-      decoration: BoxDecoration(
-        color: isPrimary ? SabaColors.primary : Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      alignment: Alignment.center,
+    final theme = Theme.of(context);
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: isPrimary
+              ? theme.colorScheme.primary
+              : theme.colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        alignment: Alignment.center,
       child: icon != null
           ? Text(
               icon!,
@@ -356,9 +372,12 @@ class _FloatingControl extends StatelessWidget {
             )
           : Icon(
               iconData,
-              color: isPrimary ? Colors.white : SabaColors.onSurface,
+              color: isPrimary
+                  ? theme.colorScheme.onPrimary
+                  : theme.colorScheme.onSurface,
               size: 20,
             ),
+      ),
     );
   }
 }
