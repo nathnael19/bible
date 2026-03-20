@@ -65,11 +65,6 @@ class _ScriptureScrubberState extends State<ScriptureScrubber> {
     }
   }
 
-  String _toGeez(int n) {
-    const geez = ['፩', '፪', '፫', '፬', '፭', '፮', '፯', '፰', '፱', '፲'];
-    if (n >= 1 && n <= 10) return geez[n - 1];
-    return n.toString();
-  }
 
   @override
   void dispose() {
@@ -126,7 +121,7 @@ class _ScriptureScrubberState extends State<ScriptureScrubber> {
                     ),
                     alignment: Alignment.center,
                     child: Text(
-                      _toGeez(index),
+                      index.toString(),
                       style: tt.headlineMedium!.copyWith(
                         fontSize: isActive ? 28 : 20,
                         color: isActive
