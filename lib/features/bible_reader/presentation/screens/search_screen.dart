@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/entities/verse.dart';
+import '../../domain/entities/search_filter.dart';
 import '../cubit/search_cubit.dart';
 import '../../../../core/theme/app_theme.dart';
 
@@ -15,6 +16,7 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   final _controller = TextEditingController();
+  SearchFilter _activeFilter = SearchFilter.all;
   
   @override
   void initState() {
@@ -23,7 +25,14 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _onSearchChanged() {
-    context.read<SearchCubit>().search(_controller.text);
+    context.read<SearchCubit>().search(_controller.text, filter: _activeFilter);
+  }
+
+  void _onFilterSelected(SearchFilter filter) {
+    setState(() {
+      _activeFilter = filter;
+    });
+    _onSearchChanged();
   }
 
   @override
@@ -100,10 +109,30 @@ class _SearchScreenState extends State<SearchScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
-                  _FilterChip(label: 'ብሉይ ኪዳን', isSelected: true),
-                  _FilterChip(label: 'ሐዲስ ኪዳን'),
-                  _FilterChip(label: 'መዝሙረ ዳዊት'),
-                  _FilterChip(label: 'ትርጉም'),
+                  _FilterChip(
+                    label: 'ሁሉም', 
+                    filter: SearchFilter.all, 
+                    activeFilter: _activeFilter, 
+                    onSelected: _onFilterSelected,
+                  ),
+                  _FilterChip(
+                    label: 'ብሉይ ኪዳን', 
+                    filter: SearchFilter.oldTestament, 
+                    activeFilter: _activeFilter, 
+                    onSelected: _onFilterSelected,
+                  ),
+                  _FilterChip(
+                    label: 'ሐዲስ ኪዳን', 
+                    filter: SearchFilter.newTestament, 
+                    activeFilter: _activeFilter, 
+                    onSelected: _onFilterSelected,
+                  ),
+                  _FilterChip(
+                    label: 'መዝሙረ ዳዊት', 
+                    filter: SearchFilter.psalms, 
+                    activeFilter: _activeFilter, 
+                    onSelected: _onFilterSelected,
+                  ),
                 ],
               ),
             ),
@@ -219,28 +248,40 @@ class _SearchScreenState extends State<SearchScreen> {
 
 class _FilterChip extends StatelessWidget {
   final String label;
-  final bool isSelected;
-  const _FilterChip({required this.label, this.isSelected = false});
+  final SearchFilter filter;
+  final SearchFilter activeFilter;
+  final ValueChanged<SearchFilter> onSelected;
+
+  const _FilterChip({
+    required this.label,
+    required this.filter,
+    required this.activeFilter,
+    required this.onSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(right: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      decoration: BoxDecoration(
-        color: isSelected ? SabaColors.secondaryContainer : Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: isSelected
-            ? null
-            : Border.all(color: Colors.black.withValues(alpha: 0.05)),
-      ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.labelMedium!.copyWith(
-          color: isSelected
-              ? SabaColors.onSecondaryContainer
-              : SabaColors.onSurfaceVariant,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+    final isSelected = filter == activeFilter;
+    return GestureDetector(
+      onTap: () => onSelected(filter),
+      child: Container(
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? SabaColors.secondaryContainer : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: isSelected
+              ? null
+              : Border.all(color: Colors.black.withValues(alpha: 0.05)),
+        ),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.labelMedium!.copyWith(
+            color: isSelected
+                ? SabaColors.onSecondaryContainer
+                : SabaColors.onSurfaceVariant,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+          ),
         ),
       ),
     );
