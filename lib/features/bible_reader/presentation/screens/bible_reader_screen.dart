@@ -29,6 +29,9 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
   String? _currentBook;
   int? _currentChapter;
 
+  double _fontSizeFactor = 1.0;
+  double _baseFontSizeFactor = 1.0;
+
   @override
   void initState() {
     super.initState();
@@ -114,36 +117,48 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
           backgroundColor: Theme.of(context).colorScheme.surface,
           extendBodyBehindAppBar: true,
           appBar: _CustomReaderAppBar(state: state),
-          body: Stack(
-            children: [
-              _buildContent(context, state),
-              // ── Side Floating Buttons ─────────────────────────────────
-              BlocBuilder<NavigationCubit, NavigationState>(
-                builder: (context, navState) {
-                  return AnimatedPositioned(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                    right: 20,
-                    bottom: navState.isBottomNavVisible ? 105 : 40,
-                    child: Column(
-                      children: [
-                        const _FloatingControl(icon: 'TT'),
-                        const SizedBox(height: 12),
-                        _FloatingControl(
-                          iconData: Icons.dark_mode_outlined,
-                          onTap: () => context.read<ThemeCubit>().toggleTheme(),
-                        ),
-                        const SizedBox(height: 12),
-                        const _FloatingControl(
-                          iconData: Icons.share_rounded,
-                          isPrimary: true,
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ],
+          body: GestureDetector(
+            onScaleStart: (details) {
+              _baseFontSizeFactor = _fontSizeFactor;
+            },
+            onScaleUpdate: (details) {
+              setState(() {
+                _fontSizeFactor = (_baseFontSizeFactor * details.scale).clamp(
+                  0.8,
+                  3.0,
+                );
+              });
+            },
+            child: Stack(
+              children: [
+                _buildContent(context, state),
+                // ── Side Floating Buttons ─────────────────────────────────
+                BlocBuilder<NavigationCubit, NavigationState>(
+                  builder: (context, navState) {
+                    return AnimatedPositioned(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      right: 20,
+                      bottom: navState.isBottomNavVisible ? 105 : 40,
+                      child: Column(
+                        children: [
+                          _FloatingControl(
+                            iconData: Icons.dark_mode_outlined,
+                            onTap: () =>
+                                context.read<ThemeCubit>().toggleTheme(),
+                          ),
+                          const SizedBox(height: 12),
+                          const _FloatingControl(
+                            iconData: Icons.share_rounded,
+                            isPrimary: true,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -169,7 +184,12 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
         // Using a key that changes with book/chapter forces a fresh tree for the list
         key: PageStorageKey('reader_${state.book}_${state.chapter}'),
         slivers: [
-          SliverToBoxAdapter(child: _ChapterHeader(state: state)),
+          SliverToBoxAdapter(
+            child: _ChapterHeader(
+              state: state,
+              fontSizeFactor: _fontSizeFactor,
+            ),
+          ),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             sliver: SliverList(
@@ -180,6 +200,7 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
                     key: _verseKeys[verse.number],
                     verse: verse,
                     isActive: state.activeVerseNumber == verse.number,
+                    fontSizeFactor: _fontSizeFactor,
                     onTap: () => context.read<BibleReaderCubit>().selectVerse(
                       verse.number,
                     ),
@@ -221,7 +242,8 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
 
 class _ChapterHeader extends StatelessWidget {
   final BibleReaderLoaded state;
-  const _ChapterHeader({required this.state});
+  final double fontSizeFactor;
+  const _ChapterHeader({required this.state, this.fontSizeFactor = 1.0});
 
   @override
   Widget build(BuildContext context) {
@@ -234,9 +256,11 @@ class _ChapterHeader extends StatelessWidget {
           Text(
             '${state.chapter}',
             style: TextStyle(
-              fontSize: 64,
+              fontSize: 64 * fontSizeFactor,
               fontFamily: 'Noto Serif Ethiopic',
-              color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.2),
+              color: Theme.of(
+                context,
+              ).colorScheme.secondary.withValues(alpha: 0.2),
               fontWeight: FontWeight.w100,
             ),
           ),
@@ -248,6 +272,7 @@ class _ChapterHeader extends StatelessWidget {
               fontWeight: FontWeight.bold,
               fontFamily: 'Noto Serif Ethiopic',
               letterSpacing: 1.2,
+              fontSize: (tt.headlineMedium?.fontSize ?? 28) * fontSizeFactor,
             ),
           ),
           const SizedBox(height: 10),
@@ -376,18 +401,21 @@ class _FloatingControl extends StatelessWidget {
           ],
         ),
         alignment: Alignment.center,
-      child: icon != null
-          ? Text(
-              icon!,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            )
-          : Icon(
-              iconData,
-              color: isPrimary
-                  ? theme.colorScheme.onPrimary
-                  : theme.colorScheme.onSurface,
-              size: 20,
-            ),
+        child: icon != null
+            ? Text(
+                icon!,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              )
+            : Icon(
+                iconData,
+                color: isPrimary
+                    ? theme.colorScheme.onPrimary
+                    : theme.colorScheme.onSurface,
+                size: 20,
+              ),
       ),
     );
   }
