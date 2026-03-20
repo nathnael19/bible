@@ -19,7 +19,7 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
   // Use a map that we clear on chapter changes to avoid stale key issues
   final Map<int, GlobalKey> _verseKeys = {};
   late ScrollController _scrollController;
-  
+
   // Track current book/chapter to detect transitions
   String? _currentBook;
   int? _currentChapter;
@@ -53,7 +53,10 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
       if (_scrollController.hasClients) {
         _scrollController
             .animateTo(
-              approximateOffset.clamp(0, _scrollController.position.maxScrollExtent),
+              approximateOffset.clamp(
+                0,
+                _scrollController.position.maxScrollExtent,
+              ),
               duration: const Duration(milliseconds: 400),
               curve: Curves.easeOut,
             )
@@ -79,8 +82,8 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
       listenWhen: (prev, curr) {
         if (prev is BibleReaderLoaded && curr is BibleReaderLoaded) {
           // Scroll if verse changed OR if it's the same chapter initial load
-          return prev.activeVerseNumber != curr.activeVerseNumber || 
-                 prev.chapter != curr.chapter;
+          return prev.activeVerseNumber != curr.activeVerseNumber ||
+              prev.chapter != curr.chapter;
         }
         return curr is BibleReaderLoaded;
       },
@@ -135,7 +138,9 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
 
   Widget _buildContent(BuildContext context, BibleReaderState state) {
     if (state is BibleReaderLoading) {
-      return const Center(child: CircularProgressIndicator(color: SabaColors.primary));
+      return const Center(
+        child: CircularProgressIndicator(color: SabaColors.primary),
+      );
     }
 
     if (state is BibleReaderLoaded) {
@@ -161,7 +166,9 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
                     key: _verseKeys[verse.number],
                     verse: verse,
                     isActive: state.activeVerseNumber == verse.number,
-                    onTap: () => context.read<BibleReaderCubit>().selectVerse(verse.number),
+                    onTap: () => context.read<BibleReaderCubit>().selectVerse(
+                      verse.number,
+                    ),
                   );
                 },
                 childCount: state.verses.length,
@@ -172,11 +179,11 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 40),
+              padding: const EdgeInsets.symmetric(vertical: 20),
               child: _buildScrubber(context, state),
             ),
           ),
-          const SliverPadding(padding: EdgeInsets.only(bottom: 120)),
+          const SliverPadding(padding: EdgeInsets.only(bottom: 10)),
         ],
       );
     }
@@ -190,7 +197,8 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
         totalItems: 50,
         activeIndex: state.chapter,
         isChapterMode: true,
-        onItemSelected: (v) => context.read<BibleReaderCubit>().navigateToChapter(v),
+        onItemSelected: (v) =>
+            context.read<BibleReaderCubit>().navigateToChapter(v),
       );
     }
     return const SizedBox.shrink();
