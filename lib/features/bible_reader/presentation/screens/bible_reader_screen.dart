@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../cubit/bible_reader_cubit.dart';
+import '../cubit/navigation_cubit.dart';
 import 'library_screen.dart';
 import '../widgets/scripture_scrubber.dart';
 import '../widgets/version_selector_modal.dart';
@@ -115,21 +116,27 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
             children: [
               _buildContent(context, state),
               // ── Side Floating Buttons ─────────────────────────────────
-              Positioned(
-                right: 20,
-                bottom: 40,
-                child: Column(
-                  children: [
-                    const _FloatingControl(icon: 'TT'),
-                    const SizedBox(height: 12),
-                    const _FloatingControl(iconData: Icons.dark_mode_outlined),
-                    const SizedBox(height: 12),
-                    const _FloatingControl(
-                      iconData: Icons.share_rounded,
-                      isPrimary: true,
+              BlocBuilder<NavigationCubit, NavigationState>(
+                builder: (context, navState) {
+                  return AnimatedPositioned(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    right: 20,
+                    bottom: navState.isBottomNavVisible ? 105 : 40,
+                    child: Column(
+                      children: [
+                        const _FloatingControl(icon: 'TT'),
+                        const SizedBox(height: 12),
+                        const _FloatingControl(iconData: Icons.dark_mode_outlined),
+                        const SizedBox(height: 12),
+                        const _FloatingControl(
+                          iconData: Icons.share_rounded,
+                          isPrimary: true,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
             ],
           ),
