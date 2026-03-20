@@ -150,6 +150,7 @@ class BibleLocalDataSource {
       return VerseModel(
         number: v['verse'],
         bookName: bookData['book_name'],
+        bookId: bookData['book_id'].toString(),
         chapter: chapter,
         text: v['text'],
       );
@@ -182,6 +183,7 @@ class BibleLocalDataSource {
               VerseModel(
                 number: verse['verse'] as int,
                 bookName: bookName,
+                bookId: bookId.toString(),
                 chapter: chapterNum,
                 text: text,
               ),
