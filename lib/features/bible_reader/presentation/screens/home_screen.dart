@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_theme.dart';
 import 'search_screen.dart';
 
 /// Home / Discover screen redesigned to match reference image.
@@ -9,29 +8,29 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tt = Theme.of(context).textTheme;
-
+    final theme = Theme.of(context);
+    final tt = theme.textTheme;
     return Scaffold(
-      backgroundColor: SabaColors.surface,
+      backgroundColor: theme.colorScheme.surface,
       body: CustomScrollView(
         slivers: [
           // ── App Bar ─────────────────────────────────────────────
           SliverAppBar(
             pinned: true,
-            backgroundColor: SabaColors.surface,
+            backgroundColor: theme.colorScheme.surface,
             elevation: 0,
             title: Text(
               'መጽሐፍ ቅዱስ',
               style: tt.headlineSmall!.copyWith(
                 fontWeight: FontWeight.bold,
-                color: SabaColors.onSurface,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             actions: [
               IconButton(
-                icon: const Icon(
+                icon: Icon(
                   Icons.search,
-                  color: SabaColors.onSurfaceVariant,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 onPressed: () => Navigator.push(
                   context,
@@ -65,19 +64,19 @@ class HomeScreen extends StatelessWidget {
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    children: const [
+                    children: [
                       _ContinueReadingCard(
                         book: 'ዘፍጥረት',
                         chapter: 'ምዕራፍ ፫',
                         progress: 0.45,
-                        iconColor: SabaColors.secondaryContainer,
+                        iconColor: Theme.of(context).colorScheme.secondaryContainer,
                         icon: Icons.menu_book_rounded,
                       ),
                       _ContinueReadingCard(
                         book: 'መዝሙረ ዳዊት',
                         chapter: 'ምዕራፍ ፩',
                         progress: 0.15,
-                        iconColor: SabaColors.primaryContainer,
+                        iconColor: Theme.of(context).colorScheme.primaryContainer,
                         icon: Icons.auto_stories_rounded,
                       ),
                     ],
@@ -161,7 +160,8 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tt = Theme.of(context).textTheme;
+    final theme = Theme.of(context);
+    final tt = theme.textTheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
@@ -171,7 +171,7 @@ class _SectionHeader extends StatelessWidget {
             title,
             style: tt.titleLarge!.copyWith(
               fontWeight: FontWeight.bold,
-              color: SabaColors.primary,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
           if (trailingText != null)
@@ -182,15 +182,15 @@ class _SectionHeader extends StatelessWidget {
                   Text(
                     trailingText!,
                     style: tt.labelSmall!.copyWith(
-                      color: SabaColors.onSurfaceVariant,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(width: 4),
-                  const Icon(
+                  Icon(
                     Icons.arrow_forward,
                     size: 12,
-                    color: SabaColors.onSurfaceVariant,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ],
               ),
@@ -206,16 +206,17 @@ class _DailyVerseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tt = Theme.of(context).textTheme;
+    final theme = Theme.of(context);
+    final tt = theme.textTheme;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: SabaColors.primary,
+        color: theme.colorScheme.primary,
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: SabaColors.primary.withValues(alpha: 0.2),
+            color: theme.colorScheme.primary.withValues(alpha: 0.2),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -230,7 +231,7 @@ class _DailyVerseCard extends StatelessWidget {
             child: Icon(
               Icons.menu_book_rounded,
               size: 120,
-              color: Colors.white.withValues(alpha: 0.05),
+              color: theme.colorScheme.onPrimary.withValues(alpha: 0.05),
             ),
           ),
           Column(
@@ -243,13 +244,13 @@ class _DailyVerseCard extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: SabaColors.secondaryContainer.withValues(alpha: 0.9),
+                  color: theme.colorScheme.secondaryContainer.withValues(alpha: 0.9),
                   borderRadius: BorderRadius.circular(100),
                 ),
                 child: Text(
                   'የዕለቱ ጥቅስ',
                   style: tt.labelSmall!.copyWith(
-                    color: SabaColors.onSecondaryContainer,
+                    color: theme.colorScheme.onSecondaryContainer,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -259,7 +260,7 @@ class _DailyVerseCard extends StatelessWidget {
               Text(
                 '"እግዚአብሔር ብርሃኔና መድኃኒቴ ነው፤ የሚያስፈራኝ ማን ነው? እግዚአብሔር ለሕይወቴ መታመኛዋ ነው፤ የሚያስደነግጠኝ ማን ነው?"',
                 style: tt.headlineSmall!.copyWith(
-                  color: Colors.white,
+                  color: theme.colorScheme.onPrimary,
                   height: 1.6,
                   fontWeight: FontWeight.w500,
                 ),
@@ -272,7 +273,7 @@ class _DailyVerseCard extends StatelessWidget {
                   Text(
                     '— መዝሙር ፳፯:፩',
                     style: tt.titleSmall!.copyWith(
-                      color: SabaColors.secondaryContainer,
+                      color: theme.colorScheme.secondaryContainer,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -299,13 +300,14 @@ class _SocialIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+        border: Border.all(color: theme.colorScheme.onPrimary.withValues(alpha: 0.2)),
       ),
-      child: Icon(icon, color: Colors.white, size: 18),
+      child: Icon(icon, color: theme.colorScheme.onPrimary, size: 18),
     );
   }
 }
@@ -327,13 +329,14 @@ class _ContinueReadingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tt = Theme.of(context).textTheme;
+    final theme = Theme.of(context);
+    final tt = theme.textTheme;
     return Container(
       width: 220,
       margin: const EdgeInsets.only(right: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: SabaColors.surfaceContainerLow,
+        color: theme.colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -347,7 +350,7 @@ class _ContinueReadingCard extends StatelessWidget {
                   color: iconColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, color: Colors.white, size: 20),
+                child: Icon(icon, color: theme.colorScheme.onPrimary, size: 20),
               ),
               const SizedBox(width: 12),
               Column(
@@ -360,7 +363,7 @@ class _ContinueReadingCard extends StatelessWidget {
                   Text(
                     chapter,
                     style: tt.labelSmall!.copyWith(
-                      color: SabaColors.onSurfaceVariant,
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -375,9 +378,9 @@ class _ContinueReadingCard extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: progress,
                   minHeight: 6,
-                  backgroundColor: Colors.black.withValues(alpha: 0.05),
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                    SabaColors.primary,
+                  backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    theme.colorScheme.primary,
                   ),
                 ),
               ),
@@ -388,7 +391,7 @@ class _ContinueReadingCard extends StatelessWidget {
                   '${(progress * 100).toInt()}% ተጠናቋል',
                   style: tt.labelSmall!.copyWith(
                     fontSize: 10,
-                    color: SabaColors.onSurfaceVariant,
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -418,6 +421,7 @@ class _ReadingPlanCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
+    final theme = Theme.of(context);
     return Container(
       height: 200,
       width: double.infinity,
@@ -427,7 +431,7 @@ class _ReadingPlanCard extends StatelessWidget {
           image: NetworkImage(imageUrl),
           fit: BoxFit.cover,
           colorFilter: ColorFilter.mode(
-            Colors.black.withValues(alpha: 0.4),
+            theme.colorScheme.onSurface.withValues(alpha: 0.4),
             BlendMode.darken,
           ),
         ),
@@ -446,13 +450,13 @@ class _ReadingPlanCard extends StatelessWidget {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: theme.colorScheme.onPrimary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   badge!,
                   style: tt.labelSmall!.copyWith(
-                    color: Colors.white,
+                    color: theme.colorScheme.onPrimary,
                     fontSize: 10,
                   ),
                 ),
@@ -460,7 +464,7 @@ class _ReadingPlanCard extends StatelessWidget {
             Text(
               title,
               style: tt.headlineSmall!.copyWith(
-                color: Colors.white,
+                color: theme.colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -468,7 +472,7 @@ class _ReadingPlanCard extends StatelessWidget {
             Text(
               description,
               style: tt.bodySmall!.copyWith(
-                color: Colors.white.withValues(alpha: 0.8),
+                color: theme.colorScheme.onPrimary.withValues(alpha: 0.8),
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -495,11 +499,12 @@ class _ActivityTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tt = Theme.of(context).textTheme;
+    final theme = Theme.of(context);
+    final tt = theme.textTheme;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: SabaColors.surfaceContainerLowest,
+        color: theme.colorScheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -507,10 +512,10 @@ class _ActivityTile extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: SabaColors.surfaceContainerLow,
+              color: theme.colorScheme.surfaceContainerLow,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: SabaColors.primary, size: 24),
+            child: Icon(icon, color: theme.colorScheme.primary, size: 24),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -525,7 +530,7 @@ class _ActivityTile extends StatelessWidget {
                 Text(
                   subtitle,
                   style: tt.bodySmall!.copyWith(
-                    color: SabaColors.onSurfaceVariant,
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -536,7 +541,7 @@ class _ActivityTile extends StatelessWidget {
           Text(
             time,
             style: tt.labelSmall!.copyWith(
-              color: SabaColors.onSurfaceVariant.withValues(alpha: 0.6),
+              color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
             ),
           ),
         ],
