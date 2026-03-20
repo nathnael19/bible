@@ -6,6 +6,7 @@ import 'core/theme/app_theme.dart';
 import 'features/bible_reader/presentation/cubit/bible_reader_cubit.dart';
 import 'features/bible_reader/presentation/cubit/navigation_cubit.dart';
 import 'features/bible_reader/presentation/cubit/library_cubit.dart';
+import 'features/bible_reader/presentation/cubit/search_cubit.dart';
 import 'features/bible_reader/presentation/screens/app_shell.dart';
 
 Future<void> main() async {
@@ -32,6 +33,7 @@ class BibleApp extends StatelessWidget {
               chapter: 1,
             ),
         ),
+        BlocProvider(create: (_) => sl<SearchCubit>()),
       ],
       child: MaterialApp(
         title: 'መጽሐፍ ቅዱስ — Ethiopian Bible',
