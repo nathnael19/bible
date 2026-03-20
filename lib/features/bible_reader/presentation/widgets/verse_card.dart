@@ -1,8 +1,6 @@
 import '../../domain/entities/verse.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../core/theme/app_theme.dart';
-
 /// A single verse widget. No dividers — spacing creates separation per DESIGN.md.
 class VerseCard extends StatelessWidget {
   final Verse verse;
@@ -27,7 +25,7 @@ class VerseCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
           color: isActive
-              ? SabaColors.surfaceContainerHigh
+              ? Theme.of(context).colorScheme.surfaceContainerHigh
               : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
         ),
@@ -40,7 +38,7 @@ class VerseCard extends StatelessWidget {
                 duration: const Duration(milliseconds: 200),
                 width: isActive ? 4 : 0,
                 decoration: BoxDecoration(
-                  color: SabaColors.primaryContainer,
+                  color: Theme.of(context).colorScheme.primary,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(4),
                     bottomLeft: Radius.circular(4),
@@ -57,7 +55,7 @@ class VerseCard extends StatelessWidget {
                     '${verse.number}',
                     style: tt.bodySmall!.copyWith(
                       fontSize: 13,
-                      color: SabaColors.secondary,
+                      color: Theme.of(context).colorScheme.secondary,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Noto Serif Ethiopic',
                     ),
