@@ -29,7 +29,23 @@ class _AppShellState extends State<AppShell> {
     return BlocBuilder<NavigationCubit, NavigationState>(
       builder: (context, state) {
         return Scaffold(
-          body: IndexedStack(index: state.selectedIndex, children: _pages),
+          body: NotificationListener<ScrollUpdateNotification>(
+            onNotification: (notification) {
+              final cubit = context.read<NavigationCubit>();
+              final delta = notification.scrollDelta ?? 0;
+
+              // Hide on scroll down (content up)
+              if (delta > 2.0 && cubit.state.isBottomNavVisible) {
+                cubit.setBottomNavVisible(false);
+              }
+              // Show on scroll up (content down) OR "hard scroll" down
+              else if (delta < -15.0 && !cubit.state.isBottomNavVisible) {
+                cubit.setBottomNavVisible(true);
+              }
+              return false;
+            },
+            child: IndexedStack(index: state.selectedIndex, children: _pages),
+          ),
           bottomNavigationBar: AnimatedSlide(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
