@@ -109,6 +109,13 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (mounted) _scrollToVerse(state.activeVerseNumber!);
             });
+          } else if (state.book != _currentBook || state.chapter != _currentChapter) {
+            // Scroll to top on chapter change if no verse targeted
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted && _scrollController.hasClients) {
+                _scrollController.jumpTo(0);
+              }
+            });
           }
         }
       },
@@ -143,6 +150,16 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
                       child: Column(
                         children: [
                           _FloatingControl(
+                            iconData: Icons.play_arrow,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const AudioPlayerScreen(),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          _FloatingControl(
                             iconData: Icons.dark_mode_outlined,
                             onTap: () =>
                                 context.read<ThemeCubit>().toggleTheme(),
@@ -157,6 +174,17 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
                     );
                   },
                 ),
+                // ── Verse Action Toolbar ──────────────────────────────────
+                if (state is BibleReaderLoaded &&
+                    state.activeVerseNumber != null)
+                  Positioned(
+                    left: 20,
+                    right: 20,
+                    bottom: 30, // Above bottom nav if visible?
+                    child: _VerseActionToolbar(
+                      verseNumber: state.activeVerseNumber!,
+                    ),
+                  ),
               ],
             ),
           ),
@@ -196,14 +224,23 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
               delegate: SliverChildBuilderDelegate(
                 (context, i) {
                   final verse = state.verses[i];
+                  final isBookmarked = state.bookmarks.contains(verse.number);
+                  final highlightColorValue = state.highlights[verse.number];
+                  final highlightColor = highlightColorValue != null
+                      ? Color(highlightColorValue)
+                      : null;
+
                   return VerseCard(
                     key: _verseKeys[verse.number],
                     verse: verse,
                     isActive: state.activeVerseNumber == verse.number,
                     fontSizeFactor: _fontSizeFactor,
+                    isBookmarked: isBookmarked,
+                    highlightColor: highlightColor,
                     onTap: () => context.read<BibleReaderCubit>().selectVerse(
-                      verse.number,
+                      state.activeVerseNumber == verse.number ? null : verse.number,
                     ),
+                    onDoubleTap: () => context.read<BibleReaderCubit>().selectVerse(null),
                   );
                 },
                 childCount: state.verses.length,
@@ -345,16 +382,6 @@ class _CustomReaderAppBar extends StatelessWidget
           onPressed: () => showVersionSelectorModal(context),
         ),
         IconButton(
-          icon: Icon(
-            Icons.headphones_rounded,
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const AudioPlayerScreen()),
-          ),
-        ),
-        IconButton(
           icon: Icon(Icons.search, color: theme.colorScheme.onSurfaceVariant),
           onPressed: () => Navigator.push(
             context,
@@ -367,13 +394,11 @@ class _CustomReaderAppBar extends StatelessWidget
 }
 
 class _FloatingControl extends StatelessWidget {
-  final String? icon;
   final IconData? iconData;
   final bool isPrimary;
   final VoidCallback? onTap;
 
   const _FloatingControl({
-    this.icon,
     this.iconData,
     this.isPrimary = false,
     this.onTap,
@@ -401,21 +426,147 @@ class _FloatingControl extends StatelessWidget {
           ],
         ),
         alignment: Alignment.center,
-        child: icon != null
-            ? Text(
-                icon!,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              )
-            : Icon(
-                iconData,
-                color: isPrimary
-                    ? theme.colorScheme.onPrimary
-                    : theme.colorScheme.onSurface,
-                size: 20,
+        child: Icon(
+          iconData,
+          color: isPrimary
+              ? theme.colorScheme.onPrimary
+              : theme.colorScheme.onSurface,
+          size: 20,
+        ),
+      ),
+    );
+  }
+}
+
+class _VerseActionToolbar extends StatelessWidget {
+  final int verseNumber;
+
+  const _VerseActionToolbar({required this.verseNumber});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cubit = context.read<BibleReaderCubit>();
+    final state = cubit.state as BibleReaderLoaded;
+    final isBookmarked = state.bookmarks.contains(verseNumber);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface.withValues(alpha: 0.95),
+        borderRadius: BorderRadius.circular(100),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+        border: Border.all(
+          color: theme.colorScheme.outline.withValues(alpha: 0.1),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _ActionButton(
+            icon: isBookmarked
+                ? Icons.bookmark_rounded
+                : Icons.bookmark_outline_rounded,
+            label: 'መዝግብ',
+            isActive: isBookmarked,
+            onTap: () => cubit.toggleBookmark(verseNumber),
+          ),
+          _divider(theme),
+          _ActionButton(
+            icon: Icons.format_color_fill_rounded,
+            label: 'ቀለም',
+            onTap: () {
+              final currentHighlight = state.highlights[verseNumber];
+              if (currentHighlight != null) {
+                cubit.setHighlight(verseNumber, null);
+              } else {
+                cubit.setHighlight(
+                  verseNumber,
+                  theme.colorScheme.primary.withValues(alpha: 0.2).toARGB32(),
+                );
+              }
+            },
+          ),
+          _divider(theme),
+          _ActionButton(
+            icon: Icons.copy_rounded,
+            label: 'ቅዳ',
+            onTap: () {
+              // Copy logic would go here
+              cubit.selectVerse(null);
+            },
+          ),
+          _divider(theme),
+          _ActionButton(
+            icon: Icons.close_rounded,
+            label: 'ዝጋ',
+            onTap: () => cubit.selectVerse(null),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _divider(ThemeData theme) {
+    return Container(
+      height: 24,
+      width: 1,
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      color: theme.colorScheme.outline.withValues(alpha: 0.1),
+    );
+  }
+}
+
+class _ActionButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const _ActionButton({
+    required this.icon,
+    required this.label,
+    this.isActive = false,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(100),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 20,
+              color: isActive
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurface,
+            ),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: theme.textTheme.labelSmall!.copyWith(
+                fontSize: 9,
+                color: isActive
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurfaceVariant,
               ),
+            ),
+          ],
+        ),
       ),
     );
   }
