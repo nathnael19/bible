@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'audio_player_screen.dart';
 import 'search_screen.dart';
 
 /// Home / Discover screen redesigned to match reference image.
@@ -69,14 +70,18 @@ class HomeScreen extends StatelessWidget {
                         book: 'ዘፍጥረት',
                         chapter: 'ምዕራፍ ፫',
                         progress: 0.45,
-                        iconColor: Theme.of(context).colorScheme.secondaryContainer,
+                        iconColor: Theme.of(
+                          context,
+                        ).colorScheme.secondaryContainer,
                         icon: Icons.menu_book_rounded,
                       ),
                       _ContinueReadingCard(
                         book: 'መዝሙረ ዳዊት',
                         chapter: 'ምዕራፍ ፩',
                         progress: 0.15,
-                        iconColor: Theme.of(context).colorScheme.primaryContainer,
+                        iconColor: Theme.of(
+                          context,
+                        ).colorScheme.primaryContainer,
                         icon: Icons.auto_stories_rounded,
                       ),
                     ],
@@ -244,7 +249,9 @@ class _DailyVerseCard extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.secondaryContainer.withValues(alpha: 0.9),
+                  color: theme.colorScheme.secondaryContainer.withValues(
+                    alpha: 0.9,
+                  ),
                   borderRadius: BorderRadius.circular(100),
                 ),
                 child: Text(
@@ -305,7 +312,9 @@ class _SocialIcon extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: theme.colorScheme.onPrimary.withValues(alpha: 0.2)),
+        border: Border.all(
+          color: theme.colorScheme.onPrimary.withValues(alpha: 0.2),
+        ),
       ),
       child: Icon(icon, color: theme.colorScheme.onPrimary, size: 18),
     );
@@ -378,7 +387,9 @@ class _ContinueReadingCard extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: progress,
                   minHeight: 6,
-                  backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                  backgroundColor: theme.colorScheme.onSurface.withValues(
+                    alpha: 0.05,
+                  ),
                   valueColor: AlwaysStoppedAnimation<Color>(
                     theme.colorScheme.primary,
                   ),
