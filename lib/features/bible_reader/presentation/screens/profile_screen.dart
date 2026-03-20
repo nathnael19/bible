@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'downloads_screen.dart';
+
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
@@ -244,6 +246,10 @@ class ProfileScreen extends StatelessWidget {
                         _MenuTile(
                           icon: Icons.audiotrack_rounded,
                           label: 'የድምጽ ቅጂዎች',
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const DownloadsScreen()),
+                          ),
                         ),
                         _MenuTile(
                           icon: Icons.settings_outlined,
@@ -478,11 +484,13 @@ class _MenuTile extends StatelessWidget {
   final String label;
   final String? subLabel;
   final bool isLast;
+  final VoidCallback? onTap;
   const _MenuTile({
     required this.icon,
     required this.label,
     this.subLabel,
     this.isLast = false,
+    this.onTap,
   });
 
   @override
@@ -531,7 +539,7 @@ class _MenuTile extends StatelessWidget {
             color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
             size: 20,
           ),
-          onTap: () {},
+          onTap: onTap,
         ),
         if (!isLast)
           Padding(
