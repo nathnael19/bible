@@ -35,4 +35,9 @@ class BibleRepositoryImpl implements IBibleRepository {
       chapter: chapter,
     );
   }
+
+  @override
+  Future<List<Verse>> searchVerses(String query) async {
+    return localDataSource.searchVerses(query);
+  }
 }
