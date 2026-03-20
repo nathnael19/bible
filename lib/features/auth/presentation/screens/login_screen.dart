@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../widgets/social_button.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -188,15 +189,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 Row(
                   children: [
                     Expanded(
-                      child: _SocialButton(
-                        icon: Icons.g_mobiledata, // Replace with Google SVG
+                      child: SocialButton(
+                        icon: Icons.g_mobiledata,
                         label: 'Google',
                         onPressed: () {},
                       ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: _SocialButton(
+                      child: SocialButton(
                         icon: Icons.apple,
                         label: 'Apple',
                         onPressed: () {},
@@ -242,40 +243,3 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-class _SocialButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onPressed;
-
-  const _SocialButton({
-    required this.icon,
-    required this.label,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton(
-      onPressed: onPressed,
-      style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        side: BorderSide(
-          color: SabaColors.outlineVariant.withValues(alpha: 0.15),
-        ),
-        backgroundColor: Colors.white,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: Colors.black, size: 24),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: SabaTypography.labelLarge().copyWith(color: Colors.black),
-          ),
-        ],
-      ),
-    );
-  }
-}
