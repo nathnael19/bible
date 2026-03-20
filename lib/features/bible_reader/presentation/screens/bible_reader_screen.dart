@@ -197,7 +197,7 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
     if (state is BibleReaderLoaded) {
       return ScriptureScrubber(
         key: ValueKey('scrubber_${state.book}_${state.chapter}'),
-        totalItems: 50, // This could be dynamic based on book
+        totalItems: state.chapterCount,
         activeIndex: state.chapter,
         isChapterMode: true,
         onItemSelected: (v) =>
@@ -286,7 +286,7 @@ class _CustomReaderAppBar extends StatelessWidget
                       style: tt.titleMedium!.copyWith(fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      loaded.chapter <= 39 ? 'ብሉይ ኪዳን' : 'ሐዲስ ኪዳን',
+                      int.parse(loaded.bookId) <= 39 ? 'ብሉይ ኪዳን' : 'ሐዲስ ኪዳን',
                       style: tt.labelSmall!.copyWith(
                         color: SabaColors.onSurfaceVariant,
                         fontSize: 10,
