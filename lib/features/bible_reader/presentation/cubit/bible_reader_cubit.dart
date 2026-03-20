@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/entities/verse.dart';
 import '../../domain/usecases/get_verses.dart';
-
 import '../../domain/usecases/get_chapter_count.dart';
+import 'package:bible/core/services/local_storage.dart';
 
 // Helper for copyWith to distinguish between null and not passed
 class Value<T> {
@@ -91,8 +91,9 @@ class BibleReaderError extends BibleReaderState {
 class BibleReaderCubit extends Cubit<BibleReaderState> {
   final GetVerses _getVerses;
   final GetChapterCount _getChapterCount;
+  final LocalStorage _storage;
 
-  BibleReaderCubit(this._getVerses, this._getChapterCount) : super(const BibleReaderLoading());
+  BibleReaderCubit(this._getVerses, this._getChapterCount, this._storage) : super(const BibleReaderLoading());
 
   Future<void> loadVerses({
     String versionId = 'amh_standard',
@@ -111,6 +112,7 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
       final chapterCount = await _getChapterCount(book);
       // Fallback for default load
       String effectiveBookId = bookId ?? (book == 'ኦሪት ዘፍጥረት' ? '1' : '0');
+      final bookmarks = _storage.getBookmarks(effectiveBookId, chapter);
       emit(BibleReaderLoaded(
         verses: verses,
         book: book,
@@ -118,6 +120,7 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
         chapter: chapter,
         chapterCount: chapterCount,
         activeVerseNumber: targetVerse,
+        bookmarks: bookmarks,
       ));
     } catch (e) {
       emit(BibleReaderError(e.toString()));
@@ -149,6 +152,7 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
         // I'll use a standard subtle gold: 0x33FFD700
         newHighlights[verseNumber] = 0x33FFD700;
       }
+      _storage.saveBookmarks(loaded.bookId, loaded.chapter, newBookmarks);
       emit(loaded.copyWith(
         bookmarks: newBookmarks,
         highlights: newHighlights,
