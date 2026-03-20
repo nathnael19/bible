@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../cubit/bible_reader_cubit.dart';
+import 'library_screen.dart';
 import '../widgets/scripture_scrubber.dart';
 import '../widgets/version_selector_modal.dart';
 import '../widgets/verse_card.dart';
@@ -266,7 +267,10 @@ class _CustomReaderAppBar extends StatelessWidget
       centerTitle: true,
       leading: IconButton(
         icon: const Icon(Icons.menu, color: SabaColors.onSurfaceVariant),
-        onPressed: () {},
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const LibraryScreen()),
+        ),
       ),
       title: Column(
         children: [
