@@ -2,94 +2,97 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/theme/app_theme.dart';
 
-/// The "Scripture Scrubber" — horizontal chapter navigator per DESIGN.md.
-/// Active chapter: full opacity display-sm. Adjacent: dimmed at 50%.
-class ScriptureScrubber extends StatefulWidget {
-  final int totalChapters;
-  final int activeChapter;
-  final ValueChanged<int> onChapterSelected;
+/// The "Scripture Scrubber" redesigned to match the burgundy Ge'ez navigation.
+class ScriptureScrubber extends StatelessWidget {
+  final int totalItems;
+  final int activeIndex;
+  final ValueChanged<int> onItemSelected;
+  final bool isChapterMode;
 
   const ScriptureScrubber({
     super.key,
-    required this.totalChapters,
-    required this.activeChapter,
-    required this.onChapterSelected,
+    required this.totalItems,
+    required this.activeIndex,
+    required this.onItemSelected,
+    this.isChapterMode = false,
   });
 
-  @override
-  State<ScriptureScrubber> createState() => _ScriptureScrubberState();
-}
-
-class _ScriptureScrubberState extends State<ScriptureScrubber> {
-  late final ScrollController _scroll;
-
-  @override
-  void initState() {
-    super.initState();
-    _scroll = ScrollController();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToActive());
-  }
-
-  void _scrollToActive() {
-    final offset = (widget.activeChapter - 1) * 56.0;
-    if (_scroll.hasClients) {
-      _scroll.animateTo(
-        offset.clamp(0.0, _scroll.position.maxScrollExtent),
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
+  String _toGeez(int n) {
+    const geez = ['፩', '፪', '፫', '፬', '፭', '፮', '፯', '፰', '፱', '፲'];
+    if (n >= 1 && n <= 10) return geez[n - 1];
+    return n.toString();
   }
 
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
 
-    return SizedBox(
-      height: 64,
-      child: ListView.builder(
-        controller: _scroll,
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 32),
-        itemCount: widget.totalChapters,
-        itemBuilder: (_, i) {
-          final chapter = i + 1;
-          final isActive = chapter == widget.activeChapter;
-          final distance = (chapter - widget.activeChapter).abs();
-          final opacity = isActive
-              ? 1.0
-              : (1.0 - (distance * 0.18)).clamp(0.25, 0.5);
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            height: 80,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 2 - 40),
+              itemCount: totalItems,
+              itemBuilder: (_, i) {
+                final index = i + 1;
+                final isActive = index == activeIndex;
 
-          return GestureDetector(
-            onTap: () => widget.onChapterSelected(chapter),
-            child: Container(
-              width: 48,
-              alignment: Alignment.center,
-              child: AnimatedDefaultTextStyle(
-                duration: const Duration(milliseconds: 200),
-                style: isActive
-                    ? tt.displaySmall!.copyWith(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                        color: SabaColors.primaryContainer,
-                      )
-                    : tt.bodyMedium!.copyWith(
-                        color: SabaColors.onSurface.withValues(
-                          alpha: opacity,
-                        ),
+                return GestureDetector(
+                  onTap: () => onItemSelected(index),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: 60,
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      color: isActive ? SabaColors.primary : Colors.transparent,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: isActive
+                          ? [
+                              BoxShadow(
+                                color: SabaColors.primary.withValues(alpha: 0.3),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              )
+                            ]
+                          : null,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      _toGeez(index),
+                      style: tt.headlineSmall!.copyWith(
+                        color: isActive ? Colors.white : SabaColors.onSurfaceVariant.withValues(alpha: 0.3),
+                        fontWeight: FontWeight.bold,
                       ),
-                child: Text('$chapter'),
-              ),
+                    ),
+                  ),
+                );
+              },
             ),
-          );
-        },
+          ),
+          const SizedBox(height: 12),
+          Text(
+            isChapterMode ? 'ምዕራፍ ይምረጡ' : 'ቁጥር ይምረጡ',
+            style: tt.labelSmall!.copyWith(
+              color: SabaColors.primary,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'ምዕራፍ ወይም ቁጥር ለመቀየር ይንኩ',
+            style: tt.labelSmall!.copyWith(
+              color: SabaColors.onSurfaceVariant.withValues(alpha: 0.5),
+              fontSize: 10,
+            ),
+          ),
+        ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _scroll.dispose();
-    super.dispose();
   }
 }
