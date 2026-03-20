@@ -138,7 +138,6 @@ class LibraryScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFFDFBFA),
       elevation: 0,
       centerTitle: true,
-      leading: const Icon(Icons.menu_rounded, color: Colors.black54),
       title: const Text(
         'መጻሕፍት',
         style: TextStyle(
@@ -230,7 +229,9 @@ class _BookCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFFF4F2F1),
           borderRadius: BorderRadius.circular(16),
-          border: isActive ? Border(left: BorderSide(color: SabaColors.primary, width: 4)) : null,
+          border: isActive
+              ? Border(left: BorderSide(color: SabaColors.primary, width: 4))
+              : null,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -301,7 +302,9 @@ class _DailyReflectionCard extends StatelessWidget {
         color: SabaColors.primary,
         borderRadius: BorderRadius.circular(24),
         image: const DecorationImage(
-          image: NetworkImage('https://www.transparenttextures.com/patterns/cubes.png'),
+          image: NetworkImage(
+            'https://www.transparenttextures.com/patterns/cubes.png',
+          ),
           opacity: 0.05,
           repeat: ImageRepeat.repeat,
         ),
@@ -356,10 +359,15 @@ class _DailyReflectionCard extends StatelessWidget {
               backgroundColor: const Color(0xFFFFD700).withValues(alpha: 0.8),
               foregroundColor: SabaColors.primary,
               elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
             ),
-            child: const Text('አንብብ', style: TextStyle(fontWeight: FontWeight.bold)),
+            child: const Text(
+              'አንብብ',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),
