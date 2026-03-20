@@ -2,6 +2,7 @@ import '../../domain/entities/bible_version.dart';
 import '../../domain/entities/verse.dart';
 import '../../domain/entities/book.dart';
 import '../../domain/repositories/i_bible_repository.dart';
+import '../../domain/entities/search_filter.dart';
 import '../datasources/bible_local_datasource.dart';
 
 class BibleRepositoryImpl implements IBibleRepository {
@@ -37,7 +38,7 @@ class BibleRepositoryImpl implements IBibleRepository {
   }
 
   @override
-  Future<List<Verse>> searchVerses(String query) async {
-    return localDataSource.searchVerses(query);
+  Future<List<Verse>> searchVerses(String query, {SearchFilter filter = SearchFilter.all}) async {
+    return localDataSource.searchVerses(query, filter: filter);
   }
 }
