@@ -13,8 +13,8 @@ class LibraryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFDFBFA),
-      appBar: _buildAppBar(),
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: _buildAppBar(context),
       body: BlocBuilder<LibraryCubit, LibraryState>(
         builder: (context, state) {
           if (state is LibraryLoading) {
@@ -198,24 +198,25 @@ class LibraryScreen extends StatelessWidget {
   }
 
 
-  PreferredSizeWidget _buildAppBar() {
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    final theme = Theme.of(context);
     return AppBar(
-      backgroundColor: const Color(0xFFFDFBFA),
+      backgroundColor: theme.colorScheme.surface,
       elevation: 0,
       centerTitle: true,
-      title: const Text(
+      title: Text(
         'መጻሕፍት',
         style: TextStyle(
-          color: SabaColors.primary,
+          color: theme.colorScheme.primary,
           fontWeight: FontWeight.bold,
           fontSize: 24,
           fontFamily: 'Noto Serif Ethiopic',
         ),
       ),
-      actions: const [
+      actions: [
         Padding(
-          padding: EdgeInsets.only(right: 16),
-          child: Icon(Icons.search_rounded, color: Colors.black54),
+          padding: const EdgeInsets.only(right: 16),
+          child: Icon(Icons.search_rounded, color: theme.colorScheme.onSurfaceVariant),
         ),
       ],
     );
@@ -238,10 +239,10 @@ class _SectionHeader extends StatelessWidget {
           children: [
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: SabaColors.secondary,
+                color: Theme.of(context).colorScheme.secondary,
                 fontFamily: 'Noto Serif Ethiopic',
               ),
             ),
@@ -250,9 +251,9 @@ class _SectionHeader extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 6),
               child: Text(
                 subtitle,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
-                  color: Colors.black26,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -263,7 +264,7 @@ class _SectionHeader extends StatelessWidget {
         Container(
           width: 60,
           height: 2,
-          color: SabaColors.primary.withValues(alpha: 0.1),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
         ),
       ],
     );
@@ -290,7 +291,7 @@ class _BookCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFFF4F2F1),
+          color: Theme.of(context).colorScheme.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
@@ -298,10 +299,10 @@ class _BookCard extends StatelessWidget {
           children: [
             Text(
               number,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
-                color: Colors.black26,
+                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
               ),
             ),
             const Spacer(),
@@ -318,9 +319,9 @@ class _BookCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               subtitle,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 9,
-                color: Colors.black38,
+                color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0.5,
               ),
@@ -337,10 +338,11 @@ class _DailyReflectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: SabaColors.primary,
+        color: theme.colorScheme.primary,
         borderRadius: BorderRadius.circular(24),
         image: const DecorationImage(
           image: NetworkImage(
