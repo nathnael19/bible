@@ -84,6 +84,14 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
     }
   }
 
+  Future<void> loadBookChapter({
+    required String book,
+    required int chapter,
+    String versionId = 'amh_standard',
+  }) async {
+    await loadVerses(versionId: versionId, book: book, chapter: chapter);
+  }
+
   void navigateToChapter(int chapter) {
     if (state is BibleReaderLoaded) {
       final loaded = state as BibleReaderLoaded;
