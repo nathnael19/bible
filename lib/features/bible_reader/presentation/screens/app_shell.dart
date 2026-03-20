@@ -1,3 +1,4 @@
+import 'package:bible/features/bible_reader/presentation/screens/bible_reader_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_theme.dart';
@@ -5,7 +6,6 @@ import '../../../../core/theme/app_theme.dart';
 import '../screens/audio_player_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/profile_screen.dart';
-import '../screens/search_screen.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
@@ -19,7 +19,7 @@ class _AppShellState extends State<AppShell> {
 
   static const List<Widget> _pages = [
     HomeScreen(),
-    SearchScreen(), // Placeholder for 'ንባብ' list
+    BibleReaderScreen(), // Placeholder for 'ንባብ' list
     AudioPlayerScreen(), // Placeholder for 'መጽሐፍ' list
     ProfileScreen(),
   ];
@@ -38,9 +38,21 @@ class _AppShellState extends State<AppShell> {
         height: 80,
         destinations: [
           _navDestination(Icons.home_outlined, Icons.home_filled, 'መነሻ'),
-          _navDestination(Icons.menu_book_outlined, Icons.menu_book_rounded, 'ንባብ'),
-          _navDestination(Icons.collections_bookmark_outlined, Icons.collections_bookmark_rounded, 'መጽሐፍ'),
-          _navDestination(Icons.person_outline_rounded, Icons.person_rounded, 'መገለጫ'),
+          _navDestination(
+            Icons.menu_book_outlined,
+            Icons.menu_book_rounded,
+            'ንባብ',
+          ),
+          _navDestination(
+            Icons.collections_bookmark_outlined,
+            Icons.collections_bookmark_rounded,
+            'መጽሐፍ',
+          ),
+          _navDestination(
+            Icons.person_outline_rounded,
+            Icons.person_rounded,
+            'መገለጫ',
+          ),
         ],
       ),
       floatingActionButton: _selectedIndex == 0
@@ -48,7 +60,9 @@ class _AppShellState extends State<AppShell> {
               onPressed: () {},
               backgroundColor: SabaColors.primary,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
               mini: true,
               child: const Icon(Icons.add),
             )
@@ -56,7 +70,11 @@ class _AppShellState extends State<AppShell> {
     );
   }
 
-  NavigationDestination _navDestination(IconData icon, IconData selectedIcon, String label) {
+  NavigationDestination _navDestination(
+    IconData icon,
+    IconData selectedIcon,
+    String label,
+  ) {
     return NavigationDestination(
       icon: Icon(icon, color: SabaColors.onSurfaceVariant),
       selectedIcon: Icon(selectedIcon, color: Colors.white),
