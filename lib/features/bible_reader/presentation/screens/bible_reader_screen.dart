@@ -158,7 +158,7 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
         // Using a key that changes with book/chapter forces a fresh tree for the list
         key: PageStorageKey('reader_${state.book}_${state.chapter}'),
         slivers: [
-          const SliverToBoxAdapter(child: _ChapterHeader()),
+          SliverToBoxAdapter(child: _ChapterHeader(state: state)),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             sliver: SliverList(
@@ -186,7 +186,7 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
               child: _buildScrubber(context, state),
             ),
           ),
-          const SliverPadding(padding: EdgeInsets.only(bottom: 10)),
+          const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
         ],
       );
     }
@@ -197,7 +197,7 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
     if (state is BibleReaderLoaded) {
       return ScriptureScrubber(
         key: ValueKey('scrubber_${state.book}_${state.chapter}'),
-        totalItems: 50,
+        totalItems: 50, // This could be dynamic based on book
         activeIndex: state.chapter,
         isChapterMode: true,
         onItemSelected: (v) =>
@@ -209,7 +209,8 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
 }
 
 class _ChapterHeader extends StatelessWidget {
-  const _ChapterHeader();
+  final BibleReaderLoaded state;
+  const _ChapterHeader({required this.state});
 
   @override
   Widget build(BuildContext context) {
@@ -220,7 +221,7 @@ class _ChapterHeader extends StatelessWidget {
         children: [
           const SizedBox(height: kToolbarHeight + 20),
           Text(
-            '፩',
+            '${state.chapter}',
             style: TextStyle(
               fontSize: 64,
               fontFamily: 'Noto Serif Ethiopic',
@@ -230,7 +231,7 @@ class _ChapterHeader extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            'ምዕራፍ አንድ',
+            'ምዕራፍ ${state.chapter}',
             style: tt.headlineMedium!.copyWith(
               color: SabaColors.primary,
               fontWeight: FontWeight.bold,
@@ -274,21 +275,28 @@ class _CustomReaderAppBar extends StatelessWidget
           MaterialPageRoute(builder: (context) => const LibraryScreen()),
         ),
       ),
-      title: Column(
-        children: [
-          Text(
-            'ኦሪት ዘፍጥረት ፩',
-            style: tt.titleMedium!.copyWith(fontWeight: FontWeight.bold),
-          ),
-          Text(
-            'ብሉይ ኪዳን',
-            style: tt.labelSmall!.copyWith(
-              color: SabaColors.onSurfaceVariant,
-              fontSize: 10,
-            ),
-          ),
-        ],
-      ),
+      title: state is BibleReaderLoaded
+          ? Builder(
+              builder: (context) {
+                final loaded = state as BibleReaderLoaded;
+                return Column(
+                  children: [
+                    Text(
+                      '${loaded.book} ${loaded.chapter}',
+                      style: tt.titleMedium!.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      loaded.chapter <= 39 ? 'ብሉይ ኪዳን' : 'ሐዲስ ኪዳን',
+                      style: tt.labelSmall!.copyWith(
+                        color: SabaColors.onSurfaceVariant,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
+                );
+              },
+            )
+          : const Text('...'),
       actions: [
         IconButton(
           icon: const Icon(
