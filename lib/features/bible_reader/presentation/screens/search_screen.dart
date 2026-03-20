@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../domain/entities/verse.dart';
+import '../cubit/search_cubit.dart';
 import '../../../../core/theme/app_theme.dart';
 
 /// Redesigned Search Screen matching the reference image.
@@ -11,7 +14,23 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final _controller = TextEditingController(text: 'ብርሃን');
+  final _controller = TextEditingController();
+  
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_onSearchChanged);
+  }
+
+  void _onSearchChanged() {
+    context.read<SearchCubit>().search(_controller.text);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,93 +109,103 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
             const SizedBox(height: 32),
 
-            // ── 3. Results Header ──────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'የተገኙ ውጤቶች (124)',
-                    style: tt.labelLarge!.copyWith(
-                      color: SabaColors.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
+            // ── 3. Dynamic Results ──────────────────────────────────────
+            BlocBuilder<SearchCubit, SearchState>(
+              builder: (context, state) {
+                if (state is SearchLoading) {
+                  return const Padding(
+                    padding: EdgeInsets.all(40),
+                    child: Center(
+                      child: CircularProgressIndicator(color: SabaColors.primary),
                     ),
-                  ),
-                  Row(
+                  );
+                }
+
+                if (state is SearchLoaded) {
+                  final results = state.results;
+                  if (results.isEmpty) {
+                    return const Padding(
+                      padding: EdgeInsets.all(40),
+                      child: Center(child: Text('ምንም ውጤት አልተገኘም')),
+                    );
+                  }
+
+                  return Column(
                     children: [
-                      const Icon(
-                        Icons.keyboard_arrow_down,
-                        size: 16,
-                        color: SabaColors.primary,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'አቀማመጥ',
-                        style: tt.labelSmall!.copyWith(
-                          color: SabaColors.primary,
-                          fontWeight: FontWeight.bold,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'የተገኙ ውጤቶች (${results.length})',
+                              style: tt.labelLarge!.copyWith(
+                                color: SabaColors.onSurfaceVariant,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.keyboard_arrow_down,
+                                  size: 16,
+                                  color: SabaColors.primary,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'አቀማመጥ',
+                                  style: tt.labelSmall!.copyWith(
+                                    color: SabaColors.primary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
+                      const SizedBox(height: 24),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        itemCount: results.length > 20 ? 20 : results.length, // Show top 20 for performance
+                        itemBuilder: (context, index) {
+                          final verse = results[index];
+                          return _SearchResultTile(
+                            verse: verse,
+                            query: _controller.text,
+                          );
+                        },
+                      ),
+                      if (results.length > 20)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: SabaColors.primary,
+                                padding: const EdgeInsets.symmetric(vertical: 18),
+                              ),
+                              child: const Text('ተጨማሪ ውጤቶችን አሳይ'),
+                            ),
+                          ),
+                        ),
                     ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
+                  );
+                }
 
-            // ── 4. Search Results ──────────────────────────────────────
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: [
-                  _SearchResultTile(
-                    number: '፩',
-                    title: 'ኦሪት ዘፍጥረት',
-                    reference: '፩ : ፫',
-                    snippet:
-                        'እግዚአብሔርም፦ <highlight>ብርሃን</highlight> ይሁን አለ፤ <highlight>ብርሃንም</highlight> ሆነ።',
-                  ),
-                  _SearchResultTile(
-                    number: '፪',
-                    title: 'የዮሐንስ ወንጌል',
-                    reference: '፩ : ፱',
-                    snippet:
-                        'ለጠቢብ ሰው ሁሉ የሚያበራው እውነተኛው <highlight>ብርሃን</highlight> ወደ ዓለም ይመጣ ነበር።',
-                  ),
-                  _SearchResultTile(
-                    number: '፫',
-                    title: 'መዝሙረ ዳዊት',
-                    reference: '፳፯ : ፩',
-                    snippet:
-                        'እግዚአብሔር <highlight>ብርሃኔና</highlight> መድኃኒቴ ነው፤ የሚያስፈራኝ ማን ነው?',
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 32),
-
-            // ── 5. Featured Result Card ───────────────────────────────
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: _FeaturedHighlightCard(),
-            ),
-            const SizedBox(height: 32),
-
-            // ── 6. Show More Button ───────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: SabaColors.primary,
-                    padding: const EdgeInsets.symmetric(vertical: 18),
-                  ),
-                  child: const Text('ተጨማሪ ውጤቶችን አሳይ'),
-                ),
-              ),
+                return Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: _FeaturedHighlightCard(),
+                    ),
+                  ],
+                );
+              },
             ),
             const SizedBox(height: 48),
           ],
@@ -219,16 +248,12 @@ class _FilterChip extends StatelessWidget {
 }
 
 class _SearchResultTile extends StatelessWidget {
-  final String number;
-  final String title;
-  final String reference;
-  final String snippet;
+  final Verse verse;
+  final String query;
 
   const _SearchResultTile({
-    required this.number,
-    required this.title,
-    required this.reference,
-    required this.snippet,
+    required this.verse,
+    required this.query,
   });
 
   @override
@@ -249,7 +274,7 @@ class _SearchResultTile extends StatelessWidget {
             ),
             alignment: Alignment.center,
             child: Text(
-              number,
+              verse.number.toString(),
               style: tt.labelLarge!.copyWith(
                 color: SabaColors.onSurfaceVariant,
               ),
@@ -264,7 +289,7 @@ class _SearchResultTile extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      title,
+                      verse.bookName,
                       style: tt.titleMedium!.copyWith(
                         color: SabaColors.primary,
                         fontWeight: FontWeight.bold,
@@ -272,7 +297,7 @@ class _SearchResultTile extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      reference,
+                      '${verse.chapter} : ${verse.number}',
                       style: tt.labelSmall!.copyWith(
                         color: SabaColors.onSurfaceVariant.withValues(
                           alpha: 0.6,
@@ -282,7 +307,7 @@ class _SearchResultTile extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                _RichSnippet(snippet: snippet),
+                _RichSnippet(text: verse.text, query: query),
                 const SizedBox(height: 12),
                 Row(
                   children: [
@@ -358,8 +383,9 @@ class _FeaturedHighlightCard extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           _RichSnippet(
-            snippet:
-                '"እናንተ የዓለም <highlight>ብርሃን</highlight> ናችሁ። በተራራ ላይ ያለች ከተማ ልትሰወር አትችልም::"',
+            text:
+                '"እናንተ የዓለም ብርሃን ናችሁ። በተራራ ላይ ያለች ከተማ ልትሰወር አትችልም::"',
+            query: 'ብርሃን',
             isLarge: true,
           ),
         ],
@@ -392,9 +418,14 @@ class _IconLink extends StatelessWidget {
 }
 
 class _RichSnippet extends StatelessWidget {
-  final String snippet;
+  final String text;
+  final String query;
   final bool isLarge;
-  const _RichSnippet({required this.snippet, this.isLarge = false});
+  const _RichSnippet({
+    required this.text,
+    required this.query,
+    this.isLarge = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -407,15 +438,30 @@ class _RichSnippet extends StatelessWidget {
       decorationColor: SabaColors.primary.withValues(alpha: 0.5),
     );
 
-    final parts = snippet.split(RegExp(r'<highlight>|</highlight>'));
-    List<TextSpan> spans = [];
+    if (query.trim().isEmpty) {
+      return Text(text, style: baseStyle.copyWith(height: 1.6, color: SabaColors.onSurface));
+    }
 
-    for (int i = 0; i < parts.length; i++) {
-      if (i % 2 == 1) {
-        spans.add(TextSpan(text: parts[i], style: highlightStyle));
-      } else {
-        spans.add(TextSpan(text: parts[i]));
+    final lowerText = text.toLowerCase();
+    final lowerQuery = query.toLowerCase();
+    
+    List<TextSpan> spans = [];
+    int start = 0;
+    int indexOfMatch;
+
+    while ((indexOfMatch = lowerText.indexOf(lowerQuery, start)) != -1) {
+      if (indexOfMatch > start) {
+        spans.add(TextSpan(text: text.substring(start, indexOfMatch)));
       }
+      spans.add(TextSpan(
+        text: text.substring(indexOfMatch, indexOfMatch + query.length),
+        style: highlightStyle,
+      ));
+      start = indexOfMatch + query.length;
+    }
+
+    if (start < text.length) {
+      spans.add(TextSpan(text: text.substring(start)));
     }
 
     return RichText(
