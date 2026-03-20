@@ -5,9 +5,16 @@ import '../../../../core/theme/app_theme.dart';
 import '../cubit/bible_reader_cubit.dart';
 import '../cubit/navigation_cubit.dart';
 
-class ChapterSelectionScreen extends StatelessWidget {
+class ChapterSelectionScreen extends StatefulWidget {
   final String bookName;
   const ChapterSelectionScreen({super.key, required this.bookName});
+
+  @override
+  State<ChapterSelectionScreen> createState() => _ChapterSelectionScreenState();
+}
+
+class _ChapterSelectionScreenState extends State<ChapterSelectionScreen> {
+  int? _selectedChapter;
 
   @override
   Widget build(BuildContext context) {
@@ -61,16 +68,23 @@ class ChapterSelectionScreen extends StatelessWidget {
               itemCount: 50,
               itemBuilder: (context, i) {
                 final index = i + 1;
-                final isActive = index == 1;
+                final isActive = _selectedChapter == index;
                 return _ChapterButton(
                   index: index,
                   isActive: isActive,
                   onTap: () async {
+                    setState(() => _selectedChapter = index);
+
+                    // Tiny delay to show the selection state
+                    await Future.delayed(const Duration(milliseconds: 50));
+
+                    if (!mounted) return;
+
                     // 1. Load the book and chapter
                     context.read<BibleReaderCubit>().loadBookChapter(
-                          book: bookName,
-                          chapter: index,
-                        );
+                      book: widget.bookName,
+                      chapter: index,
+                    );
 
                     // 2. Switch to Reader Tab (index 1)
                     context.read<NavigationCubit>().setTab(1);
@@ -85,7 +99,7 @@ class ChapterSelectionScreen extends StatelessWidget {
             const SizedBox(height: 60),
 
             // ── About Book Card ─────────────────────────────────────────
-            _AboutBookCard(bookName: bookName),
+            _AboutBookCard(bookName: widget.bookName),
             const SizedBox(height: 40),
           ],
         ),
@@ -103,7 +117,7 @@ class ChapterSelectionScreen extends StatelessWidget {
         onPressed: () => Navigator.pop(context),
       ),
       title: Text(
-        bookName,
+        widget.bookName,
         style: const TextStyle(
           color: SabaColors.primary,
           fontWeight: FontWeight.bold,
@@ -144,7 +158,9 @@ class _ChapterButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: isActive ? SabaColors.primary : const Color(0xFFF4F2F1).withValues(alpha: 0.5),
+          color: isActive
+              ? SabaColors.primary
+              : const Color(0xFFF4F2F1).withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(12),
           border: isActive ? Border.all(color: Colors.black12, width: 2) : null,
         ),
@@ -181,7 +197,13 @@ class _AboutBookCard extends StatelessWidget {
             left: 0,
             top: 0,
             bottom: 0,
-            child: Container(width: 4, decoration: const BoxDecoration(color: SabaColors.primary, borderRadius: BorderRadius.horizontal(left: Radius.circular(4)))),
+            child: Container(
+              width: 4,
+              decoration: const BoxDecoration(
+                color: SabaColors.primary,
+                borderRadius: BorderRadius.horizontal(left: Radius.circular(4)),
+              ),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(left: 16),
@@ -241,7 +263,11 @@ class _KeywordChip extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: Text(
