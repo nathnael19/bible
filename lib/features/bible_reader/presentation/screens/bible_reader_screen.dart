@@ -1,3 +1,4 @@
+import 'package:bible/features/bible_reader/presentation/screens/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -121,9 +122,7 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
                   children: [
                     const _FloatingControl(icon: 'TT'),
                     const SizedBox(height: 12),
-                    const _FloatingControl(
-                      iconData: Icons.dark_mode_outlined,
-                    ),
+                    const _FloatingControl(iconData: Icons.dark_mode_outlined),
                     const SizedBox(height: 12),
                     const _FloatingControl(
                       iconData: Icons.share_rounded,
@@ -283,7 +282,9 @@ class _CustomReaderAppBar extends StatelessWidget
                   children: [
                     Text(
                       '${loaded.book} ${loaded.chapter}',
-                      style: tt.titleMedium!.copyWith(fontWeight: FontWeight.bold),
+                      style: tt.titleMedium!.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Text(
                       int.parse(loaded.bookId) <= 39 ? 'ብሉይ ኪዳን' : 'ሐዲስ ኪዳን',
@@ -307,7 +308,10 @@ class _CustomReaderAppBar extends StatelessWidget
         ),
         IconButton(
           icon: const Icon(Icons.search, color: SabaColors.onSurfaceVariant),
-          onPressed: () {},
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const SearchScreen()),
+          ),
         ),
       ],
     );
