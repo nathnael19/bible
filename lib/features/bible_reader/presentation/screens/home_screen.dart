@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import 'search_screen.dart';
 
 /// Home / Discover screen redesigned to match reference image.
 class HomeScreen extends StatelessWidget {
@@ -34,7 +35,10 @@ class HomeScreen extends StatelessWidget {
             actions: [
               IconButton(
                 icon: const Icon(Icons.search, color: SabaColors.onSurfaceVariant),
-                onPressed: () {},
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SearchScreen()),
+                ),
               ),
               const SizedBox(width: 8),
             ],
