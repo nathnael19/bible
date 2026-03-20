@@ -7,7 +7,7 @@ import '../widgets/scripture_scrubber.dart';
 import '../widgets/version_selector_modal.dart';
 import '../widgets/verse_card.dart';
 
-/// Redesigned Bible Reader screen with Auto-Center and Chapter Scrubber.
+/// Redesigned Bible Reader screen with stable tree management and auto-scrolling.
 class BibleReaderScreen extends StatefulWidget {
   const BibleReaderScreen({super.key});
 
@@ -16,8 +16,13 @@ class BibleReaderScreen extends StatefulWidget {
 }
 
 class _BibleReaderScreenState extends State<BibleReaderScreen> {
+  // Use a map that we clear on chapter changes to avoid stale key issues
   final Map<int, GlobalKey> _verseKeys = {};
   late ScrollController _scrollController;
+  
+  // Track current book/chapter to detect transitions
+  String? _currentBook;
+  int? _currentChapter;
 
   @override
   void initState() {
@@ -35,34 +40,36 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
     final key = _verseKeys[verseNumber];
     final context = key?.currentContext;
 
-    if (context != null) {
+    if (context != null && context.mounted) {
       Scrollable.ensureVisible(
         context,
         duration: const Duration(milliseconds: 600),
         curve: Curves.easeInOutCubic,
-        alignment: 0.5, // Center in viewport
+        alignment: 0.5,
       );
     } else {
-      // Fallback: Estimate position if not in tree
-      final approximateOffset = 200.0 + (verseNumber * 100.0);
-      _scrollController
-          .animateTo(
-            approximateOffset.clamp(0, _scrollController.position.maxScrollExtent),
-            duration: const Duration(milliseconds: 400),
-            curve: Curves.easeOut,
-          )
-          .then((_) {
-            if (!mounted) return;
-            final retryContext = _verseKeys[verseNumber]?.currentContext;
-            if (retryContext != null) {
-              Scrollable.ensureVisible(
-                retryContext,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeIn,
-                alignment: 0.5,
-              );
-            }
-          });
+      // Fallback: Estimate position to bring into view if not yet built
+      final approximateOffset = 200.0 + (verseNumber * 110.0);
+      if (_scrollController.hasClients) {
+        _scrollController
+            .animateTo(
+              approximateOffset.clamp(0, _scrollController.position.maxScrollExtent),
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeOut,
+            )
+            .then((_) {
+              if (!mounted) return;
+              final retryContext = _verseKeys[verseNumber]?.currentContext;
+              if (retryContext != null && retryContext.mounted) {
+                Scrollable.ensureVisible(
+                  retryContext,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeIn,
+                  alignment: 0.5,
+                );
+              }
+            });
+      }
     }
   }
 
@@ -71,17 +78,27 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
     return BlocConsumer<BibleReaderCubit, BibleReaderState>(
       listenWhen: (prev, curr) {
         if (prev is BibleReaderLoaded && curr is BibleReaderLoaded) {
-          // Trigger scroll only if verse selection changed or new chapter loaded
+          // Scroll if verse changed OR if it's the same chapter initial load
           return prev.activeVerseNumber != curr.activeVerseNumber || 
                  prev.chapter != curr.chapter;
         }
         return curr is BibleReaderLoaded;
       },
       listener: (context, state) {
-        if (state is BibleReaderLoaded && state.activeVerseNumber != null) {
-          Future.delayed(const Duration(milliseconds: 100), () {
-            if (mounted) _scrollToVerse(state.activeVerseNumber!);
-          });
+        if (state is BibleReaderLoaded) {
+          // If chapter/book changed, clear keys to prevent element tree corruption
+          if (state.book != _currentBook || state.chapter != _currentChapter) {
+            _verseKeys.clear();
+            _currentBook = state.book;
+            _currentChapter = state.chapter;
+          }
+
+          if (state.activeVerseNumber != null) {
+            // Wait for builder to finish before scrolling
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) _scrollToVerse(state.activeVerseNumber!);
+            });
+          }
         }
       },
       builder: (context, state) {
@@ -91,7 +108,7 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
           appBar: _CustomReaderAppBar(state: state),
           body: Stack(
             children: [
-              _buildSliverContent(context, state),
+              _buildContent(context, state),
               // ── Side Floating Buttons ─────────────────────────────────
               Positioned(
                 right: 20,
@@ -116,21 +133,22 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
     );
   }
 
-  Widget _buildSliverContent(BuildContext context, BibleReaderState state) {
+  Widget _buildContent(BuildContext context, BibleReaderState state) {
     if (state is BibleReaderLoading) {
       return const Center(child: CircularProgressIndicator(color: SabaColors.primary));
     }
 
     if (state is BibleReaderLoaded) {
-      // Initialize or update keys for verses
+      // Ensure keys are initialized for the current list
       for (final verse in state.verses) {
         _verseKeys.putIfAbsent(verse.number, () => GlobalKey());
       }
 
       return CustomScrollView(
         controller: _scrollController,
-        cacheExtent: 3000,
-        key: ValueKey('reader_${state.book}_${state.chapter}'),
+        cacheExtent: 4000,
+        // Using a key that changes with book/chapter forces a fresh tree for the list
+        key: PageStorageKey('reader_${state.book}_${state.chapter}'),
         slivers: [
           const SliverToBoxAdapter(child: _ChapterHeader()),
           SliverPadding(
@@ -147,6 +165,8 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
                   );
                 },
                 childCount: state.verses.length,
+                addAutomaticKeepAlives: true,
+                addRepaintBoundaries: true,
               ),
             ),
           ),
@@ -156,7 +176,7 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
               child: _buildScrubber(context, state),
             ),
           ),
-          const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
+          const SliverPadding(padding: EdgeInsets.only(bottom: 120)),
         ],
       );
     }
@@ -167,7 +187,7 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
     if (state is BibleReaderLoaded) {
       return ScriptureScrubber(
         key: ValueKey('scrubber_${state.book}_${state.chapter}'),
-        totalItems: 50, // Mocked total chapters
+        totalItems: 50,
         activeIndex: state.chapter,
         isChapterMode: true,
         onItemSelected: (v) => context.read<BibleReaderCubit>().navigateToChapter(v),
@@ -188,7 +208,6 @@ class _ChapterHeader extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: kToolbarHeight + 20),
-          // Ornate Ge'ez numeral icon
           Text(
             '፩',
             style: TextStyle(
