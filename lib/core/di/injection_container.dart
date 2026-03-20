@@ -12,6 +12,7 @@ import '../../features/bible_reader/presentation/cubit/bible_reader_cubit.dart';
 import '../../features/bible_reader/presentation/cubit/version_selector_cubit.dart';
 import '../../features/bible_reader/presentation/cubit/library_cubit.dart';
 import '../../features/bible_reader/presentation/cubit/search_cubit.dart';
+import '../../features/bible_reader/presentation/cubit/theme_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -38,4 +39,5 @@ Future<void> initDependencies() async {
   sl.registerFactory(() => VersionSelectorCubit(sl()));
   sl.registerFactory(() => LibraryCubit(sl()));
   sl.registerFactory(() => SearchCubit(sl()));
+  sl.registerLazySingleton(() => ThemeCubit());
 }
