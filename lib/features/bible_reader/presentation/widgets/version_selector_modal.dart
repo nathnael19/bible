@@ -125,13 +125,13 @@ class _VersionSelectorSheetState extends State<_VersionSelectorSheet> {
                         version: version,
                         isSelected: isSelected,
                         onTap: () {
+                          final navigator = Navigator.of(context);
                           context.read<VersionSelectorCubit>().selectVersion(version.id);
                           // Navigate to comparison screen after short delay
                           Future.delayed(const Duration(milliseconds: 300), () {
                             if (mounted) {
-                              Navigator.pop(context);
-                              Navigator.push(
-                                context,
+                              navigator.pop();
+                              navigator.push(
                                 MaterialPageRoute(
                                   builder: (_) => const CompareVersionsScreen(),
                                 ),
