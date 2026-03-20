@@ -44,6 +44,16 @@ abstract class SabaColors {
   static const Color error = Color(0xFFBA1A1A);
   static const Color onError = Color(0xFFFFFFFF);
   static const Color errorContainer = Color(0xFFFFDAD6);
+
+  // ── Dark Theme Tokens ──────────────────────────────────────────
+  static const Color primaryDark = Color(0xFFFFB4BC);
+  static const Color onPrimaryDark = Color(0xFF67001A);
+  static const Color secondaryDark = Color(0xFFEFBF63);
+  static const Color onSecondaryDark = Color(0xFF422C00);
+  static const Color surfaceDark = Color(0xFF1A1111);
+  static const Color onSurfaceDark = Color(0xFFF0DEDE);
+  static const Color onSurfaceVariantDark = Color(0xFFD8C2C1);
+  static const Color outlineDark = Color(0xFFA08C8C);
 }
 
 /// ─── Saba Heritage Typography ────────────────────────────────────────────────
@@ -265,6 +275,61 @@ abstract class SabaTheme {
         side: BorderSide(color: SabaColors.outlineVariant.withValues(alpha: 0.15)),
         shape: const StadiumBorder(),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      ),
+    );
+  }
+
+  static ThemeData dark() {
+    final colorScheme = ColorScheme(
+      brightness: Brightness.dark,
+      primary: SabaColors.primaryDark,
+      onPrimary: SabaColors.onPrimaryDark,
+      primaryContainer: SabaColors.primary,
+      onPrimaryContainer: SabaColors.onPrimary,
+      secondary: SabaColors.secondaryDark,
+      onSecondary: SabaColors.onSecondaryDark,
+      secondaryContainer: SabaColors.secondary,
+      onSecondaryContainer: SabaColors.onSecondary,
+      tertiary: Colors.white70,
+      onTertiary: Colors.black,
+      error: SabaColors.error,
+      onError: SabaColors.onError,
+      surface: SabaColors.surfaceDark,
+      onSurface: SabaColors.onSurfaceDark,
+      onSurfaceVariant: SabaColors.onSurfaceVariantDark,
+      outline: SabaColors.outlineDark,
+      surfaceContainerHighest: Color(0xFF342222),
+      surfaceContainerHigh: Color(0xFF2D1D1D),
+      surfaceContainer: Color(0xFF261919),
+      surfaceContainerLow: Color(0xFF201515),
+      surfaceContainerLowest: Color(0xFF140D0D),
+    );
+
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: colorScheme,
+      scaffoldBackgroundColor: SabaColors.surfaceDark,
+      textTheme: TextTheme(
+        displayLarge: SabaTypography.displayLarge().copyWith(color: SabaColors.onSurfaceDark),
+        displayMedium: SabaTypography.displayMedium().copyWith(color: SabaColors.onSurfaceDark),
+        displaySmall: SabaTypography.displaySmall().copyWith(color: SabaColors.onSurfaceDark),
+        headlineLarge: SabaTypography.headlineLarge().copyWith(color: SabaColors.onSurfaceDark),
+        headlineMedium: SabaTypography.headlineMedium().copyWith(color: SabaColors.onSurfaceDark),
+        headlineSmall: SabaTypography.headlineSmall().copyWith(color: SabaColors.onSurfaceDark),
+        bodyLarge: SabaTypography.bodyLarge().copyWith(color: SabaColors.onSurfaceDark),
+        bodyMedium: SabaTypography.bodyMedium().copyWith(color: SabaColors.onSurfaceDark),
+        bodySmall: SabaTypography.bodySmall().copyWith(color: SabaColors.onSurfaceVariantDark),
+        labelLarge: SabaTypography.labelLarge().copyWith(color: SabaColors.onSurfaceDark),
+        labelMedium: SabaTypography.labelMedium().copyWith(color: SabaColors.onSurfaceDark),
+        labelSmall: SabaTypography.labelSmall().copyWith(color: SabaColors.onSurfaceVariantDark),
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: SabaColors.surfaceDark.withValues(alpha: 0.9),
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: false,
+        titleTextStyle: SabaTypography.headlineSmall().copyWith(color: SabaColors.onSurfaceDark),
+        iconTheme: const IconThemeData(color: SabaColors.onSurfaceDark),
       ),
     );
   }
