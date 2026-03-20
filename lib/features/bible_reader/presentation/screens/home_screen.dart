@@ -18,13 +18,8 @@ class HomeScreen extends StatelessWidget {
           // ── App Bar ─────────────────────────────────────────────
           SliverAppBar(
             pinned: true,
-            centerTitle: true,
             backgroundColor: SabaColors.surface,
             elevation: 0,
-            leading: IconButton(
-              icon: const Icon(Icons.menu, color: SabaColors.onSurfaceVariant),
-              onPressed: () {},
-            ),
             title: Text(
               'መጽሐፍ ቅዱስ',
               style: tt.headlineSmall!.copyWith(
