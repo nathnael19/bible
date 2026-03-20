@@ -7,6 +7,7 @@ import 'features/bible_reader/presentation/cubit/bible_reader_cubit.dart';
 import 'features/bible_reader/presentation/cubit/navigation_cubit.dart';
 import 'features/bible_reader/presentation/cubit/library_cubit.dart';
 import 'features/bible_reader/presentation/cubit/search_cubit.dart';
+import 'features/bible_reader/presentation/cubit/theme_cubit.dart';
 import 'features/bible_reader/presentation/screens/app_shell.dart';
 
 Future<void> main() async {
@@ -34,12 +35,19 @@ class BibleApp extends StatelessWidget {
             ),
         ),
         BlocProvider(create: (_) => sl<SearchCubit>()),
+        BlocProvider(create: (_) => sl<ThemeCubit>()),
       ],
-      child: MaterialApp(
-        title: 'መጽሐፍ ቅዱስ — Ethiopian Bible',
-        debugShowCheckedModeBanner: false,
-        theme: SabaTheme.light(),
-        home: const AppShell(),
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, mode) {
+          return MaterialApp(
+            title: 'መጽሐፍ ቅዱስ — Ethiopian Bible',
+            debugShowCheckedModeBanner: false,
+            theme: SabaTheme.light(),
+            darkTheme: SabaTheme.dark(),
+            themeMode: mode,
+            home: const AppShell(),
+          );
+        },
       ),
     );
   }
