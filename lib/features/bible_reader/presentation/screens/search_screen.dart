@@ -23,10 +23,6 @@ class _SearchScreenState extends State<SearchScreen> {
         centerTitle: true,
         backgroundColor: SabaColors.surface,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.menu, color: SabaColors.onSurfaceVariant),
-          onPressed: () {},
-        ),
         title: Text(
           'ወንጌል', // Gospel title as per image
           style: tt.headlineSmall!.copyWith(
@@ -65,7 +61,10 @@ class _SearchScreenState extends State<SearchScreen> {
                   controller: _controller,
                   decoration: const InputDecoration(
                     hintText: 'ፈልግ...',
-                    prefixIcon: Icon(Icons.search, color: SabaColors.onSurfaceVariant),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: SabaColors.onSurfaceVariant,
+                    ),
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
@@ -106,7 +105,11 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                   Row(
                     children: [
-                      const Icon(Icons.keyboard_arrow_down, size: 16, color: SabaColors.primary),
+                      const Icon(
+                        Icons.keyboard_arrow_down,
+                        size: 16,
+                        color: SabaColors.primary,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         'አቀማመጥ',
@@ -131,19 +134,22 @@ class _SearchScreenState extends State<SearchScreen> {
                     number: '፩',
                     title: 'ኦሪት ዘፍጥረት',
                     reference: '፩ : ፫',
-                    snippet: 'እግዚአብሔርም፦ <highlight>ብርሃን</highlight> ይሁን አለ፤ <highlight>ብርሃንም</highlight> ሆነ።',
+                    snippet:
+                        'እግዚአብሔርም፦ <highlight>ብርሃን</highlight> ይሁን አለ፤ <highlight>ብርሃንም</highlight> ሆነ።',
                   ),
                   _SearchResultTile(
                     number: '፪',
                     title: 'የዮሐንስ ወንጌል',
                     reference: '፩ : ፱',
-                    snippet: 'ለጠቢብ ሰው ሁሉ የሚያበራው እውነተኛው <highlight>ብርሃን</highlight> ወደ ዓለም ይመጣ ነበር።',
+                    snippet:
+                        'ለጠቢብ ሰው ሁሉ የሚያበራው እውነተኛው <highlight>ብርሃን</highlight> ወደ ዓለም ይመጣ ነበር።',
                   ),
                   _SearchResultTile(
                     number: '፫',
                     title: 'መዝሙረ ዳዊት',
                     reference: '፳፯ : ፩',
-                    snippet: 'እግዚአብሔር <highlight>ብርሃኔና</highlight> መድኃኒቴ ነው፤ የሚያስፈራኝ ማን ነው?',
+                    snippet:
+                        'እግዚአብሔር <highlight>ብርሃኔና</highlight> መድኃኒቴ ነው፤ የሚያስፈራኝ ማን ነው?',
                   ),
                 ],
               ),
@@ -195,14 +201,18 @@ class _FilterChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: isSelected ? SabaColors.secondaryContainer : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: isSelected ? null : Border.all(color: Colors.black.withValues(alpha: 0.05)),
+        border: isSelected
+            ? null
+            : Border.all(color: Colors.black.withValues(alpha: 0.05)),
       ),
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelMedium!.copyWith(
-              color: isSelected ? SabaColors.onSecondaryContainer : SabaColors.onSurfaceVariant,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            ),
+          color: isSelected
+              ? SabaColors.onSecondaryContainer
+              : SabaColors.onSurfaceVariant,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+        ),
       ),
     );
   }
@@ -240,7 +250,9 @@ class _SearchResultTile extends StatelessWidget {
             alignment: Alignment.center,
             child: Text(
               number,
-              style: tt.labelLarge!.copyWith(color: SabaColors.onSurfaceVariant),
+              style: tt.labelLarge!.copyWith(
+                color: SabaColors.onSurfaceVariant,
+              ),
             ),
           ),
           const SizedBox(width: 16),
@@ -262,7 +274,9 @@ class _SearchResultTile extends StatelessWidget {
                     Text(
                       reference,
                       style: tt.labelSmall!.copyWith(
-                        color: SabaColors.onSurfaceVariant.withValues(alpha: 0.6),
+                        color: SabaColors.onSurfaceVariant.withValues(
+                          alpha: 0.6,
+                        ),
                       ),
                     ),
                   ],
@@ -306,17 +320,27 @@ class _FeaturedHighlightCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: SabaColors.primary,
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   'ተለይቶ የቀረበ',
-                  style: tt.labelSmall!.copyWith(color: Colors.white, fontSize: 10),
+                  style: tt.labelSmall!.copyWith(
+                    color: Colors.white,
+                    fontSize: 10,
+                  ),
                 ),
               ),
-              const Icon(Icons.star_border_rounded, color: SabaColors.secondary, size: 24),
+              const Icon(
+                Icons.star_border_rounded,
+                color: SabaColors.secondary,
+                size: 24,
+              ),
             ],
           ),
           const SizedBox(height: 20),
@@ -334,7 +358,8 @@ class _FeaturedHighlightCard extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           _RichSnippet(
-            snippet: '"እናንተ የዓለም <highlight>ብርሃን</highlight> ናችሁ። በተራራ ላይ ያለች ከተማ ልትሰወር አትችልም::"',
+            snippet:
+                '"እናንተ የዓለም <highlight>ብርሃን</highlight> ናችሁ። በተራራ ላይ ያለች ከተማ ልትሰወር አትችልም::"',
             isLarge: true,
           ),
         ],
@@ -357,9 +382,9 @@ class _IconLink extends StatelessWidget {
         Text(
           label,
           style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                color: SabaColors.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
-              ),
+            color: SabaColors.onSurfaceVariant,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ],
     );
