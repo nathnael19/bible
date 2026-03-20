@@ -6,14 +6,20 @@ class VerseCard extends StatelessWidget {
   final Verse verse;
   final bool isActive;
   final VoidCallback? onTap;
+  final VoidCallback? onDoubleTap;
   final double fontSizeFactor;
+  final bool isBookmarked;
+  final Color? highlightColor;
 
   const VerseCard({
     super.key,
     required this.verse,
     this.isActive = false,
     this.onTap,
+    this.onDoubleTap,
     this.fontSizeFactor = 1.0,
+    this.isBookmarked = false,
+    this.highlightColor,
   });
 
   @override
@@ -22,14 +28,19 @@ class VerseCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
+      onDoubleTap: onDoubleTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        margin: const EdgeInsets.only(bottom: 10),
+        duration: const Duration(milliseconds: 300),
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: isActive
               ? Theme.of(context).colorScheme.surfaceContainerHigh
-              : Colors.transparent,
+              : highlightColor ?? Colors.transparent,
           borderRadius: BorderRadius.circular(8),
+          border: isActive
+              ? Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3))
+              : null,
         ),
         child: IntrinsicHeight(
           child: Row(
@@ -51,19 +62,31 @@ class VerseCard extends StatelessWidget {
               // ── Verse number (editorial large numeral) ─────────────────
               SizedBox(
                 width: 36,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Text(
-                    '${verse.number}',
-                    style: tt.bodySmall!.copyWith(
-                      fontSize: 13 * fontSizeFactor,
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Noto Serif Ethiopic',
-                    ),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          '${verse.number}',
+                          style: tt.bodySmall!.copyWith(
+                            fontSize: 13 * fontSizeFactor,
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Noto Serif Ethiopic',
+                          ),
+                        ),
+                      ),
+                      if (isBookmarked) ...[
+                        const SizedBox(height: 4),
+                        Icon(
+                          Icons.bookmark_rounded,
+                          size: 14,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ],
+                    ],
                   ),
                 ),
-              ),
               const SizedBox(width: 12),
               // ── Verse text ────────────────────────────────────────────
               Expanded(
