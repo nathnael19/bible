@@ -29,6 +29,7 @@ class _AppShellState extends State<AppShell> {
     return BlocBuilder<NavigationCubit, NavigationState>(
       builder: (context, state) {
         return Scaffold(
+          extendBody: true,
           body: NotificationListener<ScrollUpdateNotification>(
             onNotification: (notification) {
               final cubit = context.read<NavigationCubit>();
@@ -55,18 +56,6 @@ class _AppShellState extends State<AppShell> {
               onTap: (idx) => context.read<NavigationCubit>().setTab(idx),
             ),
           ),
-          floatingActionButton: state.selectedIndex == 0
-              ? FloatingActionButton(
-                  onPressed: () {},
-                  backgroundColor: SabaColors.primary,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  mini: true,
-                  child: const Icon(Icons.add),
-                )
-              : null,
         );
       },
     );
