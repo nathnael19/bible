@@ -1,3 +1,4 @@
+import 'package:bible/features/auth/presentation/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'downloads_screen.dart';
@@ -248,7 +249,9 @@ class ProfileScreen extends StatelessWidget {
                           label: 'የድምጽ ቅጂዎች',
                           onTap: () => Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => const DownloadsScreen()),
+                            MaterialPageRoute(
+                              builder: (_) => const DownloadsScreen(),
+                            ),
                           ),
                         ),
                         _MenuTile(
@@ -274,7 +277,10 @@ class ProfileScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: OutlinedButton.icon(
-                onPressed: () {},
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                ),
                 icon: const Icon(Icons.logout_outlined, size: 20),
                 label: const Text(
                   'ከመለያ ውጣ',
