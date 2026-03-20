@@ -8,13 +8,18 @@ import 'features/bible_reader/presentation/cubit/navigation_cubit.dart';
 import 'features/bible_reader/presentation/cubit/library_cubit.dart';
 import 'features/bible_reader/presentation/cubit/search_cubit.dart';
 import 'features/bible_reader/presentation/cubit/theme_cubit.dart';
-import 'features/bible_reader/presentation/screens/app_shell.dart';
+
+
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'features/splash/presentation/screens/splash_screen.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await initDependencies();
   runApp(const BibleApp());
 }
+
 
 class BibleApp extends StatelessWidget {
   const BibleApp({super.key});
@@ -45,8 +50,9 @@ class BibleApp extends StatelessWidget {
             theme: SabaTheme.light(),
             darkTheme: SabaTheme.dark(),
             themeMode: mode,
-            home: const AppShell(),
+            home: const SplashScreen(),
           );
+
         },
       ),
     );
