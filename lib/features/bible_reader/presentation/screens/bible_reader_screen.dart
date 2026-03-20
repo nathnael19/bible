@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../cubit/bible_reader_cubit.dart';
-import '../cubit/navigation_cubit.dart';
 import 'library_screen.dart';
 import '../widgets/scripture_scrubber.dart';
 import '../widgets/version_selector_modal.dart';
@@ -111,45 +110,29 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
           backgroundColor: SabaColors.surface,
           extendBodyBehindAppBar: true,
           appBar: _CustomReaderAppBar(state: state),
-          body: NotificationListener<ScrollUpdateNotification>(
-            onNotification: (notification) {
-              final cubit = context.read<NavigationCubit>();
-              final delta = notification.scrollDelta ?? 0;
-
-              // Hide on scroll down (content up)
-              if (delta > 2.0 && cubit.state.isBottomNavVisible) {
-                cubit.setBottomNavVisible(false);
-              }
-              // Show on scroll up (content down) OR "hard scroll" down
-              else if (delta < -10.0 && !cubit.state.isBottomNavVisible) {
-                cubit.setBottomNavVisible(true);
-              }
-              return false;
-            },
-            child: Stack(
-              children: [
-                _buildContent(context, state),
-                // ── Side Floating Buttons ─────────────────────────────────
-                Positioned(
-                  right: 20,
-                  bottom: 40,
-                  child: Column(
-                    children: [
-                      const _FloatingControl(icon: 'TT'),
-                      const SizedBox(height: 12),
-                      const _FloatingControl(
-                        iconData: Icons.dark_mode_outlined,
-                      ),
-                      const SizedBox(height: 12),
-                      const _FloatingControl(
-                        iconData: Icons.share_rounded,
-                        isPrimary: true,
-                      ),
-                    ],
-                  ),
+          body: Stack(
+            children: [
+              _buildContent(context, state),
+              // ── Side Floating Buttons ─────────────────────────────────
+              Positioned(
+                right: 20,
+                bottom: 40,
+                child: Column(
+                  children: [
+                    const _FloatingControl(icon: 'TT'),
+                    const SizedBox(height: 12),
+                    const _FloatingControl(
+                      iconData: Icons.dark_mode_outlined,
+                    ),
+                    const SizedBox(height: 12),
+                    const _FloatingControl(
+                      iconData: Icons.share_rounded,
+                      isPrimary: true,
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
