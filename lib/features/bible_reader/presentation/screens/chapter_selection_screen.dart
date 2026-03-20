@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../cubit/bible_reader_cubit.dart';
+import '../cubit/navigation_cubit.dart';
 
 class ChapterSelectionScreen extends StatelessWidget {
   final String bookName;
@@ -59,7 +62,23 @@ class ChapterSelectionScreen extends StatelessWidget {
               itemBuilder: (context, i) {
                 final index = i + 1;
                 final isActive = index == 1;
-                return _ChapterButton(index: index, isActive: isActive);
+                return _ChapterButton(
+                  index: index,
+                  isActive: isActive,
+                  onTap: () async {
+                    // 1. Load the book and chapter
+                    context.read<BibleReaderCubit>().loadBookChapter(
+                          book: bookName,
+                          chapter: index,
+                        );
+
+                    // 2. Switch to Reader Tab (index 1)
+                    context.read<NavigationCubit>().setTab(1);
+
+                    // 3. Pop selection screen AND library screen to get back to shell
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                  },
+                );
               },
             ),
 
@@ -105,8 +124,13 @@ class ChapterSelectionScreen extends StatelessWidget {
 class _ChapterButton extends StatelessWidget {
   final int index;
   final bool isActive;
+  final VoidCallback onTap;
 
-  const _ChapterButton({required this.index, required this.isActive});
+  const _ChapterButton({
+    required this.index,
+    required this.isActive,
+    required this.onTap,
+  });
 
   String _toGeez(int n) {
     const geez = ['፩', '፪', '፫', '፬', '፭', '፮', '፯', '፰', '፱', '፲'];
@@ -116,20 +140,23 @@ class _ChapterButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: isActive ? SabaColors.primary : const Color(0xFFF4F2F1).withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(12),
-        border: isActive ? Border.all(color: Colors.black12, width: 2) : null,
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        _toGeez(index),
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: isActive ? Colors.white : Colors.black38,
-          fontFamily: 'Noto Serif Ethiopic',
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: isActive ? SabaColors.primary : const Color(0xFFF4F2F1).withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(12),
+          border: isActive ? Border.all(color: Colors.black12, width: 2) : null,
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          _toGeez(index),
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: isActive ? Colors.white : Colors.black38,
+            fontFamily: 'Noto Serif Ethiopic',
+          ),
         ),
       ),
     );
