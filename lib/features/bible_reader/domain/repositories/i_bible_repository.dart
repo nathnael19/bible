@@ -1,6 +1,7 @@
 import '../entities/bible_version.dart';
 import '../entities/verse.dart';
 import '../entities/book.dart';
+import '../entities/search_filter.dart';
 
 abstract class IBibleRepository {
   Future<List<BibleVersion>> getBibleVersions();
@@ -11,5 +12,5 @@ abstract class IBibleRepository {
     required String book,
     required int chapter,
   });
-  Future<List<Verse>> searchVerses(String query);
+  Future<List<Verse>> searchVerses(String query, {SearchFilter filter = SearchFilter.all});
 }
