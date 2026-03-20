@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'audio_player_screen.dart';
 import 'search_screen.dart';
 
 /// Home / Discover screen redesigned to match reference image.
