@@ -31,7 +31,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => GetChapterCount(sl()));
 
   // ── Cubits (factory — new instance each time) ─────────────────────────────
-  sl.registerFactory(() => BibleReaderCubit(sl()));
+  sl.registerFactory(() => BibleReaderCubit(sl(), sl()));
   sl.registerFactory(() => VersionSelectorCubit(sl()));
   sl.registerFactory(() => LibraryCubit(sl()));
 }
