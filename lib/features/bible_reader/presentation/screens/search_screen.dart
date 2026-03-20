@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/verse.dart';
 import '../../domain/entities/search_filter.dart';
 import '../cubit/search_cubit.dart';
+import '../cubit/bible_reader_cubit.dart' as bible_reader_cubit;
+import '../cubit/navigation_cubit.dart' as navigation_cubit;
 import '../../../../core/theme/app_theme.dart';
 
 /// Redesigned Search Screen matching the reference image.
@@ -300,67 +302,89 @@ class _SearchResultTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 24),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Ge'ez number in box
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: Colors.grey.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              verse.number.toString(),
-              style: tt.labelLarge!.copyWith(
-                color: SabaColors.onSurfaceVariant,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          final bibleReaderCubit = context.read<bible_reader_cubit.BibleReaderCubit>();
+          final navigationCubit = context.read<navigation_cubit.NavigationCubit>();
+          final navigator = Navigator.of(context);
+          
+          bibleReaderCubit.loadBookChapter(
+            book: verse.bookName,
+            bookId: verse.bookId,
+            chapter: verse.chapter,
+            targetVerse: verse.number,
+          );
+          
+          navigationCubit.setTab(1);
+          navigator.popUntil((route) => route.isFirst);
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          margin: const EdgeInsets.only(bottom: 16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Ge'ez number in box
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: Colors.grey.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  verse.number.toString(),
+                  style: tt.labelLarge!.copyWith(
+                    color: SabaColors.onSurfaceVariant,
+                  ),
+                ),
               ),
-            ),
-          ),
-          const SizedBox(width: 16),
-          // Content
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+              const SizedBox(width: 16),
+              // Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      verse.bookName,
-                      style: tt.titleMedium!.copyWith(
-                        color: SabaColors.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '${verse.chapter} : ${verse.number}',
-                      style: tt.labelSmall!.copyWith(
-                        color: SabaColors.onSurfaceVariant.withValues(
-                          alpha: 0.6,
+                    Row(
+                      children: [
+                        Text(
+                          verse.bookName,
+                          style: tt.titleMedium!.copyWith(
+                            color: SabaColors.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${verse.chapter} : ${verse.number}',
+                          style: tt.labelSmall!.copyWith(
+                            color: SabaColors.onSurfaceVariant.withValues(
+                              alpha: 0.6,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    _RichSnippet(text: verse.text, query: query),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        _IconLink(Icons.copy_rounded, 'ቅዳ'),
+                        const SizedBox(width: 20),
+                        _IconLink(Icons.share_outlined, 'አጋራ'),
+                      ],
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                _RichSnippet(text: verse.text, query: query),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    _IconLink(Icons.copy_rounded, 'ቅዳ'),
-                    const SizedBox(width: 20),
-                    _IconLink(Icons.share_outlined, 'አጋራ'),
-                  ],
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
