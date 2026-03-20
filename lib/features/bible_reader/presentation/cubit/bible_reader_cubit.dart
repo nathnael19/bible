@@ -76,6 +76,7 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
     required String book,
     required int chapter,
     String? bookId,
+    int? targetVerse,
   }) async {
     emit(const BibleReaderLoading());
     try {
@@ -93,6 +94,7 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
         bookId: effectiveBookId,
         chapter: chapter,
         chapterCount: chapterCount,
+        activeVerseNumber: targetVerse ?? 1,
       ));
     } catch (e) {
       emit(BibleReaderError(e.toString()));
@@ -110,12 +112,14 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
     required int chapter,
     String? bookId,
     String versionId = 'amh_standard',
+    int? targetVerse,
   }) async {
     await loadVerses(
       versionId: versionId,
       book: book,
       chapter: chapter,
       bookId: bookId,
+      targetVerse: targetVerse,
     );
   }
 
