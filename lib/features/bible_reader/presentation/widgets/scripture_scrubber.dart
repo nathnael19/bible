@@ -23,13 +23,16 @@ class ScriptureScrubber extends StatefulWidget {
 
 class _ScriptureScrubberState extends State<ScriptureScrubber> {
   late ScrollController _scrollController;
-  final double _itemWidth = 90.0; // item width (70) + horizontal margin (10*2)
+  final double _itemWidth = 70.0; // width (70) + horizontal margin (10*2)
 
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToActive(animate: false));
+    // Use a small delay to ensure the list is ready
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (mounted) _scrollToActive(animate: false);
+    });
   }
 
   @override
@@ -43,10 +46,13 @@ class _ScriptureScrubberState extends State<ScriptureScrubber> {
   void _scrollToActive({bool animate = true}) {
     if (!_scrollController.hasClients) return;
 
-    final screenWidth = MediaQuery.of(context).size.width;
-    // index is 1-based
-    final targetOffset = ((widget.activeIndex - 1) * _itemWidth + (_itemWidth / 2)) - (screenWidth / 2);
-    final clampedOffset = targetOffset.clamp(0.0, _scrollController.position.maxScrollExtent);
+    // With side padding centered on the first item, the scroll offset
+    // needed to center any item 'i' is simply (i * itemWidth).
+    final targetOffset = (widget.activeIndex - 1) * _itemWidth;
+    final clampedOffset = targetOffset.clamp(
+      0.0,
+      _scrollController.position.maxScrollExtent,
+    );
 
     if (animate) {
       _scrollController.animateTo(
@@ -76,16 +82,22 @@ class _ScriptureScrubberState extends State<ScriptureScrubber> {
     final tt = Theme.of(context).textTheme;
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 30),
+      padding: const EdgeInsets.symmetric(vertical: 20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            height: 100, // Increased height for larger box
+            height: 80,
             child: ListView.builder(
               controller: _scrollController,
               scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 2 - (_itemWidth / 2)),
+              // Side padding keeps the first and last items centerable
+              padding: EdgeInsets.symmetric(
+                horizontal:
+                    MediaQuery.of(context).size.width / 2 -
+                    (_itemWidth / 2) +
+                    20,
+              ),
               itemCount: widget.totalItems,
               itemBuilder: (_, i) {
                 final index = i + 1;
@@ -95,18 +107,20 @@ class _ScriptureScrubberState extends State<ScriptureScrubber> {
                   onTap: () => widget.onItemSelected(index),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
-                    width: 70, // Increased width
+                    width: 60,
                     margin: const EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
                       color: isActive ? SabaColors.primary : Colors.transparent,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(16),
                       boxShadow: isActive
                           ? [
                               BoxShadow(
-                                color: SabaColors.primary.withValues(alpha: 0.4),
+                                color: SabaColors.primary.withValues(
+                                  alpha: 0.4,
+                                ),
                                 blurRadius: 15,
                                 offset: const Offset(0, 6),
-                              )
+                              ),
                             ]
                           : null,
                     ),
@@ -114,8 +128,12 @@ class _ScriptureScrubberState extends State<ScriptureScrubber> {
                     child: Text(
                       _toGeez(index),
                       style: tt.headlineMedium!.copyWith(
-                        fontSize: isActive ? 32 : 24, // Contrast size
-                        color: isActive ? Colors.white : SabaColors.onSurfaceVariant.withValues(alpha: 0.3),
+                        fontSize: isActive ? 28 : 20,
+                        color: isActive
+                            ? Colors.white
+                            : SabaColors.onSurfaceVariant.withValues(
+                                alpha: 0.3,
+                              ),
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Noto Serif Ethiopic',
                       ),
