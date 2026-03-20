@@ -28,6 +28,7 @@ class BibleApp extends StatelessWidget {
             ..loadVerses(
               versionId: 'amh_standard',
               book: 'ኦሪት ዘፍጥረት',
+              bookId: '1',
               chapter: 1,
             ),
         ),
