@@ -487,22 +487,6 @@ class _VerseActionToolbar extends StatelessWidget {
           ),
           _divider(theme),
           _ActionButton(
-            icon: Icons.format_color_fill_rounded,
-            label: 'ቀለም',
-            onTap: () {
-              final currentHighlight = state.highlights[verseNumber];
-              if (currentHighlight != null) {
-                cubit.setHighlight(verseNumber, null);
-              } else {
-                cubit.setHighlight(
-                  verseNumber,
-                  theme.colorScheme.primary.withValues(alpha: 0.2).toARGB32(),
-                );
-              }
-            },
-          ),
-          _divider(theme),
-          _ActionButton(
             icon: Icons.copy_rounded,
             label: 'ቅዳ',
             onTap: () {
