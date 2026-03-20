@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../widgets/social_button.dart';
 import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -232,6 +233,46 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
                 const SizedBox(height: 32),
+
+                // ── Divider ──────────────────────────────────────────────────
+                Row(
+                  children: [
+                    const Expanded(child: Divider()),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'ወይም',
+                        style: SabaTypography.labelSmall().copyWith(
+                          color: SabaColors.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                    const Expanded(child: Divider()),
+                  ],
+                ),
+                const SizedBox(height: 32),
+
+                // ── Social Login ─────────────────────────────────────────────
+                Row(
+                  children: [
+                    Expanded(
+                      child: SocialButton(
+                        icon: Icons.g_mobiledata,
+                        label: 'Google',
+                        onPressed: () {},
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: SocialButton(
+                        icon: Icons.apple,
+                        label: 'Apple',
+                        onPressed: () {},
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 48),
 
                 // ── Footer ───────────────────────────────────────────────────
                 Row(
