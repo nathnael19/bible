@@ -25,6 +25,8 @@ class BibleReaderLoaded extends BibleReaderState {
   final int chapter;
   final int chapterCount;
   final int? activeVerseNumber;
+  final Set<int> bookmarks;
+  final Map<int, int> highlights; // Map<VerseNumber, ColorValue>
 
   const BibleReaderLoaded({
     required this.verses,
@@ -33,6 +35,8 @@ class BibleReaderLoaded extends BibleReaderState {
     required this.chapter,
     required this.chapterCount,
     this.activeVerseNumber,
+    this.bookmarks = const {},
+    this.highlights = const {},
   });
 
   BibleReaderLoaded copyWith({
@@ -42,6 +46,8 @@ class BibleReaderLoaded extends BibleReaderState {
     int? chapter,
     int? chapterCount,
     int? activeVerseNumber,
+    Set<int>? bookmarks,
+    Map<int, int>? highlights,
   }) =>
       BibleReaderLoaded(
         verses: verses ?? this.verses,
@@ -50,10 +56,21 @@ class BibleReaderLoaded extends BibleReaderState {
         chapter: chapter ?? this.chapter,
         chapterCount: chapterCount ?? this.chapterCount,
         activeVerseNumber: activeVerseNumber ?? this.activeVerseNumber,
+        bookmarks: bookmarks ?? this.bookmarks,
+        highlights: highlights ?? this.highlights,
       );
 
   @override
-  List<Object?> get props => [verses, book, bookId, chapter, chapterCount, activeVerseNumber];
+  List<Object?> get props => [
+        verses,
+        book,
+        bookId,
+        chapter,
+        chapterCount,
+        activeVerseNumber,
+        bookmarks,
+        highlights,
+      ];
 }
 
 class BibleReaderError extends BibleReaderState {
@@ -94,16 +111,42 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
         bookId: effectiveBookId,
         chapter: chapter,
         chapterCount: chapterCount,
-        activeVerseNumber: targetVerse ?? 1,
+        activeVerseNumber: targetVerse,
       ));
     } catch (e) {
       emit(BibleReaderError(e.toString()));
     }
   }
 
-  void selectVerse(int verseNumber) {
+  void selectVerse(int? verseNumber) {
     if (state is BibleReaderLoaded) {
       emit((state as BibleReaderLoaded).copyWith(activeVerseNumber: verseNumber));
+    }
+  }
+
+  void toggleBookmark(int verseNumber) {
+    if (state is BibleReaderLoaded) {
+      final loaded = state as BibleReaderLoaded;
+      final newBookmarks = Set<int>.from(loaded.bookmarks);
+      if (newBookmarks.contains(verseNumber)) {
+        newBookmarks.remove(verseNumber);
+      } else {
+        newBookmarks.add(verseNumber);
+      }
+      emit(loaded.copyWith(bookmarks: newBookmarks));
+    }
+  }
+
+  void setHighlight(int verseNumber, int? colorValue) {
+    if (state is BibleReaderLoaded) {
+      final loaded = state as BibleReaderLoaded;
+      final newHighlights = Map<int, int>.from(loaded.highlights);
+      if (colorValue == null) {
+        newHighlights.remove(verseNumber);
+      } else {
+        newHighlights[verseNumber] = colorValue;
+      }
+      emit(loaded.copyWith(highlights: newHighlights));
     }
   }
 
