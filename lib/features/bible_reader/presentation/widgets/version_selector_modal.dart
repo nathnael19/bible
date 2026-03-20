@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/di/injection_container.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../domain/entities/bible_version.dart';
 import '../cubit/version_selector_cubit.dart';
 import '../screens/compare_versions_screen.dart';
@@ -38,9 +37,9 @@ class _VersionSelectorSheetState extends State<_VersionSelectorSheet> {
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.50,
       ),
-      decoration: const BoxDecoration(
-        color: Color(0xFFF9F9F9),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHigh,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -63,12 +62,12 @@ class _VersionSelectorSheetState extends State<_VersionSelectorSheet> {
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.05),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
                     icon: const Icon(Icons.close_rounded, size: 20),
-                    color: Colors.black54,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),
@@ -83,8 +82,8 @@ class _VersionSelectorSheetState extends State<_VersionSelectorSheet> {
             child: BlocBuilder<VersionSelectorCubit, VersionSelectorState>(
               builder: (context, state) {
                 if (state is VersionSelectorLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: SabaColors.primary),
+                  return Center(
+                    child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
                   );
                 }
 
@@ -150,11 +149,13 @@ class _VersionCard extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: isSelected ? SabaColors.primary : Colors.white,
+            color: isSelected 
+                ? Theme.of(context).colorScheme.primary 
+                : Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
+                color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.03),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -171,7 +172,9 @@ class _VersionCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: isSelected ? Colors.white : Colors.black87,
+                        color: isSelected 
+                            ? Theme.of(context).colorScheme.onPrimary 
+                            : Theme.of(context).colorScheme.onSurface,
                         fontFamily: 'Noto Serif Ethiopic',
                       ),
                     ),
@@ -180,7 +183,9 @@ class _VersionCard extends StatelessWidget {
                       version.language,
                       style: TextStyle(
                         fontSize: 12,
-                        color: isSelected ? Colors.white70 : Colors.black38,
+                        color: isSelected 
+                            ? Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.8) 
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
                         fontFamily: 'Noto Serif Ethiopic',
                       ),
                     ),
@@ -195,10 +200,10 @@ class _VersionCard extends StatelessWidget {
                     color: Color(0xFFFFD700), // Gold
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.check,
                     size: 16,
-                    color: SabaColors.primary,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
             ],
@@ -220,7 +225,7 @@ class _DragHandle extends StatelessWidget {
         width: 40,
         height: 4,
         decoration: BoxDecoration(
-          color: Colors.black.withValues(alpha: 0.1),
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(2),
         ),
       ),
