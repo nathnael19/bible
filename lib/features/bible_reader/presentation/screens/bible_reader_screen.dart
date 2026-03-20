@@ -175,16 +175,23 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
                   },
                 ),
                 // ── Verse Action Toolbar ──────────────────────────────────
-                if (state is BibleReaderLoaded &&
-                    state.activeVerseNumber != null)
-                  Positioned(
-                    left: 20,
-                    right: 20,
-                    bottom: 30, // Above bottom nav if visible?
-                    child: _VerseActionToolbar(
-                      verseNumber: state.activeVerseNumber!,
-                    ),
-                  ),
+                BlocBuilder<NavigationCubit, NavigationState>(
+                  builder: (context, navState) {
+                    if (state is BibleReaderLoaded && state.activeVerseNumber != null) {
+                      return AnimatedPositioned(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                        left: 20,
+                        right: 20,
+                        bottom: navState.isBottomNavVisible ? 105 : 40,
+                        child: _VerseActionToolbar(
+                          verseNumber: state.activeVerseNumber!,
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
               ],
             ),
           ),
