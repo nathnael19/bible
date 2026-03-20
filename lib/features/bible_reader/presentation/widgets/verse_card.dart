@@ -6,12 +6,14 @@ class VerseCard extends StatelessWidget {
   final Verse verse;
   final bool isActive;
   final VoidCallback? onTap;
+  final double fontSizeFactor;
 
   const VerseCard({
     super.key,
     required this.verse,
     this.isActive = false,
     this.onTap,
+    this.fontSizeFactor = 1.0,
   });
 
   @override
@@ -54,7 +56,7 @@ class VerseCard extends StatelessWidget {
                   child: Text(
                     '${verse.number}',
                     style: tt.bodySmall!.copyWith(
-                      fontSize: 13,
+                      fontSize: 13 * fontSizeFactor,
                       color: Theme.of(context).colorScheme.secondary,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Noto Serif Ethiopic',
@@ -69,7 +71,10 @@ class VerseCard extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
                     verse.text,
-                    style: tt.bodyLarge!.copyWith(height: 1.7),
+                    style: tt.bodyLarge!.copyWith(
+                      height: 1.7,
+                      fontSize: (tt.bodyLarge?.fontSize ?? 16) * fontSizeFactor,
+                    ),
                   ),
                 ),
               ),
