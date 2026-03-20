@@ -1,5 +1,6 @@
 import '../../domain/entities/bible_version.dart';
 import '../../domain/entities/verse.dart';
+import '../../domain/entities/book.dart';
 import '../../domain/repositories/i_bible_repository.dart';
 import '../datasources/bible_local_datasource.dart';
 
@@ -10,6 +11,16 @@ class BibleRepositoryImpl implements IBibleRepository {
   @override
   Future<List<BibleVersion>> getBibleVersions() async {
     return localDataSource.getBibleVersions();
+  }
+
+  @override
+  Future<List<Book>> getBooks() async {
+    return localDataSource.getBooks();
+  }
+
+  @override
+  Future<int> getChapterCount(String book) async {
+    return localDataSource.getChapterCount(book);
   }
 
   @override
