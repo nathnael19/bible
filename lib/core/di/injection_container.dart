@@ -7,9 +7,11 @@ import '../../features/bible_reader/domain/usecases/get_bible_versions.dart';
 import '../../features/bible_reader/domain/usecases/get_verses.dart';
 import '../../features/bible_reader/domain/usecases/get_books.dart';
 import '../../features/bible_reader/domain/usecases/get_chapter_count.dart';
+import '../../features/bible_reader/domain/usecases/search_verses.dart';
 import '../../features/bible_reader/presentation/cubit/bible_reader_cubit.dart';
 import '../../features/bible_reader/presentation/cubit/version_selector_cubit.dart';
 import '../../features/bible_reader/presentation/cubit/library_cubit.dart';
+import '../../features/bible_reader/presentation/cubit/search_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -29,9 +31,11 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => GetVerses(sl()));
   sl.registerLazySingleton(() => GetBooks(sl()));
   sl.registerLazySingleton(() => GetChapterCount(sl()));
+  sl.registerLazySingleton(() => SearchVerses(sl()));
 
   // ── Cubits (factory — new instance each time) ─────────────────────────────
   sl.registerFactory(() => BibleReaderCubit(sl(), sl()));
   sl.registerFactory(() => VersionSelectorCubit(sl()));
   sl.registerFactory(() => LibraryCubit(sl()));
+  sl.registerFactory(() => SearchCubit(sl()));
 }
