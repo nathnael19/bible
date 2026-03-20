@@ -24,7 +24,7 @@ class VerseCard extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        margin: const EdgeInsets.only(bottom: 22), // 1.4rem ≈ 22px
+        margin: const EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
           color: isActive
               ? SabaColors.surfaceContainerHigh
