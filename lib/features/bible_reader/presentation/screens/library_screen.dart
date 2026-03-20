@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../screens/chapter_selection_screen.dart';
 import '../../../../core/theme/app_theme.dart';
 
 /// Redesigned Library/Books screen with Testament grids and reflection card.
@@ -32,11 +33,37 @@ class LibraryScreen extends StatelessWidget {
                 childAspectRatio: 1.4,
               ),
               delegate: SliverChildListDelegate([
-                const _BookCard(number: '01', title: 'ኦሪት ዘፍጥረት', subtitle: 'GENESIS'),
-                const _BookCard(number: '02', title: 'ኦሪት ዘጸአት', subtitle: 'EXODUS'),
-                const _BookCard(number: '03', title: 'ኦሪት ዘሌዋውያን', subtitle: 'LEVITICUS', isActive: true),
-                const _BookCard(number: '04', title: 'ኦሪት ዘኍል፲', subtitle: 'NUMBERS'),
-                const _BookCard(number: '05', title: 'ኦሪት ዘዳግም', subtitle: 'DEUTERONOMY'),
+                _BookCard(
+                  number: '01',
+                  title: 'ኦሪት ዘፍጥረት',
+                  subtitle: 'GENESIS',
+                  onTap: () => _navigateToChapters(context, 'ኦሪት ዘፍጥረት'),
+                ),
+                _BookCard(
+                  number: '02',
+                  title: 'ኦሪት ዘጸአት',
+                  subtitle: 'EXODUS',
+                  onTap: () => _navigateToChapters(context, 'ኦሪት ዘጸአት'),
+                ),
+                _BookCard(
+                  number: '03',
+                  title: 'ኦሪት ዘሌዋውያን',
+                  subtitle: 'LEVITICUS',
+                  isActive: true,
+                  onTap: () => _navigateToChapters(context, 'ኦሪት ዘሌዋውያን'),
+                ),
+                _BookCard(
+                  number: '04',
+                  title: 'ኦሪት ዘኍል፲',
+                  subtitle: 'NUMBERS',
+                  onTap: () => _navigateToChapters(context, 'ኦሪት ዘኍል፲'),
+                ),
+                _BookCard(
+                  number: '05',
+                  title: 'ኦሪት ዘዳግም',
+                  subtitle: 'DEUTERONOMY',
+                  onTap: () => _navigateToChapters(context, 'ኦሪት ዘዳግም'),
+                ),
                 const _PlaceholderCard(),
               ]),
             ),
@@ -60,10 +87,30 @@ class LibraryScreen extends StatelessWidget {
                 childAspectRatio: 1.4,
               ),
               delegate: SliverChildListDelegate([
-                const _BookCard(number: '01', title: 'የማቴዎስ ወንጌል', subtitle: 'MATTHEW'),
-                const _BookCard(number: '02', title: 'የማርቆስ ወንጌል', subtitle: 'MARK'),
-                const _BookCard(number: '03', title: 'የሉቃስ ወንጌል', subtitle: 'LUKE'),
-                const _BookCard(number: '04', title: 'የዮሐንስ ወንጌል', subtitle: 'JOHN'),
+                _BookCard(
+                  number: '01',
+                  title: 'የማቴዎስ ወንጌል',
+                  subtitle: 'MATTHEW',
+                  onTap: () => _navigateToChapters(context, 'የማቴዎስ ወንጌል'),
+                ),
+                _BookCard(
+                  number: '02',
+                  title: 'የማርቆስ ወንጌል',
+                  subtitle: 'MARK',
+                  onTap: () => _navigateToChapters(context, 'የማርቆስ ወንጌል'),
+                ),
+                _BookCard(
+                  number: '03',
+                  title: 'የሉቃስ ወንጌል',
+                  subtitle: 'LUKE',
+                  onTap: () => _navigateToChapters(context, 'የሉቃስ ወንጌል'),
+                ),
+                _BookCard(
+                  number: '04',
+                  title: 'የዮሐንስ ወንጌል',
+                  subtitle: 'JOHN',
+                  onTap: () => _navigateToChapters(context, 'የዮሐንስ ወንጌል'),
+                ),
               ]),
             ),
           ),
@@ -73,6 +120,15 @@ class LibraryScreen extends StatelessWidget {
           ),
           const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
         ],
+      ),
+    );
+  }
+
+  void _navigateToChapters(BuildContext context, String bookName) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChapterSelectionScreen(bookName: bookName),
       ),
     );
   }
@@ -155,56 +211,61 @@ class _BookCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final bool isActive;
+  final VoidCallback onTap;
 
   const _BookCard({
     required this.number,
     required this.title,
     required this.subtitle,
+    required this.onTap,
     this.isActive = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF4F2F1),
-        borderRadius: BorderRadius.circular(16),
-        border: isActive ? Border(left: BorderSide(color: SabaColors.primary, width: 4)) : null,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            number,
-            style: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-              color: Colors.black26,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF4F2F1),
+          borderRadius: BorderRadius.circular(16),
+          border: isActive ? Border(left: BorderSide(color: SabaColors.primary, width: 4)) : null,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              number,
+              style: const TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                color: Colors.black26,
+              ),
             ),
-          ),
-          const Spacer(),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-              fontFamily: 'Noto Serif Ethiopic',
-              height: 1.2,
+            const Spacer(),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+                fontFamily: 'Noto Serif Ethiopic',
+                height: 1.2,
+              ),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            style: const TextStyle(
-              fontSize: 9,
-              color: Colors.black38,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.5,
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: const TextStyle(
+                fontSize: 9,
+                color: Colors.black38,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
