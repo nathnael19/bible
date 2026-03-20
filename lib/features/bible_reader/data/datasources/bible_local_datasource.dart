@@ -7,15 +7,20 @@ import '../../domain/entities/search_filter.dart';
 
 /// Local data source that loads the Amharic Bible from bundled JSON.
 class BibleLocalDataSource {
-  List<dynamic>? _cachedBible;
+  final Map<String, List<dynamic>> _cachedBibles = {};
 
-  Future<void> _init() async {
-    if (_cachedBible != null) return;
+  Future<void> _init(String versionId) async {
+    if (_cachedBibles.containsKey(versionId)) return;
+    
+    String fileName = versionId == 'amh_full' 
+        ? 'amharic_full.json' 
+        : 'amharic_bible.json';
+
     try {
-      final String response = await rootBundle.loadString('assets/bible/amharic_bible.json');
-      _cachedBible = json.decode(response) as List<dynamic>;
+      final String response = await rootBundle.loadString('assets/bible/$fileName');
+      _cachedBibles[versionId] = json.decode(response) as List<dynamic>;
     } catch (e) {
-      _cachedBible = [];
+      _cachedBibles[versionId] = [];
       rethrow;
     }
   }
@@ -24,18 +29,26 @@ class BibleLocalDataSource {
     return const [
       BibleVersionModel(
         id: 'amh_standard',
-        name: 'Amharic Standard',
+        name: 'አማርኛ መደበኛ',
         language: 'አማርኛ',
-        abbreviation: 'ASB',
+        abbreviation: 'ASV',
+      ),
+      BibleVersionModel(
+        id: 'amh_full',
+        name: 'የ1954 ትርጉም (Old)',
+        language: 'አማርኛ',
+        abbreviation: 'OAM',
       ),
     ];
   }
 
   Future<List<BookModel>> getBooks() async {
-    await _init();
+    const versionId = 'amh_standard';
+    await _init(versionId);
     final List<BookModel> books = [];
-    if (_cachedBible != null) {
-      for (final b in _cachedBible!) {
+    final bible = _cachedBibles[versionId];
+    if (bible != null) {
+      for (final b in bible) {
         final id = b['book_id'] as int;
         final englishName = _getEnglishName(id);
         books.add(BookModel.fromJson(b, englishName));
@@ -117,8 +130,10 @@ class BibleLocalDataSource {
   }
 
   Future<int> getChapterCount(String book) async {
-    await _init();
-    final bookData = _cachedBible?.firstWhere(
+    const versionId = 'amh_standard';
+    await _init(versionId);
+    final bible = _cachedBibles[versionId];
+    final bookData = bible?.firstWhere(
       (b) => b['book_name'] == book || b['book_id'].toString() == book,
       orElse: () => null,
     );
@@ -130,9 +145,10 @@ class BibleLocalDataSource {
     required String book,
     required int chapter,
   }) async {
-    await _init();
+    await _init(versionId);
     
-    final bookData = _cachedBible?.firstWhere(
+    final bible = _cachedBibles[versionId];
+    final bookData = bible?.firstWhere(
       (b) => b['book_name'] == book || b['book_id'].toString() == book,
       orElse: () => null,
     );
@@ -158,13 +174,15 @@ class BibleLocalDataSource {
   }
 
   Future<List<VerseModel>> searchVerses(String query, {SearchFilter filter = SearchFilter.all}) async {
-    await _init();
-    if (query.trim().isEmpty || _cachedBible == null) return [];
+    const versionId = 'amh_standard';
+    await _init(versionId);
+    final bible = _cachedBibles[versionId];
+    if (query.trim().isEmpty || bible == null) return [];
 
     final queryLower = query.toLowerCase();
     final results = <VerseModel>[];
 
-    for (final book in _cachedBible!) {
+    for (final book in bible) {
       final bookId = book['book_id'] as int;
       
       // Apply filter
