@@ -7,10 +7,14 @@ import '../cubit/navigation_cubit.dart';
 
 class ChapterSelectionScreen extends StatefulWidget {
   final String bookName;
+  final String bookId;
+  final String englishName;
   final int chapterCount;
   const ChapterSelectionScreen({
     super.key,
     required this.bookName,
+    required this.bookId,
+    required this.englishName,
     required this.chapterCount,
   });
 
@@ -35,7 +39,7 @@ class _ChapterSelectionScreenState extends State<ChapterSelectionScreen> {
             const SizedBox(height: 24),
             // ── Header ──────────────────────────────────────────────────
             Text(
-              'THE FIRST BOOK OF MOSES',
+              widget.englishName.toUpperCase(),
               style: tt.labelSmall!.copyWith(
                 color: Colors.brown.withValues(alpha: 0.6),
                 letterSpacing: 2,
@@ -92,6 +96,7 @@ class _ChapterSelectionScreenState extends State<ChapterSelectionScreen> {
                     // 1. Load the book and chapter
                     bibleReaderCubit.loadBookChapter(
                       book: widget.bookName,
+                      bookId: widget.bookId,
                       chapter: index,
                     );
 
@@ -105,10 +110,10 @@ class _ChapterSelectionScreenState extends State<ChapterSelectionScreen> {
               },
             ),
 
-            const SizedBox(height: 60),
+            const SizedBox(height: 40),
 
             // ── About Book Card ─────────────────────────────────────────
-            _AboutBookCard(bookName: widget.bookName),
+            if (widget.bookName == 'ኦሪት ዘፍጥረት') _AboutBookCard(bookName: widget.bookName),
             const SizedBox(height: 40),
           ],
         ),
@@ -155,12 +160,6 @@ class _ChapterButton extends StatelessWidget {
     required this.onTap,
   });
 
-  String _toGeez(int n) {
-    const geez = ['፩', '፪', '፫', '፬', '፭', '፮', '፯', '፰', '፱', '፲'];
-    if (n >= 1 && n <= 10) return geez[n - 1];
-    return n.toString();
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -175,7 +174,7 @@ class _ChapterButton extends StatelessWidget {
         ),
         alignment: Alignment.center,
         child: Text(
-          _toGeez(index),
+          index.toString(),
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
