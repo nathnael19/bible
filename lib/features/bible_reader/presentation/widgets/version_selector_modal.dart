@@ -30,15 +30,13 @@ class _VersionSelectorSheet extends StatefulWidget {
 }
 
 class _VersionSelectorSheetState extends State<_VersionSelectorSheet> {
-  int _activeTab = 0; // 0: Versions, 1: By Language
-
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
 
     return Container(
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.85,
+        maxHeight: MediaQuery.of(context).size.height * 0.50,
       ),
       decoration: const BoxDecoration(
         color: Color(0xFFF9F9F9),
@@ -48,7 +46,7 @@ class _VersionSelectorSheetState extends State<_VersionSelectorSheet> {
         mainAxisSize: MainAxisSize.min,
         children: [
           const _DragHandle(),
-          
+
           // ── Header ──────────────────────────────────────────────────
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 8, 16, 16),
@@ -79,39 +77,15 @@ class _VersionSelectorSheetState extends State<_VersionSelectorSheet> {
           ),
 
           // ── Tab Toggle ──────────────────────────────────────────────
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.03),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Row(
-                children: [
-                  _TabButton(
-                    label: 'የመጽሐፍ ቅዱስ ቅጂዎች',
-                    isActive: _activeTab == 0,
-                    onTap: () => setState(() => _activeTab = 0),
-                  ),
-                  _TabButton(
-                    label: 'በቋንቋ',
-                    isActive: _activeTab == 1,
-                    onTap: () => setState(() => _activeTab = 1),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 16),
 
           // ── Version List ───────────────────────────────────────────
           Flexible(
             child: BlocBuilder<VersionSelectorCubit, VersionSelectorState>(
               builder: (context, state) {
                 if (state is VersionSelectorLoading) {
-                  return const Center(child: CircularProgressIndicator(color: SabaColors.primary));
+                  return const Center(
+                    child: CircularProgressIndicator(color: SabaColors.primary),
+                  );
                 }
 
                 if (state is VersionSelectorLoaded) {
@@ -126,7 +100,9 @@ class _VersionSelectorSheetState extends State<_VersionSelectorSheet> {
                         isSelected: isSelected,
                         onTap: () {
                           final navigator = Navigator.of(context);
-                          context.read<VersionSelectorCubit>().selectVersion(version.id);
+                          context.read<VersionSelectorCubit>().selectVersion(
+                            version.id,
+                          );
                           // Navigate to comparison screen after short delay
                           Future.delayed(const Duration(milliseconds: 300), () {
                             if (mounted) {
@@ -148,54 +124,6 @@ class _VersionSelectorSheetState extends State<_VersionSelectorSheet> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _TabButton extends StatelessWidget {
-  final String label;
-  final bool isActive;
-  final VoidCallback onTap;
-
-  const _TabButton({
-    required this.label,
-    required this.isActive,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          decoration: BoxDecoration(
-            color: isActive ? Colors.white : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: isActive
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    )
-                  ]
-                : null,
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
-              color: isActive ? Colors.black87 : Colors.black45,
-              fontFamily: 'Noto Serif Ethiopic',
-            ),
-          ),
-        ),
       ),
     );
   }
