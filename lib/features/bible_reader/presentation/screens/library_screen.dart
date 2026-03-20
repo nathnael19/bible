@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../cubit/library_cubit.dart';
+import '../../domain/entities/book.dart';
 import '../screens/chapter_selection_screen.dart';
 import '../../../../core/theme/app_theme.dart';
 
@@ -12,126 +15,186 @@ class LibraryScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFFDFBFA),
       appBar: _buildAppBar(),
-      body: CustomScrollView(
-        slivers: [
-          const SliverPadding(
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            sliver: SliverToBoxAdapter(
-              child: _SectionHeader(
-                title: 'ብሉይ ኪዳን',
-                subtitle: 'Old Testament',
-              ),
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                childAspectRatio: 1.4,
-              ),
-              delegate: SliverChildListDelegate([
-                _BookCard(
-                  number: '01',
-                  title: 'ኦሪት ዘፍጥረት',
-                  subtitle: 'GENESIS',
-                  onTap: () => _navigateToChapters(context, 'ኦሪት ዘፍጥረት'),
+      body: BlocBuilder<LibraryCubit, LibraryState>(
+        builder: (context, state) {
+          if (state is LibraryLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (state is LibraryError) {
+            return Center(child: Text(state.message));
+          }
+          if (state is LibraryLoaded) {
+            final oldTestament = state.books
+                .where((b) => int.parse(b.id) <= 39)
+                .toList();
+            final newTestament = state.books
+                .where((b) => int.parse(b.id) > 39)
+                .toList();
+
+            return CustomScrollView(
+              slivers: [
+                const SliverPadding(
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  sliver: SliverToBoxAdapter(
+                    child: _SectionHeader(
+                      title: 'ብሉይ ኪዳን',
+                      subtitle: 'Old Testament',
+                    ),
+                  ),
                 ),
-                _BookCard(
-                  number: '02',
-                  title: 'ኦሪት ዘጸአት',
-                  subtitle: 'EXODUS',
-                  onTap: () => _navigateToChapters(context, 'ኦሪት ዘጸአት'),
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  sliver: SliverGrid(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 12,
+                      childAspectRatio: 1.4,
+                    ),
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final book = oldTestament[index];
+                        return _BookCard(
+                          number: book.id.padLeft(2, '0'),
+                          title: book.name,
+                          subtitle: _getEnglishName(int.parse(book.id)),
+                          onTap: () => _navigateToChapters(context, book),
+                        );
+                      },
+                      childCount: oldTestament.length,
+                    ),
+                  ),
                 ),
-                _BookCard(
-                  number: '03',
-                  title: 'ኦሪት ዘሌዋውያን',
-                  subtitle: 'LEVITICUS',
-                  isActive: true,
-                  onTap: () => _navigateToChapters(context, 'ኦሪት ዘሌዋውያን'),
+                const SliverPadding(
+                  padding: EdgeInsets.fromLTRB(24, 40, 24, 16),
+                  sliver: SliverToBoxAdapter(
+                    child: _SectionHeader(
+                      title: 'ሐዲስ ኪዳን',
+                      subtitle: 'New Testament',
+                    ),
+                  ),
                 ),
-                _BookCard(
-                  number: '04',
-                  title: 'ኦሪት ዘኍል፲',
-                  subtitle: 'NUMBERS',
-                  onTap: () => _navigateToChapters(context, 'ኦሪት ዘኍል፲'),
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  sliver: SliverGrid(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 12,
+                      childAspectRatio: 1.4,
+                    ),
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final book = newTestament[index];
+                        return _BookCard(
+                          number: book.id.padLeft(2, '0'),
+                          title: book.name,
+                          subtitle: _getEnglishName(int.parse(book.id)),
+                          onTap: () => _navigateToChapters(context, book),
+                        );
+                      },
+                      childCount: newTestament.length,
+                    ),
+                  ),
                 ),
-                _BookCard(
-                  number: '05',
-                  title: 'ኦሪት ዘዳግም',
-                  subtitle: 'DEUTERONOMY',
-                  onTap: () => _navigateToChapters(context, 'ኦሪት ዘዳግም'),
+                const SliverPadding(
+                  padding: EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+                  sliver: SliverToBoxAdapter(child: _DailyReflectionCard()),
                 ),
-                const _PlaceholderCard(),
-              ]),
-            ),
-          ),
-          const SliverPadding(
-            padding: EdgeInsets.fromLTRB(24, 40, 24, 16),
-            sliver: SliverToBoxAdapter(
-              child: _SectionHeader(
-                title: 'ሐዲስ ኪዳን',
-                subtitle: 'New Testament',
-              ),
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                childAspectRatio: 1.4,
-              ),
-              delegate: SliverChildListDelegate([
-                _BookCard(
-                  number: '01',
-                  title: 'የማቴዎስ ወንጌል',
-                  subtitle: 'MATTHEW',
-                  onTap: () => _navigateToChapters(context, 'የማቴዎስ ወንጌል'),
-                ),
-                _BookCard(
-                  number: '02',
-                  title: 'የማርቆስ ወንጌል',
-                  subtitle: 'MARK',
-                  onTap: () => _navigateToChapters(context, 'የማርቆስ ወንጌል'),
-                ),
-                _BookCard(
-                  number: '03',
-                  title: 'የሉቃስ ወንጌል',
-                  subtitle: 'LUKE',
-                  onTap: () => _navigateToChapters(context, 'የሉቃስ ወንጌል'),
-                ),
-                _BookCard(
-                  number: '04',
-                  title: 'የዮሐንስ ወንጌል',
-                  subtitle: 'JOHN',
-                  onTap: () => _navigateToChapters(context, 'የዮሐንስ ወንጌል'),
-                ),
-              ]),
-            ),
-          ),
-          const SliverPadding(
-            padding: EdgeInsets.symmetric(vertical: 40, horizontal: 24),
-            sliver: SliverToBoxAdapter(child: _DailyReflectionCard()),
-          ),
-          const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
-        ],
+                const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
+              ],
+            );
+          }
+          return const SizedBox.shrink();
+        },
       ),
     );
   }
 
-  void _navigateToChapters(BuildContext context, String bookName) {
+  void _navigateToChapters(BuildContext context, Book book) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => ChapterSelectionScreen(bookName: bookName),
+        builder: (_) => ChapterSelectionScreen(
+          bookName: book.name,
+          chapterCount: book.chapterCount,
+        ),
       ),
     );
   }
+
+  String _getEnglishName(int id) {
+    final names = {
+      1: 'GENESIS',
+      2: 'EXODUS',
+      3: 'LEVITICUS',
+      4: 'NUMBERS',
+      5: 'DEUTERONOMY',
+      6: 'JOSHUA',
+      7: 'JUDGES',
+      8: 'RUTH',
+      9: '1 SAMUEL',
+      10: '2 SAMUEL',
+      11: '1 KINGS',
+      12: '2 KINGS',
+      13: '1 CHRONICLES',
+      14: '2 CHRONICLES',
+      15: 'EZRA',
+      16: 'NEHEMIAH',
+      17: 'ESTHER',
+      18: 'JOB',
+      19: 'PSALMS',
+      20: 'PROVERBS',
+      21: 'ECCLESIASTES',
+      22: 'SONG OF SOLOMON',
+      23: 'ISAIAH',
+      24: 'JEREMIAH',
+      25: 'LAMENTATIONS',
+      26: 'EZEKIEL',
+      27: 'DANIEL',
+      28: 'HOSEA',
+      29: 'JOEL',
+      30: 'AMOS',
+      31: 'OBADIAH',
+      32: 'JONAH',
+      33: 'MICAH',
+      34: 'NAHUM',
+      35: 'HABAKKUK',
+      36: 'ZEPHANIAH',
+      37: 'HAGGAI',
+      38: 'ZECHARIAH',
+      39: 'MALACHI',
+      40: 'MATTHEW',
+      41: 'MARK',
+      42: 'LUKE',
+      43: 'JOHN',
+      44: 'ACTS',
+      45: 'ROMANS',
+      46: '1 CORINTHIANS',
+      47: '2 CORINTHIANS',
+      48: 'GALATIANS',
+      49: 'EPHESIANS',
+      50: 'PHILIPPIANS',
+      51: 'COLOSSIANS',
+      52: '1 THESSALONIANS',
+      53: '2 THESSALONIANS',
+      54: '1 TIMOTHY',
+      55: '2 TIMOTHY',
+      56: 'TITUS',
+      57: 'PHILEMON',
+      58: 'HEBREWS',
+      59: 'JAMES',
+      60: '1 PETER',
+      61: '2 PETER',
+      62: '1 JOHN',
+      63: '2 JOHN',
+      64: '3 JOHN',
+      65: 'JUDE',
+      66: 'REVELATION',
+    };
+    return names[id] ?? 'BOOK $id';
+  }
+
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
@@ -209,7 +272,6 @@ class _BookCard extends StatelessWidget {
   final String number;
   final String title;
   final String subtitle;
-  final bool isActive;
   final VoidCallback onTap;
 
   const _BookCard({
@@ -217,7 +279,6 @@ class _BookCard extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.onTap,
-    this.isActive = false,
   });
 
   @override
@@ -229,9 +290,6 @@ class _BookCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFFF4F2F1),
           borderRadius: BorderRadius.circular(16),
-          border: isActive
-              ? Border(left: BorderSide(color: SabaColors.primary, width: 4))
-              : null,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -267,25 +325,6 @@ class _BookCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _PlaceholderCard extends StatelessWidget {
-  const _PlaceholderCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFF4F2F1).withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      alignment: Alignment.center,
-      child: const Text(
-        '...',
-        style: TextStyle(color: Colors.black12, fontWeight: FontWeight.bold),
       ),
     );
   }
