@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/theme/app_theme.dart';
 
 import '../cubit/navigation_cubit.dart';
 
@@ -73,7 +72,7 @@ class _CustomBottomBar extends StatelessWidget {
     return Container(
       height: 85,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surfaceContainerLowest,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
         boxShadow: [
           BoxShadow(
@@ -141,14 +140,16 @@ class _NavItem extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: isSelected ? SabaColors.primary : Colors.transparent,
+                color: isSelected
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.transparent,
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Icon(
                 icon,
                 color: isSelected
-                    ? Colors.white
-                    : SabaColors.primary.withValues(alpha: 0.8),
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
                 size: 26,
               ),
             ),
@@ -156,7 +157,7 @@ class _NavItem extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                color: SabaColors.primary.withValues(alpha: 0.8),
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 fontFamily: 'Noto Serif Ethiopic',
