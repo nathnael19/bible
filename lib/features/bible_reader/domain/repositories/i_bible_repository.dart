@@ -11,4 +11,5 @@ abstract class IBibleRepository {
     required String book,
     required int chapter,
   });
+  Future<List<Verse>> searchVerses(String query);
 }
