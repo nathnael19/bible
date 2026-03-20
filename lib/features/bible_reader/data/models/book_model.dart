@@ -4,14 +4,17 @@ class BookModel extends Book {
   const BookModel({
     required super.id,
     required super.name,
+    required super.englishName,
     required super.chapterCount,
   });
 
-  factory BookModel.fromJson(Map<String, dynamic> json) {
+  factory BookModel.fromJson(Map<String, dynamic> json, String englishName) {
+    final chapters = json['chapters'] as List;
     return BookModel(
-      id: json['book_id']?.toString() ?? '',
+      id: json['book_id'].toString(),
       name: json['book_name'] as String,
-      chapterCount: (json['chapters'] as List).length,
+      englishName: englishName,
+      chapterCount: chapters.length,
     );
   }
 
