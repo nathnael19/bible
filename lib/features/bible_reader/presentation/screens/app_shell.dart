@@ -19,11 +19,9 @@ class AppShell extends StatefulWidget {
 }
 
 class _AppShellState extends State<AppShell> {
-
   static const List<Widget> _pages = [
     HomeScreen(),
     BibleReaderScreen(),
-    LibraryScreen(),
     ProfileScreen(),
   ];
 
@@ -33,33 +31,9 @@ class _AppShellState extends State<AppShell> {
       builder: (context, selectedIndex) {
         return Scaffold(
           body: IndexedStack(index: selectedIndex, children: _pages),
-          bottomNavigationBar: NavigationBar(
+          bottomNavigationBar: _CustomBottomBar(
             selectedIndex: selectedIndex,
-            onDestinationSelected: (idx) =>
-                context.read<NavigationCubit>().setTab(idx),
-            backgroundColor: SabaColors.surfaceContainerLowest,
-            indicatorColor: SabaColors.primary,
-            surfaceTintColor: Colors.transparent,
-            elevation: 10,
-            height: 80,
-            destinations: [
-              _navDestination(Icons.home_outlined, Icons.home_filled, 'መነሻ'),
-              _navDestination(
-                Icons.menu_book_outlined,
-                Icons.menu_book_rounded,
-                'ንባብ',
-              ),
-              _navDestination(
-                Icons.collections_bookmark_outlined,
-                Icons.collections_bookmark_rounded,
-                'መጽሐፍ',
-              ),
-              _navDestination(
-                Icons.person_outline_rounded,
-                Icons.person_rounded,
-                'መገለጫ',
-              ),
-            ],
+            onTap: (idx) => context.read<NavigationCubit>().setTab(idx),
           ),
           floatingActionButton: selectedIndex == 0
               ? FloatingActionButton(
@@ -67,7 +41,7 @@ class _AppShellState extends State<AppShell> {
                   backgroundColor: SabaColors.primary,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   mini: true,
                   child: const Icon(Icons.add),
@@ -77,16 +51,109 @@ class _AppShellState extends State<AppShell> {
       },
     );
   }
+}
 
-  NavigationDestination _navDestination(
-    IconData icon,
-    IconData selectedIcon,
-    String label,
-  ) {
-    return NavigationDestination(
-      icon: Icon(icon, color: SabaColors.onSurfaceVariant),
-      selectedIcon: Icon(selectedIcon, color: Colors.white),
-      label: label,
+class _CustomBottomBar extends StatelessWidget {
+  final int selectedIndex;
+  final Function(int) onTap;
+
+  const _CustomBottomBar({required this.selectedIndex, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 90,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 20,
+            offset: const Offset(0, -5),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _NavItem(
+              icon: Icons.home_rounded,
+              label: 'መጀመሪያ',
+              isSelected: selectedIndex == 0,
+              onTap: () => onTap(0),
+            ),
+            _NavItem(
+              icon: Icons.auto_stories_rounded,
+              label: 'ንባብ',
+              isSelected: selectedIndex == 1,
+              onTap: () => onTap(1),
+            ),
+            _NavItem(
+              icon: Icons.person_rounded,
+              label: 'መገለጫ',
+              isSelected: selectedIndex == 2,
+              onTap: () => onTap(2),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NavItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _NavItem({
+    required this.icon,
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? SabaColors.primary : Colors.transparent,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: isSelected
+                  ? Colors.white
+                  : SabaColors.primary.withValues(alpha: 0.8),
+              size: 26,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected
+                    ? Colors.white
+                    : SabaColors.primary.withValues(alpha: 0.8),
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                fontFamily: 'Noto Serif Ethiopic',
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
