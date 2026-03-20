@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/di/injection_container.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../domain/entities/verse.dart';
 import '../../domain/entities/bible_version.dart';
 import '../../domain/repositories/i_bible_repository.dart';
@@ -19,7 +18,7 @@ class CompareVersionsScreen extends StatefulWidget {
 class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
   String _leftVersionId = 'amh_standard';
   String _rightVersionId = 'amh_full';
-  
+
   List<Verse>? _leftVerses;
   List<Verse>? _rightVerses;
   bool _isLoading = false;
@@ -38,7 +37,7 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
 
     try {
       final repository = sl<IBibleRepository>();
-      
+
       final results = await Future.wait([
         repository.getVerses(
           versionId: _leftVersionId,
@@ -60,9 +59,9 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('ስህተት: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('ስህተት: $e')));
       }
     }
   }
@@ -91,16 +90,24 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _buildAppBar(context),
       body: BlocBuilder<BibleReaderCubit, BibleReaderState>(
         builder: (context, state) {
           if (state is! BibleReaderLoaded) {
-            return const Center(child: CircularProgressIndicator(color: SabaColors.primary));
+            return Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            );
           }
 
           if (_isLoading) {
-            return const Center(child: CircularProgressIndicator(color: SabaColors.primary));
+            return Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            );
           }
 
           return Column(
@@ -108,7 +115,16 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
               _buildVersionSelectors('${state.book} ${state.chapter}'),
               Expanded(
                 child: _leftVerses == null || _rightVerses == null
-                    ? const Center(child: Text('ምንም መረጃ አልተገኘም።'))
+                    ? Center(
+                        child: Text(
+                          'ምንም መረጃ አልተገኘም።',
+                          style: TextStyle(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      )
                     : ListView.builder(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         itemCount: _leftVerses!.length + 1,
@@ -116,7 +132,7 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
                           if (index == _leftVerses!.length) {
                             return const _ComparisonNoteCard();
                           }
-                          
+
                           final leftVerse = _leftVerses![index];
                           // Match by verse number if possible
                           Verse? rightVerseMatch;
@@ -132,7 +148,7 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
                               rightVerseMatch = leftVerse;
                             }
                           }
-                          
+
                           final rightVerse = rightVerseMatch;
 
                           return _buildVerseRow(
@@ -151,18 +167,23 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
+    final theme = Theme.of(context);
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.colorScheme.surface,
       elevation: 0,
       centerTitle: true,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black87, size: 20),
+        icon: Icon(
+          Icons.arrow_back_ios_new_rounded,
+          color: theme.colorScheme.onSurface,
+          size: 20,
+        ),
         onPressed: () => Navigator.pop(context),
       ),
-      title: const Text(
+      title: Text(
         'ማነጻጸሪያ',
         style: TextStyle(
-          color: SabaColors.primary,
+          color: theme.colorScheme.primary,
           fontWeight: FontWeight.bold,
           fontSize: 22,
           fontFamily: 'Noto Serif Ethiopic',
@@ -170,7 +191,10 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.settings_outlined, color: Colors.black54),
+          icon: Icon(
+            Icons.settings_outlined,
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
           onPressed: () {},
         ),
       ],
@@ -179,9 +203,14 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
 
   Widget _buildVersionSelectors(String title) {
     // For now, let's just find names based on IDs
-    final leftName = _leftVersionId == 'amh_standard' ? 'አማርኛ መደበኛ' : 'የ1954 ትርጉም (Old)';
-    final rightName = _rightVersionId == 'amh_standard' ? 'አማርኛ መደበኛ' : 'የ1954 ትርጉም (Old)';
+    final leftName = _leftVersionId == 'amh_standard'
+        ? 'አማርኛ መደበኛ'
+        : 'የ1954 ትርጉም (Old)';
+    final rightName = _rightVersionId == 'amh_standard'
+        ? 'አማርኛ መደበኛ'
+        : 'የ1954 ትርጉም (Old)';
 
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Column(
@@ -189,12 +218,18 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.compare_arrows_rounded, color: Colors.black26, size: 16),
+              Icon(
+                Icons.compare_arrows_rounded,
+                color: theme.colorScheme.onSurfaceVariant.withValues(
+                  alpha: 0.3,
+                ),
+                size: 16,
+              ),
               const SizedBox(width: 8),
               Text(
                 title,
-                style: const TextStyle(
-                  color: Colors.black54,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
                   fontSize: 12,
                   fontFamily: 'Noto Serif Ethiopic',
                 ),
@@ -229,26 +264,33 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
     bool isFavorite = false,
     bool hasNote = false,
   }) {
+    final theme = Theme.of(context);
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 1, horizontal: 16),
       decoration: BoxDecoration(
-        color: isActive ? SabaColors.primary.withValues(alpha: 0.05) : Colors.transparent,
+        color: isActive
+            ? theme.colorScheme.primary.withValues(alpha: 0.05)
+            : Colors.transparent,
       ),
       child: IntrinsicHeight(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Left Accent Bar
-            if (isActive)
-              Container(width: 4, color: SabaColors.primary),
-            
+            if (isActive) Container(width: 4, color: theme.colorScheme.primary),
+
             // Left Column
             Expanded(
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   border: Border(
-                    right: BorderSide(color: Colors.black.withValues(alpha: 0.05), width: 0.5),
+                    right: BorderSide(
+                      color: theme.colorScheme.onSurface.withValues(
+                        alpha: 0.05,
+                      ),
+                      width: 0.5,
+                    ),
                   ),
                 ),
                 child: Column(
@@ -258,8 +300,8 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
                       children: [
                         Text(
                           number,
-                          style: const TextStyle(
-                            color: SabaColors.secondary,
+                          style: TextStyle(
+                            color: theme.colorScheme.secondary,
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Noto Serif Ethiopic',
                           ),
@@ -270,9 +312,10 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
                     const SizedBox(height: 12),
                     Text(
                       textLeft,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         height: 1.6,
+                        color: theme.colorScheme.onSurface,
                         fontFamily: 'Noto Serif Ethiopic',
                       ),
                     ),
@@ -292,25 +335,34 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
                       children: [
                         Text(
                           number,
-                          style: const TextStyle(
-                            color: SabaColors.secondary,
+                          style: TextStyle(
+                            color: theme.colorScheme.secondary,
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Noto Serif Ethiopic',
                           ),
                         ),
                         const Spacer(),
                         if (isFavorite)
-                          const Icon(Icons.star_rounded, color: Colors.orange, size: 16),
+                          const Icon(
+                            Icons.star_rounded,
+                            color: Colors.orange,
+                            size: 16,
+                          ),
                         if (hasNote)
-                          const Icon(Icons.chat_bubble_outline_rounded, color: Colors.black26, size: 14),
+                          Icon(
+                            Icons.chat_bubble_outline_rounded,
+                            color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                            size: 14,
+                          ),
                       ],
                     ),
                     const SizedBox(height: 12),
                     Text(
                       textRight,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         height: 1.6,
+                        color: theme.colorScheme.onSurface,
                         fontFamily: 'Noto Serif Ethiopic',
                       ),
                     ),
@@ -332,24 +384,35 @@ class _VersionSelectorChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: Colors.black.withValues(alpha: 0.03),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
+          border: Border.all(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               label,
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
+              ),
             ),
             const SizedBox(width: 4),
-            const Icon(Icons.keyboard_arrow_down_rounded, size: 16, color: Colors.black45),
+            Icon(
+              Icons.keyboard_arrow_down_rounded,
+              size: 16,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ],
         ),
       ),
@@ -366,11 +429,12 @@ class _ComparisonVersionSelector extends StatelessWidget {
     final tt = Theme.of(context).textTheme;
     final repository = sl<IBibleRepository>();
 
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -387,14 +451,26 @@ class _ComparisonVersionSelector extends StatelessWidget {
           FutureBuilder<List<BibleVersion>>(
             future: repository.getBibleVersions(),
             builder: (context, snapshot) {
-              if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-              
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
               return Column(
-                children: snapshot.data!.map((v) => ListTile(
-                  title: Text(v.name, style: const TextStyle(fontFamily: 'Noto Serif Ethiopic')),
-                  subtitle: Text(v.language),
-                  onTap: () => onSelected(v),
-                )).toList(),
+                children: snapshot.data!
+                    .map(
+                      (v) => ListTile(
+                        title: Text(
+                          v.name,
+                          style: const TextStyle(
+                            fontFamily: 'Noto Serif Ethiopic',
+                          ),
+                        ),
+                        subtitle: Text(v.language),
+                        textColor: theme.colorScheme.onSurface,
+                        onTap: () => onSelected(v),
+                      ),
+                    )
+                    .toList(),
               );
             },
           ),
@@ -410,11 +486,12 @@ class _ComparisonNoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       margin: const EdgeInsets.all(24),
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.03),
+        color: theme.colorScheme.onSurface.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
@@ -425,16 +502,20 @@ class _ComparisonNoteCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: SabaColors.primary.withValues(alpha: 0.1),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.lightbulb_outline_rounded, color: SabaColors.primary, size: 20),
+                child: Icon(
+                  Icons.lightbulb_outline_rounded,
+                  color: theme.colorScheme.primary,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 16),
-              const Text(
+              Text(
                 'የንጽጽር ማስታወሻ',
                 style: TextStyle(
-                  color: SabaColors.primary,
+                  color: theme.colorScheme.primary,
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                   fontFamily: 'Noto Serif Ethiopic',
@@ -448,7 +529,7 @@ class _ComparisonNoteCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               height: 1.5,
-              color: Colors.black54,
+              color: theme.colorScheme.onSurfaceVariant,
               fontFamily: 'Noto Serif Ethiopic',
             ),
           ),
