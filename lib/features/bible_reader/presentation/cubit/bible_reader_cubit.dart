@@ -62,7 +62,7 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
 
   Future<void> loadVerses({
     String versionId = 'amh_standard',
-    String book = 'ዘፍጥረት',
+    String book = 'ኦሪት ዘፍጥረት',
     int chapter = 1,
   }) async {
     emit(const BibleReaderLoading());
