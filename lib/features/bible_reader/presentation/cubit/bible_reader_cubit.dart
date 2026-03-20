@@ -6,6 +6,12 @@ import '../../domain/usecases/get_verses.dart';
 
 import '../../domain/usecases/get_chapter_count.dart';
 
+// Helper for copyWith to distinguish between null and not passed
+class Value<T> {
+  final T value;
+  const Value(this.value);
+}
+
 // ── States ────────────────────────────────────────────────────────────────────
 
 abstract class BibleReaderState extends Equatable {
@@ -45,7 +51,7 @@ class BibleReaderLoaded extends BibleReaderState {
     String? bookId,
     int? chapter,
     int? chapterCount,
-    int? activeVerseNumber,
+    Value<int?>? activeVerseNumber,
     Set<int>? bookmarks,
     Map<int, int>? highlights,
   }) =>
@@ -55,7 +61,7 @@ class BibleReaderLoaded extends BibleReaderState {
         bookId: bookId ?? this.bookId,
         chapter: chapter ?? this.chapter,
         chapterCount: chapterCount ?? this.chapterCount,
-        activeVerseNumber: activeVerseNumber ?? this.activeVerseNumber,
+        activeVerseNumber: activeVerseNumber != null ? activeVerseNumber.value : this.activeVerseNumber,
         bookmarks: bookmarks ?? this.bookmarks,
         highlights: highlights ?? this.highlights,
       );
@@ -120,7 +126,7 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
 
   void selectVerse(int? verseNumber) {
     if (state is BibleReaderLoaded) {
-      emit((state as BibleReaderLoaded).copyWith(activeVerseNumber: verseNumber));
+      emit((state as BibleReaderLoaded).copyWith(activeVerseNumber: Value(verseNumber)));
     }
   }
 
