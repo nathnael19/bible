@@ -8,7 +8,6 @@ import '../cubit/navigation_cubit.dart';
 
 import '../screens/home_screen.dart';
 import '../screens/bible_reader_screen.dart';
-import '../screens/library_screen.dart';
 import '../screens/profile_screen.dart';
 
 class AppShell extends StatefulWidget {
@@ -27,15 +26,20 @@ class _AppShellState extends State<AppShell> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<NavigationCubit, int>(
-      builder: (context, selectedIndex) {
+    return BlocBuilder<NavigationCubit, NavigationState>(
+      builder: (context, state) {
         return Scaffold(
-          body: IndexedStack(index: selectedIndex, children: _pages),
-          bottomNavigationBar: _CustomBottomBar(
-            selectedIndex: selectedIndex,
-            onTap: (idx) => context.read<NavigationCubit>().setTab(idx),
+          body: IndexedStack(index: state.selectedIndex, children: _pages),
+          bottomNavigationBar: AnimatedSlide(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            offset: state.isBottomNavVisible ? Offset.zero : const Offset(0, 1),
+            child: _CustomBottomBar(
+              selectedIndex: state.selectedIndex,
+              onTap: (idx) => context.read<NavigationCubit>().setTab(idx),
+            ),
           ),
-          floatingActionButton: selectedIndex == 0
+          floatingActionButton: state.selectedIndex == 0
               ? FloatingActionButton(
                   onPressed: () {},
                   backgroundColor: SabaColors.primary,
