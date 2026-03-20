@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../cubit/bible_reader_cubit.dart';
 import '../../../../core/theme/app_theme.dart';
 
 /// Side-by-side Bible version comparison screen.
@@ -11,48 +13,47 @@ class CompareVersionsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: _buildAppBar(context),
-      body: Column(
-        children: [
-          _buildVersionSelectors(),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: 16),
+      body: BlocBuilder<BibleReaderCubit, BibleReaderState>(
+        builder: (context, state) {
+          if (state is BibleReaderLoading) {
+            return const Center(child: CircularProgressIndicator(color: SabaColors.primary));
+          }
+
+          if (state is BibleReaderError) {
+            return Center(child: Text('ስህተት ተፈጥሯል: ${state.message}'));
+          }
+
+          if (state is BibleReaderLoaded) {
+            return Column(
               children: [
-                _buildVerseRow(
-                  number: '፩',
-                  textLeft: 'በመጀመሪያ ቃል ነበረ፤ ቃልም በእግዚአብሔር ዘንድ ነበረ፤ ቃልም እግዚአብሔር ነበረ።',
-                  textRight: 'በመጀመሪያ ቃል ነበረ፤ ቃልም በእግዚአብሔር ዘንድ ነበረ፤ ቃልም ራሱ እግዚአብሔር ነበረ።',
-                  isFavorite: true,
+                _buildVersionSelectors('${state.book} ${state.chapter}'),
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    itemCount: state.verses.length + 1, // +1 for the note card
+                    itemBuilder: (context, index) {
+                      if (index == state.verses.length) {
+                        return const _ComparisonNoteCard();
+                      }
+                      
+                      final verse = state.verses[index];
+                      // Simulating a second version's text until a secondary JSON is provided
+                      final mockedRightText = verse.text; 
+
+                      return _buildVerseRow(
+                        number: verse.number.toString(),
+                        textLeft: verse.text,
+                        textRight: mockedRightText,
+                      );
+                    },
+                  ),
                 ),
-                _buildVerseRow(
-                  number: '፪',
-                  textLeft: 'ይህ በመጀመሪያው በእግዚአብሔር ዘንድ ነበረ።',
-                  textRight: 'እርሱም በመጀመሪያ በእግዚአብሔር ዘንድ ነበረ።',
-                ),
-                _buildVerseRow(
-                  number: '፫',
-                  textLeft: 'ሁሉ በእርሱ ሆነ፤ ከሆነውም አንዱስ ስንኳ ያለ እርሱ አልሆነም።',
-                  textRight: 'ሁሉ ነገር በእርሱ ተፈጠረ፤ ከተፈጠረው ሁሉ ያለ እርሱ ምንም የተፈጠረ የለም።',
-                  isActive: true,
-                  hasNote: true,
-                ),
-                _buildVerseRow(
-                  number: '፬',
-                  textLeft: 'ሕይወት በእርሱ ነበረች፤ ሕይወትም የሰው ብርሃን ነበረች።',
-                  textRight: 'ሕይወት በእርሱ ነበረች፤ ይህችም ሕይወት የሰው ብርሃን ነበረች።',
-                ),
-                _buildVerseRow(
-                  number: '፭',
-                  textLeft: 'ብርሃንም በጨለማ ይበራል፤ ጨለማም አላሸነፈውም።',
-                  textRight: 'ብርሃንም በጨለማ ይበራል፤ ጨለማውም አላሸነፈውም።',
-                ),
-                const SizedBox(height: 32),
-                const _ComparisonNoteCard(),
-                const SizedBox(height: 40),
               ],
-            ),
-          ),
-        ],
+            );
+          }
+
+          return const SizedBox.shrink();
+        },
       ),
     );
   }
@@ -84,7 +85,7 @@ class CompareVersionsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildVersionSelectors() {
+  Widget _buildVersionSelectors(String title) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Column(
@@ -95,8 +96,8 @@ class CompareVersionsScreen extends StatelessWidget {
               const Icon(Icons.compare_arrows_rounded, color: Colors.black26, size: 16),
               const SizedBox(width: 8),
               Text(
-                'ዮሐንስ 1',
-                style: TextStyle(
+                title,
+                style: const TextStyle(
                   color: Colors.black54,
                   fontSize: 12,
                   fontFamily: 'Noto Serif Ethiopic',
