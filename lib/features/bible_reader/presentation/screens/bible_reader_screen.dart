@@ -1,3 +1,4 @@
+import 'package:bible/features/bible_reader/presentation/screens/audio_player_screen.dart';
 import 'package:bible/features/bible_reader/presentation/screens/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -317,6 +318,16 @@ class _CustomReaderAppBar extends StatelessWidget
             color: theme.colorScheme.onSurfaceVariant,
           ),
           onPressed: () => showVersionSelectorModal(context),
+        ),
+        IconButton(
+          icon: Icon(
+            Icons.headphones_rounded,
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const AudioPlayerScreen()),
+          ),
         ),
         IconButton(
           icon: Icon(Icons.search, color: theme.colorScheme.onSurfaceVariant),
