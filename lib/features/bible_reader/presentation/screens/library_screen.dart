@@ -117,6 +117,8 @@ class LibraryScreen extends StatelessWidget {
       MaterialPageRoute(
         builder: (_) => ChapterSelectionScreen(
           bookName: book.name,
+          bookId: book.id,
+          englishName: book.englishName,
           chapterCount: book.chapterCount,
         ),
       ),
