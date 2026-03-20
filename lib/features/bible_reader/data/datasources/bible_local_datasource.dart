@@ -154,4 +154,35 @@ class BibleLocalDataSource {
       );
     }).toList();
   }
+
+  Future<List<VerseModel>> searchVerses(String query) async {
+    await _init();
+    if (query.trim().isEmpty || _cachedBible == null) return [];
+
+    final queryLower = query.toLowerCase();
+    final results = <VerseModel>[];
+
+    for (final book in _cachedBible!) {
+      final bookName = book['book_name'] as String;
+      for (final chapter in book['chapters']) {
+        final chapterNum = chapter['chapter'] as int;
+        for (final verse in chapter['verses']) {
+          final text = verse['text'] as String;
+          if (text.toLowerCase().contains(queryLower)) {
+            results.add(
+              VerseModel(
+                number: verse['verse'] as int,
+                bookName: bookName,
+                chapter: chapterNum,
+                text: text,
+              ),
+            );
+            // Cap results to prevent memory issues and UI stutter
+            if (results.length >= 200) return results;
+          }
+        }
+      }
+    }
+    return results;
+  }
 }
