@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/theme/app_theme.dart';
-
 /// The "Scripture Scrubber" with horizontal auto-centering for the active item.
 class ScriptureScrubber extends StatefulWidget {
   final int totalItems;
@@ -75,6 +73,7 @@ class _ScriptureScrubberState extends State<ScriptureScrubber> {
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
+    final theme = Theme.of(context);
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20),
@@ -105,14 +104,12 @@ class _ScriptureScrubberState extends State<ScriptureScrubber> {
                     width: 60,
                     margin: const EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
-                      color: isActive ? SabaColors.primary : Colors.transparent,
+                      color: isActive ? theme.colorScheme.primary : Colors.transparent,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: isActive
                           ? [
                               BoxShadow(
-                                color: SabaColors.primary.withValues(
-                                  alpha: 0.4,
-                                ),
+                                color: theme.colorScheme.primary.withValues(alpha: 0.4),
                                 blurRadius: 15,
                                 offset: const Offset(0, 6),
                               ),
@@ -125,10 +122,8 @@ class _ScriptureScrubberState extends State<ScriptureScrubber> {
                       style: tt.headlineMedium!.copyWith(
                         fontSize: isActive ? 28 : 20,
                         color: isActive
-                            ? Colors.white
-                            : SabaColors.onSurfaceVariant.withValues(
-                                alpha: 0.3,
-                              ),
+                            ? theme.colorScheme.onPrimary
+                            : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Noto Serif Ethiopic',
                       ),
@@ -142,7 +137,7 @@ class _ScriptureScrubberState extends State<ScriptureScrubber> {
           Text(
             widget.isChapterMode ? 'ምዕራፍ ይምረጡ' : 'ቁጥር ይምረጡ',
             style: tt.labelMedium!.copyWith(
-              color: SabaColors.primary,
+              color: theme.colorScheme.primary,
               fontWeight: FontWeight.bold,
               fontFamily: 'Noto Serif Ethiopic',
               letterSpacing: 0.5,
@@ -152,7 +147,7 @@ class _ScriptureScrubberState extends State<ScriptureScrubber> {
           Text(
             'ምዕራፍ ወይም ቁጥር ለመቀየር ይንኩ',
             style: tt.labelSmall!.copyWith(
-              color: SabaColors.onSurfaceVariant.withValues(alpha: 0.5),
+              color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
               fontSize: 11,
               fontFamily: 'Noto Serif Ethiopic',
             ),
