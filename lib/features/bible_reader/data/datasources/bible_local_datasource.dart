@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../models/bible_version_model.dart';
 import '../models/verse_model.dart';
 import '../models/book_model.dart';
+import '../../domain/entities/search_filter.dart';
 
 /// Local data source that loads the Amharic Bible from bundled JSON.
 class BibleLocalDataSource {
@@ -155,7 +156,7 @@ class BibleLocalDataSource {
     }).toList();
   }
 
-  Future<List<VerseModel>> searchVerses(String query) async {
+  Future<List<VerseModel>> searchVerses(String query, {SearchFilter filter = SearchFilter.all}) async {
     await _init();
     if (query.trim().isEmpty || _cachedBible == null) return [];
 
@@ -163,6 +164,14 @@ class BibleLocalDataSource {
     final results = <VerseModel>[];
 
     for (final book in _cachedBible!) {
+      final bookId = book['book_id'] as int;
+      
+      // Apply filter
+      if (filter == SearchFilter.oldTestament && bookId > 39) continue;
+      if (filter == SearchFilter.newTestament && bookId <= 39) continue;
+      if (filter == SearchFilter.psalms && bookId != 19) continue;
+      // translation filter is a no-op for now as we only have one translation
+
       final bookName = book['book_name'] as String;
       for (final chapter in book['chapters']) {
         final chapterNum = chapter['chapter'] as int;
