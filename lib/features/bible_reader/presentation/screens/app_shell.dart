@@ -1,10 +1,10 @@
-import 'package:bible/features/bible_reader/presentation/screens/bible_reader_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_theme.dart';
 
-import '../screens/audio_player_screen.dart';
 import '../screens/home_screen.dart';
+import '../screens/bible_reader_screen.dart';
+import '../screens/library_screen.dart';
 import '../screens/profile_screen.dart';
 
 class AppShell extends StatefulWidget {
@@ -19,8 +19,8 @@ class _AppShellState extends State<AppShell> {
 
   static const List<Widget> _pages = [
     HomeScreen(),
-    BibleReaderScreen(), // Placeholder for 'ንባብ' list
-    AudioPlayerScreen(), // Placeholder for 'መጽሐፍ' list
+    BibleReaderScreen(),
+    LibraryScreen(),
     ProfileScreen(),
   ];
 
