@@ -134,12 +134,25 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
     if (state is BibleReaderLoaded) {
       final loaded = state as BibleReaderLoaded;
       final newBookmarks = Set<int>.from(loaded.bookmarks);
+      final newHighlights = Map<int, int>.from(loaded.highlights);
+
       if (newBookmarks.contains(verseNumber)) {
         newBookmarks.remove(verseNumber);
+        newHighlights.remove(verseNumber);
       } else {
         newBookmarks.add(verseNumber);
+        // Automatically highlight with a subtle version of the primary color
+        // Assuming we are in a context where we can't easily get the theme here,
+        // we'll use a standard gold/burgundy hex if needed, 
+        // or just let the UI handle the default highlight if bookmarks exists?
+        // Actually, better to keep highlights explicit. 
+        // I'll use a standard subtle gold: 0x33FFD700
+        newHighlights[verseNumber] = 0x33FFD700;
       }
-      emit(loaded.copyWith(bookmarks: newBookmarks));
+      emit(loaded.copyWith(
+        bookmarks: newBookmarks,
+        highlights: newHighlights,
+      ));
     }
   }
 
