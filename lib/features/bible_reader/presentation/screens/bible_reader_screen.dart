@@ -123,7 +123,6 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
         return Scaffold(
           backgroundColor: Theme.of(context).colorScheme.surface,
           extendBodyBehindAppBar: true,
-          appBar: _CustomReaderAppBar(state: state),
           body: GestureDetector(
             onScaleStart: (details) {
               _baseFontSizeFactor = _fontSizeFactor;
@@ -139,6 +138,20 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
             child: Stack(
               children: [
                 _buildContent(context, state),
+                
+                // ── Hiding AppBar ──────────────────────────────────────────
+                BlocBuilder<NavigationCubit, NavigationState>(
+                  builder: (context, navState) {
+                    return AnimatedPositioned(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      top: navState.isBottomNavVisible ? 0 : -(kToolbarHeight + 50),
+                      left: 0,
+                      right: 0,
+                      child: _CustomReaderAppBar(state: state),
+                    );
+                  },
+                ),
                 // ── Side Floating Buttons ─────────────────────────────────
                 BlocBuilder<NavigationCubit, NavigationState>(
                   builder: (context, navState) {
