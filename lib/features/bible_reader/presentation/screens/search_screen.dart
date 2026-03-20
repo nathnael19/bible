@@ -19,7 +19,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final _controller = TextEditingController();
   SearchFilter _activeFilter = SearchFilter.all;
-  
+
   @override
   void initState() {
     super.initState();
@@ -48,25 +48,18 @@ class _SearchScreenState extends State<SearchScreen> {
     final tt = Theme.of(context).textTheme;
 
     return Scaffold(
-      backgroundColor: SabaColors.surface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: SabaColors.surface,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         title: Text(
-          'ወንጌል', // Gospel title as per image
+          'መጽሐፍ ቅዱስ', // Gospel title as per image
           style: tt.headlineSmall!.copyWith(
             fontWeight: FontWeight.bold,
-            color: SabaColors.onSurface,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search, color: SabaColors.onSurfaceVariant),
-            onPressed: () {},
-          ),
-          const SizedBox(width: 8),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -77,7 +70,7 @@ class _SearchScreenState extends State<SearchScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
@@ -89,16 +82,16 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
                 child: TextField(
                   controller: _controller,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     hintText: 'ፈልግ...',
                     prefixIcon: Icon(
                       Icons.search,
-                      color: SabaColors.onSurfaceVariant,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 16),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                 ),
               ),
@@ -112,27 +105,27 @@ class _SearchScreenState extends State<SearchScreen> {
               child: Row(
                 children: [
                   _FilterChip(
-                    label: 'ሁሉም', 
-                    filter: SearchFilter.all, 
-                    activeFilter: _activeFilter, 
+                    label: 'ሁሉም',
+                    filter: SearchFilter.all,
+                    activeFilter: _activeFilter,
                     onSelected: _onFilterSelected,
                   ),
                   _FilterChip(
-                    label: 'ብሉይ ኪዳን', 
-                    filter: SearchFilter.oldTestament, 
-                    activeFilter: _activeFilter, 
+                    label: 'ብሉይ ኪዳን',
+                    filter: SearchFilter.oldTestament,
+                    activeFilter: _activeFilter,
                     onSelected: _onFilterSelected,
                   ),
                   _FilterChip(
-                    label: 'ሐዲስ ኪዳን', 
-                    filter: SearchFilter.newTestament, 
-                    activeFilter: _activeFilter, 
+                    label: 'ሐዲስ ኪዳን',
+                    filter: SearchFilter.newTestament,
+                    activeFilter: _activeFilter,
                     onSelected: _onFilterSelected,
                   ),
                   _FilterChip(
-                    label: 'መዝሙረ ዳዊት', 
-                    filter: SearchFilter.psalms, 
-                    activeFilter: _activeFilter, 
+                    label: 'መዝሙረ ዳዊት',
+                    filter: SearchFilter.psalms,
+                    activeFilter: _activeFilter,
                     onSelected: _onFilterSelected,
                   ),
                 ],
@@ -144,10 +137,12 @@ class _SearchScreenState extends State<SearchScreen> {
             BlocBuilder<SearchCubit, SearchState>(
               builder: (context, state) {
                 if (state is SearchLoading) {
-                  return const Padding(
-                    padding: EdgeInsets.all(40),
+                  return Padding(
+                    padding: const EdgeInsets.all(40),
                     child: Center(
-                      child: CircularProgressIndicator(color: SabaColors.primary),
+                      child: CircularProgressIndicator(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                     ),
                   );
                 }
@@ -171,22 +166,26 @@ class _SearchScreenState extends State<SearchScreen> {
                             Text(
                               'የተገኙ ውጤቶች (${results.length})',
                               style: tt.labelLarge!.copyWith(
-                                color: SabaColors.onSurfaceVariant,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                             Row(
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.keyboard_arrow_down,
                                   size: 16,
-                                  color: SabaColors.primary,
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
                                   'አቀማመጥ',
                                   style: tt.labelSmall!.copyWith(
-                                    color: SabaColors.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -200,7 +199,9 @@ class _SearchScreenState extends State<SearchScreen> {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         padding: const EdgeInsets.symmetric(horizontal: 20),
-                        itemCount: results.length > 20 ? 20 : results.length, // Show top 20 for performance
+                        itemCount: results.length > 20
+                            ? 20
+                            : results.length, // Show top 20 for performance
                         itemBuilder: (context, index) {
                           final verse = results[index];
                           return _SearchResultTile(
@@ -217,8 +218,12 @@ class _SearchScreenState extends State<SearchScreen> {
                             child: ElevatedButton(
                               onPressed: () {},
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: SabaColors.primary,
-                                padding: const EdgeInsets.symmetric(vertical: 18),
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.primary,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 18,
+                                ),
                               ),
                               child: const Text('ተጨማሪ ውጤቶችን አሳይ'),
                             ),
@@ -270,18 +275,24 @@ class _FilterChip extends StatelessWidget {
         margin: const EdgeInsets.only(right: 8),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? SabaColors.secondaryContainer : Colors.white,
+          color: isSelected
+              ? Theme.of(context).colorScheme.secondaryContainer
+              : Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
           border: isSelected
               ? null
-              : Border.all(color: Colors.black.withValues(alpha: 0.05)),
+              : Border.all(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.outlineVariant.withValues(alpha: 0.1),
+                ),
         ),
         child: Text(
           label,
           style: Theme.of(context).textTheme.labelMedium!.copyWith(
             color: isSelected
-                ? SabaColors.onSecondaryContainer
-                : SabaColors.onSurfaceVariant,
+                ? Theme.of(context).colorScheme.onSecondaryContainer
+                : Theme.of(context).colorScheme.onSurfaceVariant,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
           ),
         ),
@@ -294,10 +305,7 @@ class _SearchResultTile extends StatelessWidget {
   final Verse verse;
   final String query;
 
-  const _SearchResultTile({
-    required this.verse,
-    required this.query,
-  });
+  const _SearchResultTile({required this.verse, required this.query});
 
   @override
   Widget build(BuildContext context) {
@@ -306,17 +314,19 @@ class _SearchResultTile extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-          final bibleReaderCubit = context.read<bible_reader_cubit.BibleReaderCubit>();
-          final navigationCubit = context.read<navigation_cubit.NavigationCubit>();
+          final bibleReaderCubit = context
+              .read<bible_reader_cubit.BibleReaderCubit>();
+          final navigationCubit = context
+              .read<navigation_cubit.NavigationCubit>();
           final navigator = Navigator.of(context);
-          
+
           bibleReaderCubit.loadBookChapter(
             book: verse.bookName,
             bookId: verse.bookId,
             chapter: verse.chapter,
             targetVerse: verse.number,
           );
-          
+
           navigationCubit.setTab(1);
           navigator.popUntil((route) => route.isFirst);
         },
@@ -332,14 +342,16 @@ class _SearchResultTile extends StatelessWidget {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.1),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurfaceVariant.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 alignment: Alignment.center,
                 child: Text(
                   verse.number.toString(),
                   style: tt.labelLarge!.copyWith(
-                    color: SabaColors.onSurfaceVariant,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -354,7 +366,7 @@ class _SearchResultTile extends StatelessWidget {
                         Text(
                           verse.bookName,
                           style: tt.titleMedium!.copyWith(
-                            color: SabaColors.primary,
+                            color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -362,9 +374,10 @@ class _SearchResultTile extends StatelessWidget {
                         Text(
                           '${verse.chapter} : ${verse.number}',
                           style: tt.labelSmall!.copyWith(
-                            color: SabaColors.onSurfaceVariant.withValues(
-                              alpha: 0.6,
-                            ),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurfaceVariant
+                                .withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -400,7 +413,7 @@ class _FeaturedHighlightCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: SabaColors.surfaceContainerLow,
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(28),
       ),
       child: Column(
@@ -415,7 +428,7 @@ class _FeaturedHighlightCard extends StatelessWidget {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: SabaColors.primary,
+                  color: Theme.of(context).colorScheme.primary,
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -448,8 +461,7 @@ class _FeaturedHighlightCard extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           _RichSnippet(
-            text:
-                '"እናንተ የዓለም ብርሃን ናችሁ። በተራራ ላይ ያለች ከተማ ልትሰወር አትችልም::"',
+            text: '"እናንተ የዓለም ብርሃን ናችሁ። በተራራ ላይ ያለች ከተማ ልትሰወር አትችልም::"',
             query: 'ብርሃን',
             isLarge: true,
           ),
@@ -468,12 +480,16 @@ class _IconLink extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 14, color: SabaColors.onSurfaceVariant),
+        Icon(
+          icon,
+          size: 14,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
         const SizedBox(width: 4),
         Text(
           label,
           style: Theme.of(context).textTheme.labelSmall!.copyWith(
-            color: SabaColors.onSurfaceVariant,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -497,19 +513,27 @@ class _RichSnippet extends StatelessWidget {
     final tt = Theme.of(context).textTheme;
     final baseStyle = isLarge ? tt.titleMedium! : tt.bodyMedium!;
     final highlightStyle = baseStyle.copyWith(
-      color: SabaColors.primary,
+      color: Theme.of(context).colorScheme.primary,
       fontWeight: FontWeight.bold,
       decoration: isLarge ? TextDecoration.underline : null,
-      decorationColor: SabaColors.primary.withValues(alpha: 0.5),
+      decorationColor: Theme.of(
+        context,
+      ).colorScheme.primary.withValues(alpha: 0.5),
     );
 
     if (query.trim().isEmpty) {
-      return Text(text, style: baseStyle.copyWith(height: 1.6, color: SabaColors.onSurface));
+      return Text(
+        text,
+        style: baseStyle.copyWith(
+          height: 1.6,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
+      );
     }
 
     final lowerText = text.toLowerCase();
     final lowerQuery = query.toLowerCase();
-    
+
     List<TextSpan> spans = [];
     int start = 0;
     int indexOfMatch;
@@ -518,10 +542,12 @@ class _RichSnippet extends StatelessWidget {
       if (indexOfMatch > start) {
         spans.add(TextSpan(text: text.substring(start, indexOfMatch)));
       }
-      spans.add(TextSpan(
-        text: text.substring(indexOfMatch, indexOfMatch + query.length),
-        style: highlightStyle,
-      ));
+      spans.add(
+        TextSpan(
+          text: text.substring(indexOfMatch, indexOfMatch + query.length),
+          style: highlightStyle,
+        ),
+      );
       start = indexOfMatch + query.length;
     }
 
@@ -531,7 +557,10 @@ class _RichSnippet extends StatelessWidget {
 
     return RichText(
       text: TextSpan(
-        style: baseStyle.copyWith(height: 1.6, color: SabaColors.onSurface),
+        style: baseStyle.copyWith(
+          height: 1.6,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
         children: spans,
       ),
     );
