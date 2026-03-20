@@ -7,7 +7,12 @@ import '../cubit/navigation_cubit.dart';
 
 class ChapterSelectionScreen extends StatefulWidget {
   final String bookName;
-  const ChapterSelectionScreen({super.key, required this.bookName});
+  final int chapterCount;
+  const ChapterSelectionScreen({
+    super.key,
+    required this.bookName,
+    required this.chapterCount,
+  });
 
   @override
   State<ChapterSelectionScreen> createState() => _ChapterSelectionScreenState();
@@ -65,7 +70,7 @@ class _ChapterSelectionScreenState extends State<ChapterSelectionScreen> {
                 mainAxisSpacing: 16,
                 crossAxisSpacing: 16,
               ),
-              itemCount: 50,
+              itemCount: widget.chapterCount,
               itemBuilder: (context, i) {
                 final index = i + 1;
                 final isActive = _selectedChapter == index;
@@ -75,22 +80,26 @@ class _ChapterSelectionScreenState extends State<ChapterSelectionScreen> {
                   onTap: () async {
                     setState(() => _selectedChapter = index);
 
+                    final bibleReaderCubit = context.read<BibleReaderCubit>();
+                    final navigationCubit = context.read<NavigationCubit>();
+                    final navigator = Navigator.of(context);
+
                     // Tiny delay to show the selection state
                     await Future.delayed(const Duration(milliseconds: 50));
 
                     if (!mounted) return;
 
                     // 1. Load the book and chapter
-                    context.read<BibleReaderCubit>().loadBookChapter(
+                    bibleReaderCubit.loadBookChapter(
                       book: widget.bookName,
                       chapter: index,
                     );
 
                     // 2. Switch to Reader Tab (index 1)
-                    context.read<NavigationCubit>().setTab(1);
+                    navigationCubit.setTab(1);
 
                     // 3. Pop selection screen AND library screen to get back to shell
-                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    navigator.popUntil((route) => route.isFirst);
                   },
                 );
               },
