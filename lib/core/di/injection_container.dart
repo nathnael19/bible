@@ -14,9 +14,17 @@ import '../../features/bible_reader/presentation/cubit/library_cubit.dart';
 import '../../features/bible_reader/presentation/cubit/search_cubit.dart';
 import '../../features/bible_reader/presentation/cubit/theme_cubit.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/services/local_storage.dart';
+
 final sl = GetIt.instance;
 
 Future<void> initDependencies() async {
+  // ── Core Services ────────────────────────────────────────────────────────
+  final sharedPreferences = await SharedPreferences.getInstance();
+  sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+  sl.registerLazySingleton<LocalStorage>(() => LocalStorage(sl()));
+
   // ── Data sources ──────────────────────────────────────────────────────────
   sl.registerLazySingleton<BibleLocalDataSource>(
     () => BibleLocalDataSource(),
@@ -35,9 +43,10 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => SearchVerses(sl()));
 
   // ── Cubits (factory — new instance each time) ─────────────────────────────
-  sl.registerFactory(() => BibleReaderCubit(sl(), sl()));
+  sl.registerFactory(() => BibleReaderCubit(sl(), sl(), sl()));
   sl.registerFactory(() => VersionSelectorCubit(sl()));
   sl.registerFactory(() => LibraryCubit(sl()));
   sl.registerFactory(() => SearchCubit(sl()));
-  sl.registerLazySingleton(() => ThemeCubit());
+  sl.registerLazySingleton(() => ThemeCubit(sl()));
 }
+
