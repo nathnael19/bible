@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/entities/verse.dart';
 import '../../domain/usecases/search_verses.dart';
+import '../../domain/entities/search_filter.dart';
 
 abstract class SearchState extends Equatable {
   const SearchState();
@@ -38,7 +39,7 @@ class SearchCubit extends Cubit<SearchState> {
 
   SearchCubit(this._searchVerses) : super(SearchInitial());
 
-  Future<void> search(String query) async {
+  Future<void> search(String query, {SearchFilter filter = SearchFilter.all}) async {
     if (query.trim().isEmpty) {
       emit(SearchInitial());
       return;
@@ -46,7 +47,7 @@ class SearchCubit extends Cubit<SearchState> {
 
     emit(SearchLoading());
     try {
-      final results = await _searchVerses(query);
+      final results = await _searchVerses(query, filter: filter);
       emit(SearchLoaded(results));
     } catch (e) {
       emit(SearchError(e.toString()));
