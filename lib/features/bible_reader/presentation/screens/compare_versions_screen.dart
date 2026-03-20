@@ -1,12 +1,92 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../cubit/bible_reader_cubit.dart';
+import '../../../../core/di/injection_container.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../domain/entities/verse.dart';
+import '../../domain/entities/bible_version.dart';
+import '../../domain/repositories/i_bible_repository.dart';
+import '../cubit/bible_reader_cubit.dart';
 
 /// Side-by-side Bible version comparison screen.
-class CompareVersionsScreen extends StatelessWidget {
+class CompareVersionsScreen extends StatefulWidget {
   const CompareVersionsScreen({super.key});
+
+  @override
+  State<CompareVersionsScreen> createState() => _CompareVersionsScreenState();
+}
+
+class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
+  String _leftVersionId = 'amh_standard';
+  String _rightVersionId = 'amh_full';
+  
+  List<Verse>? _leftVerses;
+  List<Verse>? _rightVerses;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAllVerses();
+  }
+
+  Future<void> _loadAllVerses() async {
+    final readerState = context.read<BibleReaderCubit>().state;
+    if (readerState is! BibleReaderLoaded) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      final repository = sl<IBibleRepository>();
+      
+      final results = await Future.wait([
+        repository.getVerses(
+          versionId: _leftVersionId,
+          book: readerState.book,
+          chapter: readerState.chapter,
+        ),
+        repository.getVerses(
+          versionId: _rightVersionId,
+          book: readerState.book,
+          chapter: readerState.chapter,
+        ),
+      ]);
+
+      setState(() {
+        _leftVerses = results[0];
+        _rightVerses = results[1];
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('ስህተት: $e')),
+        );
+      }
+    }
+  }
+
+  void _showVersionPicker(bool isLeft) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _ComparisonVersionSelector(
+        onSelected: (version) {
+          setState(() {
+            if (isLeft) {
+              _leftVersionId = version.id;
+            } else {
+              _rightVersionId = version.id;
+            }
+          });
+          _loadAllVerses();
+          Navigator.pop(context);
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,44 +95,56 @@ class CompareVersionsScreen extends StatelessWidget {
       appBar: _buildAppBar(context),
       body: BlocBuilder<BibleReaderCubit, BibleReaderState>(
         builder: (context, state) {
-          if (state is BibleReaderLoading) {
+          if (state is! BibleReaderLoaded) {
             return const Center(child: CircularProgressIndicator(color: SabaColors.primary));
           }
 
-          if (state is BibleReaderError) {
-            return Center(child: Text('ስህተት ተፈጥሯል: ${state.message}'));
+          if (_isLoading) {
+            return const Center(child: CircularProgressIndicator(color: SabaColors.primary));
           }
 
-          if (state is BibleReaderLoaded) {
-            return Column(
-              children: [
-                _buildVersionSelectors('${state.book} ${state.chapter}'),
-                Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    itemCount: state.verses.length + 1, // +1 for the note card
-                    itemBuilder: (context, index) {
-                      if (index == state.verses.length) {
-                        return const _ComparisonNoteCard();
-                      }
-                      
-                      final verse = state.verses[index];
-                      // Simulating a second version's text until a secondary JSON is provided
-                      final mockedRightText = verse.text; 
+          return Column(
+            children: [
+              _buildVersionSelectors('${state.book} ${state.chapter}'),
+              Expanded(
+                child: _leftVerses == null || _rightVerses == null
+                    ? const Center(child: Text('ምንም መረጃ አልተገኘም።'))
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        itemCount: _leftVerses!.length + 1,
+                        itemBuilder: (context, index) {
+                          if (index == _leftVerses!.length) {
+                            return const _ComparisonNoteCard();
+                          }
+                          
+                          final leftVerse = _leftVerses![index];
+                          // Match by verse number if possible
+                          Verse? rightVerseMatch;
+                          try {
+                            rightVerseMatch = _rightVerses!.firstWhere(
+                              (v) => v.number == leftVerse.number,
+                            );
+                          } catch (_) {
+                            // Fallback to index if no match found
+                            if (_rightVerses!.length > index) {
+                              rightVerseMatch = _rightVerses![index];
+                            } else {
+                              rightVerseMatch = leftVerse;
+                            }
+                          }
+                          
+                          final rightVerse = rightVerseMatch;
 
-                      return _buildVerseRow(
-                        number: verse.number.toString(),
-                        textLeft: verse.text,
-                        textRight: mockedRightText,
-                      );
-                    },
-                  ),
-                ),
-              ],
-            );
-          }
-
-          return const SizedBox.shrink();
+                          return _buildVerseRow(
+                            number: leftVerse.number.toString(),
+                            textLeft: leftVerse.text,
+                            textRight: rightVerse.text,
+                          );
+                        },
+                      ),
+              ),
+            ],
+          );
         },
       ),
     );
@@ -86,6 +178,10 @@ class CompareVersionsScreen extends StatelessWidget {
   }
 
   Widget _buildVersionSelectors(String title) {
+    // For now, let's just find names based on IDs
+    final leftName = _leftVersionId == 'amh_standard' ? 'አማርኛ መደበኛ' : 'የ1954 ትርጉም (Old)';
+    final rightName = _rightVersionId == 'amh_standard' ? 'አማርኛ መደበኛ' : 'የ1954 ትርጉም (Old)';
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Column(
@@ -109,9 +205,15 @@ class CompareVersionsScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _VersionSelectorChip(label: 'የ1954 ትርጉም (Old)'),
+              _VersionSelectorChip(
+                label: leftName,
+                onTap: () => _showVersionPicker(true),
+              ),
               const SizedBox(width: 12),
-              _VersionSelectorChip(label: 'አዲሱ መደበኛ ትርጉም'),
+              _VersionSelectorChip(
+                label: rightName,
+                onTap: () => _showVersionPicker(false),
+              ),
             ],
           ),
         ],
@@ -225,26 +327,78 @@ class CompareVersionsScreen extends StatelessWidget {
 
 class _VersionSelectorChip extends StatelessWidget {
   final String label;
-  const _VersionSelectorChip({required this.label});
+  final VoidCallback onTap;
+  const _VersionSelectorChip({required this.label, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.03),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: 0.03),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(width: 4),
+            const Icon(Icons.keyboard_arrow_down_rounded, size: 16, color: Colors.black45),
+          ],
+        ),
       ),
-      child: Row(
+    );
+  }
+}
+
+class _ComparisonVersionSelector extends StatelessWidget {
+  final Function(BibleVersion) onSelected;
+  const _ComparisonVersionSelector({required this.onSelected});
+
+  @override
+  Widget build(BuildContext context) {
+    final tt = Theme.of(context).textTheme;
+    final repository = sl<IBibleRepository>();
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+      ),
+      child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            label,
-            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+            'ትርጉም ይምረጡ',
+            style: tt.titleLarge!.copyWith(
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Noto Serif Ethiopic',
+            ),
           ),
-          const SizedBox(width: 4),
-          const Icon(Icons.keyboard_arrow_down_rounded, size: 16, color: Colors.black45),
+          const SizedBox(height: 24),
+          FutureBuilder<List<BibleVersion>>(
+            future: repository.getBibleVersions(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+              
+              return Column(
+                children: snapshot.data!.map((v) => ListTile(
+                  title: Text(v.name, style: const TextStyle(fontFamily: 'Noto Serif Ethiopic')),
+                  subtitle: Text(v.language),
+                  onTap: () => onSelected(v),
+                )).toList(),
+              );
+            },
+          ),
+          const SizedBox(height: 24),
         ],
       ),
     );
