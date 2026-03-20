@@ -34,7 +34,10 @@ class HomeScreen extends StatelessWidget {
             ),
             actions: [
               IconButton(
-                icon: const Icon(Icons.search, color: SabaColors.onSurfaceVariant),
+                icon: const Icon(
+                  Icons.search,
+                  color: SabaColors.onSurfaceVariant,
+                ),
                 onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const SearchScreen()),
@@ -97,7 +100,8 @@ class HomeScreen extends StatelessWidget {
                     description: 'በዕለታዊ ጊዜ የሚደረጉ መጽሐፍ ቅዱሳዊ ምክሮችና ጸሎቶች ለ፲፭ ቀናት።',
                     badge: 'አዲስ ዕቅድ',
                     // Placeholder for image
-                    imageUrl: 'https://images.unsplash.com/photo-1504052434139-44b55dec9bb0?q=80&w=800',
+                    imageUrl:
+                        'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=800',
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -107,7 +111,8 @@ class HomeScreen extends StatelessWidget {
                     title: 'የጾም ወቅት',
                     description: 'ለአርባ ቀን የሚቆይ የንባብ ዕቅድ',
                     // Placeholder for image
-                    imageUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=800',
+                    imageUrl:
+                        'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=800',
                     isCrossCard: true,
                   ),
                 ),
@@ -187,7 +192,11 @@ class _SectionHeader extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 4),
-                  const Icon(Icons.arrow_forward, size: 12, color: SabaColors.onSurfaceVariant),
+                  const Icon(
+                    Icons.arrow_forward,
+                    size: 12,
+                    color: SabaColors.onSurfaceVariant,
+                  ),
                 ],
               ),
             ),
@@ -234,7 +243,10 @@ class _DailyVerseCard extends StatelessWidget {
             children: [
               // Badge
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: SabaColors.secondaryContainer.withValues(alpha: 0.9),
                   borderRadius: BorderRadius.circular(100),
@@ -346,10 +358,15 @@ class _ContinueReadingCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(book, style: tt.titleSmall!.copyWith(fontWeight: FontWeight.bold)),
+                  Text(
+                    book,
+                    style: tt.titleSmall!.copyWith(fontWeight: FontWeight.bold),
+                  ),
                   Text(
                     chapter,
-                    style: tt.labelSmall!.copyWith(color: SabaColors.onSurfaceVariant),
+                    style: tt.labelSmall!.copyWith(
+                      color: SabaColors.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -364,7 +381,9 @@ class _ContinueReadingCard extends StatelessWidget {
                   value: progress,
                   minHeight: 6,
                   backgroundColor: Colors.black.withValues(alpha: 0.05),
-                  valueColor: const AlwaysStoppedAnimation<Color>(SabaColors.primary),
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    SabaColors.primary,
+                  ),
                 ),
               ),
               const SizedBox(height: 6),
@@ -373,7 +392,9 @@ class _ContinueReadingCard extends StatelessWidget {
                 child: Text(
                   '${(progress * 100).toInt()}% ተጠናቋል',
                   style: tt.labelSmall!.copyWith(
-                      fontSize: 10, color: SabaColors.onSurfaceVariant),
+                    fontSize: 10,
+                    color: SabaColors.onSurfaceVariant,
+                  ),
                 ),
               ),
             ],
@@ -425,24 +446,35 @@ class _ReadingPlanCard extends StatelessWidget {
             if (badge != null)
               Container(
                 margin: const EdgeInsets.only(bottom: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   badge!,
-                  style: tt.labelSmall!.copyWith(color: Colors.white, fontSize: 10),
+                  style: tt.labelSmall!.copyWith(
+                    color: Colors.white,
+                    fontSize: 10,
+                  ),
                 ),
               ),
             Text(
               title,
-              style: tt.headlineSmall!.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+              style: tt.headlineSmall!.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
               description,
-              style: tt.bodySmall!.copyWith(color: Colors.white.withValues(alpha: 0.8)),
+              style: tt.bodySmall!.copyWith(
+                color: Colors.white.withValues(alpha: 0.8),
+              ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -490,11 +522,16 @@ class _ActivityTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: tt.labelLarge!.copyWith(fontWeight: FontWeight.bold)),
+                Text(
+                  title,
+                  style: tt.labelLarge!.copyWith(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: tt.bodySmall!.copyWith(color: SabaColors.onSurfaceVariant),
+                  style: tt.bodySmall!.copyWith(
+                    color: SabaColors.onSurfaceVariant,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -503,7 +540,9 @@ class _ActivityTile extends StatelessWidget {
           ),
           Text(
             time,
-            style: tt.labelSmall!.copyWith(color: SabaColors.onSurfaceVariant.withValues(alpha: 0.6)),
+            style: tt.labelSmall!.copyWith(
+              color: SabaColors.onSurfaceVariant.withValues(alpha: 0.6),
+            ),
           ),
         ],
       ),
