@@ -5,6 +5,7 @@ import 'core/di/injection_container.dart';
 import 'core/theme/app_theme.dart';
 import 'features/bible_reader/presentation/cubit/bible_reader_cubit.dart';
 import 'features/bible_reader/presentation/cubit/navigation_cubit.dart';
+import 'features/bible_reader/presentation/cubit/library_cubit.dart';
 import 'features/bible_reader/presentation/screens/app_shell.dart';
 
 Future<void> main() async {
@@ -21,11 +22,12 @@ class BibleApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => NavigationCubit()),
+        BlocProvider(create: (_) => sl<LibraryCubit>()..loadBooks()),
         BlocProvider(
           create: (_) => sl<BibleReaderCubit>()
             ..loadVerses(
               versionId: 'amh_standard',
-              book: 'ዘፍጥረት',
+              book: 'ኦሪት ዘፍጥረት',
               chapter: 1,
             ),
         ),
