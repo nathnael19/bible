@@ -50,15 +50,17 @@ class VerseCard extends StatelessWidget {
               const SizedBox(width: 4),
               // ── Verse number (editorial large numeral) ─────────────────
               SizedBox(
-                width: 32,
-                child: Text(
-                  '${verse.number}',
-                  style: tt.displaySmall!.copyWith(
-                    fontSize: 18,
-                    color: isActive
-                        ? SabaColors.primaryContainer
-                        : SabaColors.outlineVariant,
-                    fontWeight: FontWeight.w700,
+                width: 36,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    '${verse.number}',
+                    style: tt.bodySmall!.copyWith(
+                      fontSize: 13,
+                      color: SabaColors.secondary,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Noto Serif Ethiopic',
+                    ),
                   ),
                 ),
               ),
