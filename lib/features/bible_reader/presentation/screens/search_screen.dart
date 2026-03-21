@@ -5,6 +5,7 @@ import 'package:bible/l10n/app_localizations.dart';
 import '../../domain/entities/verse.dart';
 import '../../domain/entities/search_filter.dart';
 import '../cubit/search_cubit.dart';
+import '../cubit/version_selector_cubit.dart';
 import '../cubit/bible_reader_cubit.dart' as bible_reader_cubit;
 import '../cubit/navigation_cubit.dart' as navigation_cubit;
 import '../../../../core/theme/app_theme.dart';
@@ -28,7 +29,12 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _onSearchChanged() {
-    context.read<SearchCubit>().search(_controller.text, filter: _activeFilter);
+    final versionState = context.read<VersionSelectorCubit>().state;
+    String? versionId;
+    if (versionState is VersionSelectorLoaded) {
+      versionId = versionState.selectedId;
+    }
+    context.read<SearchCubit>().search(_controller.text, filter: _activeFilter, versionId: versionId);
   }
 
   void _onFilterSelected(SearchFilter filter) {
@@ -327,11 +333,18 @@ class _SearchResultTile extends StatelessWidget {
               .read<navigation_cubit.NavigationCubit>();
           final navigator = Navigator.of(context);
 
+          final versionState = context.read<VersionSelectorCubit>().state;
+          String? versionId;
+          if (versionState is VersionSelectorLoaded) {
+            versionId = versionState.selectedId;
+          }
+
           bibleReaderCubit.loadBookChapter(
             book: verse.bookName,
             bookId: verse.bookId,
             chapter: verse.chapter,
             targetVerse: verse.number,
+            versionId: versionId ?? 'amh_standard',
           );
 
           navigationCubit.setTab(2);
