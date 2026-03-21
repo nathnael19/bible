@@ -113,6 +113,11 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
       // Fallback for default load
       String effectiveBookId = bookId ?? (book == 'ኦሪት ዘፍጥረት' ? '1' : '0');
       final bookmarks = _storage.getBookmarks(effectiveBookId, chapter);
+      
+      // Record reading event and stats
+      _storage.recordReadingEvent(book, chapter);
+      _storage.incrementVersesRead(verses.length);
+
       emit(BibleReaderLoaded(
         verses: verses,
         book: book,
