@@ -43,8 +43,8 @@ class ProfileScreen extends StatelessWidget {
             // --- Avatar Section ---
             BlocBuilder<AuthCubit, AuthState>(
               builder: (context, state) {
-                final initial = (state.username?.isNotEmpty == true) 
-                    ? state.username!.trim().substring(0, 1).toUpperCase() 
+                final initial = (state.username?.isNotEmpty == true)
+                    ? state.username!.trim().substring(0, 1).toUpperCase()
                     : '?';
                 return Center(
                   child: Stack(
@@ -56,7 +56,9 @@ class ProfileScreen extends StatelessWidget {
                           color: theme.colorScheme.primaryContainer,
                           borderRadius: BorderRadius.circular(30),
                           border: Border.all(
-                            color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                            color: theme.colorScheme.primary.withValues(
+                              alpha: 0.2,
+                            ),
                             width: 4,
                           ),
                         ),
@@ -70,30 +72,30 @@ class ProfileScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                  Positioned(
-                    bottom: -4,
-                    right: -4,
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: theme.colorScheme.shadow.withValues(
-                              alpha: 0.1,
-                            ),
-                            blurRadius: 4,
+                      Positioned(
+                        bottom: -4,
+                        right: -4,
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primary,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: theme.colorScheme.shadow.withValues(
+                                  alpha: 0.1,
+                                ),
+                                blurRadius: 4,
+                              ),
+                            ],
                           ),
-                        ],
+                          child: Icon(
+                            Icons.edit,
+                            color: theme.colorScheme.onPrimary,
+                            size: 14,
+                          ),
+                        ),
                       ),
-                      child: Icon(
-                        Icons.edit,
-                        color: theme.colorScheme.onPrimary,
-                        size: 14,
-                      ),
-                    ),
-                  ),
                     ],
                   ),
                 );
@@ -112,7 +114,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '${state.username?.toLowerCase().replaceAll(' ', '.')}@example.com',
+                      '${state.username?.toLowerCase().replaceAll(' ', '.')}@gmail.com',
                       style: tt.bodySmall!.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -125,7 +127,11 @@ class ProfileScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _ActionButton(label: l10n.profileDash, isActive: true, onTap: () {}),
+                _ActionButton(
+                  label: l10n.profileDash,
+                  isActive: true,
+                  onTap: () {},
+                ),
                 const SizedBox(width: 12),
                 _ActionButton(label: l10n.share, isActive: false, onTap: () {}),
               ],
@@ -251,7 +257,12 @@ class ProfileScreen extends StatelessWidget {
                           icon: Icons.note_alt_outlined,
                           label: l10n.myArchives,
                           onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => const DownloadsScreen()));
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const DownloadsScreen(),
+                              ),
+                            );
                           },
                         ),
                         _MenuTile(
@@ -275,7 +286,10 @@ class ProfileScreen extends StatelessWidget {
                           isLast: true,
                           onTap: () {
                             context.read<NavigationCubit>().setTab(2);
-                            Navigator.popUntil(context, (route) => route.isFirst);
+                            Navigator.popUntil(
+                              context,
+                              (route) => route.isFirst,
+                            );
                           },
                         ),
                       ],
@@ -311,7 +325,11 @@ class ProfileScreen extends StatelessWidget {
                           icon: Icons.settings_outlined,
                           label: l10n.appSettings,
                           onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Settings Coming Soon')));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Settings Coming Soon'),
+                              ),
+                            );
                           },
                         ),
                         _MenuTile(
@@ -427,7 +445,11 @@ class _ActionButton extends StatelessWidget {
   final String label;
   final bool isActive;
   final VoidCallback? onTap;
-  const _ActionButton({required this.label, required this.isActive, this.onTap});
+  const _ActionButton({
+    required this.label,
+    required this.isActive,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -444,7 +466,9 @@ class _ActionButton extends StatelessWidget {
           border: isActive
               ? null
               : Border.all(
-                  color: theme.colorScheme.outlineVariant.withValues(alpha: 0.1),
+                  color: theme.colorScheme.outlineVariant.withValues(
+                    alpha: 0.1,
+                  ),
                 ),
           boxShadow: isActive
               ? [
@@ -531,7 +555,7 @@ class _LevelCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-    
+
     // Dynamic Level Calculation
     final totalVerses = sl.get<LocalStorage>().getTotalVersesRead();
     final level = (totalVerses ~/ 100) + 1; // Level up every 100 verses
@@ -561,7 +585,7 @@ class _LevelCard extends StatelessWidget {
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                 child: Text(
+                child: Text(
                   '${l10n.levelTitle.toUpperCase()} $level',
                   style: const TextStyle(
                     color: Colors.white,
@@ -581,8 +605,8 @@ class _LevelCard extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-                  Text(
-                    l10n.growthLevel,
+          Text(
+            l10n.growthLevel,
             style: const TextStyle(
               color: Colors.white70,
               fontSize: 11,
