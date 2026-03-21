@@ -14,7 +14,7 @@ class ReadingPlansScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     
     return BlocProvider(
-      create: (context) => sl<ReadingPlanCubit>()..loadPlans(),
+      create: (context) => sl<ReadingPlanCubit>()..loadPlans(locale: l10n.localeName),
       child: Scaffold(
         appBar: AppBar(
           title: Text(l10n.readingPlans),
@@ -54,6 +54,7 @@ class _ReadingPlanCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     
     return GestureDetector(
       onTap: () {
@@ -93,7 +94,7 @@ class _ReadingPlanCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 Text(
-                  '${plan.durationDays} Days',
+                  l10n.daysCount(plan.durationDays),
                   style: theme.textTheme.labelSmall,
                 ),
               ],
@@ -124,7 +125,7 @@ class _ReadingPlanCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              '${(progress * 100).toInt()}% completed',
+              l10n.percentCompleted((progress * 100).toInt()),
               style: theme.textTheme.labelSmall?.copyWith(
                 color: theme.colorScheme.primary,
                 fontWeight: FontWeight.bold,
