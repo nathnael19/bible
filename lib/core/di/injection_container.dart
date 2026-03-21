@@ -17,6 +17,9 @@ import '../../features/bible_reader/presentation/cubit/bookmarks_cubit.dart';
 import '../../features/bible_reader/presentation/cubit/locale_cubit.dart';
 import '../../features/auth/presentation/cubit/auth_cubit.dart';
 import '../../features/onboarding/presentation/cubit/onboarding_cubit.dart';
+import '../../features/reading_plans/data/repositories/reading_plan_repository_impl.dart';
+import '../../features/reading_plans/domain/repositories/i_reading_plan_repository.dart';
+import '../../features/reading_plans/presentation/cubit/reading_plan_cubit.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/services/local_storage.dart';
@@ -38,6 +41,9 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<IBibleRepository>(
     () => BibleRepositoryImpl(sl()),
   );
+  sl.registerLazySingleton<IReadingPlanRepository>(
+    () => ReadingPlanRepositoryImpl(sl()),
+  );
 
   // ── Use cases ─────────────────────────────────────────────────────────────
   sl.registerLazySingleton(() => GetBibleVersions(sl()));
@@ -56,6 +62,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => ThemeCubit(sl()));
   sl.registerLazySingleton(() => LocaleCubit(sl()));
   sl.registerLazySingleton(() => OnboardingCubit(sl()));
+  sl.registerFactory(() => ReadingPlanCubit(sl()));
 }
 
 
