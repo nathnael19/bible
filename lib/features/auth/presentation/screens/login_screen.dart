@@ -251,9 +251,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         icon: Icons.g_mobiledata,
                         label: 'Google',
                         onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Google Login Coming Soon')),
-                          );
+                          context.read<AuthCubit>().signInWithGoogle();
                         },
                       ),
                     ),
