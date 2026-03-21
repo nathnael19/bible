@@ -11,15 +11,18 @@ class ReadingPlanRepositoryImpl implements IReadingPlanRepository {
   ReadingPlanRepositoryImpl(this._localStorage);
 
   @override
-  Future<List<ReadingPlan>> getReadingPlans() async {
-    final String response = await rootBundle.loadString('assets/bible/reading_plans.json');
+  Future<List<ReadingPlan>> getReadingPlans({String locale = 'en'}) async {
+    final String assetPath = locale == 'am' 
+        ? 'assets/bible/reading_plans_am.json' 
+        : 'assets/bible/reading_plans_en.json';
+    final String response = await rootBundle.loadString(assetPath);
     final List<dynamic> data = json.decode(response);
     return data.map((json) => ReadingPlanModel.fromJson(json)).toList();
   }
 
   @override
-  Future<ReadingPlan?> getReadingPlanById(String id) async {
-    final plans = await getReadingPlans();
+  Future<ReadingPlan?> getReadingPlanById(String id, {String locale = 'en'}) async {
+    final plans = await getReadingPlans(locale: locale);
     return plans.where((p) => p.id == id).firstOrNull;
   }
 
