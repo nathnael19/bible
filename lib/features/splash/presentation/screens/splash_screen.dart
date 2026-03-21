@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:bible/l10n/app_localizations.dart';
 import '../../../../core/theme/app_theme.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -47,6 +48,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -91,7 +93,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   const SizedBox(height: 48),
                   // Ethiopic Text
                   Text(
-                    'ሳባ ቅዱስ ስነ-ጽሁፍ',
+                    l10n.splashTitle,
                     style: GoogleFonts.notoSerifEthiopic(
                       fontSize: 32,
                       fontWeight: FontWeight.w600,
@@ -102,7 +104,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   const SizedBox(height: 8),
                   // English Subtext
                   Text(
-                    'SABA SACRED SCRIPT',
+                    l10n.splashSubtitle,
                     style: GoogleFonts.inter(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -144,7 +146,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'ILLUMINATING THE WORD',
+                        l10n.splashTagline,
                         style: GoogleFonts.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
