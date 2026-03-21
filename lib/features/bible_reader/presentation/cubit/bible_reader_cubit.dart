@@ -123,6 +123,10 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
       
       // Record reading event and stats
       _storage.recordReadingEvent(book, effectiveBookId, chapter);
+      _storage.logActivity('chapter', {
+        'bookId': effectiveBookId,
+        'chapter': chapter,
+      });
       _storage.incrementVersesRead(verses.length);
 
       // Save last read location
@@ -177,6 +181,11 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
         newHighlights.remove(verseNumber);
       } else {
         newBookmarks.add(verseNumber);
+        _storage.logActivity('bookmark', {
+          'bookId': loaded.bookId,
+          'chapter': loaded.chapter,
+          'verse': verseNumber,
+        });
         // Automatically highlight with a subtle version of the primary color
         // Assuming we are in a context where we can't easily get the theme here,
         // we'll use a standard gold/burgundy hex if needed, 
