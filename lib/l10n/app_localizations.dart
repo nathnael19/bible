@@ -689,7 +689,7 @@ abstract class AppLocalizations {
   /// No description provided for @gospelDescriptor.
   ///
   /// In en, this message translates to:
-  /// **'The Gospel of our Lord Jesus Christ'**
+  /// **'The Gospel according to John'**
   String get gospelDescriptor;
 
   /// No description provided for @nextChapters.
@@ -731,7 +731,7 @@ abstract class AppLocalizations {
   /// No description provided for @johnGospel.
   ///
   /// In en, this message translates to:
-  /// **'Gospel of John'**
+  /// **'John\'s Gospel'**
   String get johnGospel;
 
   /// No description provided for @noDataFound.
@@ -985,6 +985,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit'**
   String get edit;
+
+  /// No description provided for @daysCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 Day} other{{count} Days}}'**
+  String daysCount(int count);
+
+  /// No description provided for @percentCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% completed'**
+  String percentCompleted(int percent);
+
+  /// No description provided for @overallProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Progress'**
+  String get overallProgress;
+
+  /// No description provided for @dayAbbreviation.
+  ///
+  /// In en, this message translates to:
+  /// **'DAY'**
+  String get dayAbbreviation;
+
+  /// No description provided for @featuredVerseContent.
+  ///
+  /// In en, this message translates to:
+  /// **'You are the light of the world. A city set on a hill cannot be hidden.'**
+  String get featuredVerseContent;
+
+  /// No description provided for @featuredVerseReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Matthew 5:14'**
+  String get featuredVerseReference;
+
+  /// No description provided for @featuredVerseBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Gospel of Matthew'**
+  String get featuredVerseBook;
+
+  /// No description provided for @featuredVerseQuery.
+  ///
+  /// In en, this message translates to:
+  /// **'light'**
+  String get featuredVerseQuery;
+
+  /// No description provided for @recentActivity1Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Psalms - Get-9'**
+  String get recentActivity1Subtitle;
+
+  /// No description provided for @recentActivity2Subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Gospel of John 3'**
+  String get recentActivity2Subtitle;
+
+  /// No description provided for @continueReadingBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Genesis'**
+  String get continueReadingBook;
+
+  /// No description provided for @selectChapterDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Select the chapter you want and start reading.'**
+  String get selectChapterDesc;
+
+  /// No description provided for @aboutBook.
+  ///
+  /// In en, this message translates to:
+  /// **'About {book}'**
+  String aboutBook(Object book);
+
+  /// No description provided for @genesisDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Genesis is the first book of the Bible, recounting the creation of the world, the beginning of humanity, and God\'s first covenant with mankind.'**
+  String get genesisDescription;
+
+  /// No description provided for @keywordCreation.
+  ///
+  /// In en, this message translates to:
+  /// **'Creation'**
+  String get keywordCreation;
+
+  /// No description provided for @keywordNoah.
+  ///
+  /// In en, this message translates to:
+  /// **'Noah'**
+  String get keywordNoah;
+
+  /// No description provided for @keywordAbraham.
+  ///
+  /// In en, this message translates to:
+  /// **'Abraham'**
+  String get keywordAbraham;
+
+  /// No description provided for @keywordIsaac.
+  ///
+  /// In en, this message translates to:
+  /// **'Isaac'**
+  String get keywordIsaac;
+
+  /// No description provided for @keywordJacob.
+  ///
+  /// In en, this message translates to:
+  /// **'Jacob'**
+  String get keywordJacob;
+
+  /// No description provided for @keywordJoseph.
+  ///
+  /// In en, this message translates to:
+  /// **'Joseph'**
+  String get keywordJoseph;
+
+  /// No description provided for @dailyReflectionQuote.
+  ///
+  /// In en, this message translates to:
+  /// **'\"In the beginning was the Word...\"'**
+  String get dailyReflectionQuote;
+
+  /// No description provided for @dailyReflectionReference.
+  ///
+  /// In en, this message translates to:
+  /// **'— John 1:1'**
+  String get dailyReflectionReference;
+
+  /// No description provided for @oldTranslation.
+  ///
+  /// In en, this message translates to:
+  /// **'1954 Translation (Old)'**
+  String get oldTranslation;
+
+  /// No description provided for @chapterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter'**
+  String get chapterLabel;
+
+  /// No description provided for @geeNumber1.
+  ///
+  /// In en, this message translates to:
+  /// **'1'**
+  String get geeNumber1;
+
+  /// No description provided for @geeNumber2.
+  ///
+  /// In en, this message translates to:
+  /// **'2'**
+  String get geeNumber2;
+
+  /// No description provided for @geeNumber3.
+  ///
+  /// In en, this message translates to:
+  /// **'3'**
+  String get geeNumber3;
+
+  /// No description provided for @geeNumber4.
+  ///
+  /// In en, this message translates to:
+  /// **'4'**
+  String get geeNumber4;
 }
 
 class _AppLocalizationsDelegate

@@ -307,7 +307,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nowPlaying => 'Now Playing';
 
   @override
-  String get gospelDescriptor => 'The Gospel of our Lord Jesus Christ';
+  String get gospelDescriptor => 'The Gospel according to John';
 
   @override
   String get nextChapters => 'Next Chapters';
@@ -328,7 +328,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sleep => 'Sleep';
 
   @override
-  String get johnGospel => 'Gospel of John';
+  String get johnGospel => 'John\'s Gospel';
 
   @override
   String get noDataFound => 'No data found.';
@@ -462,4 +462,103 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get edit => 'Edit';
+
+  @override
+  String daysCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Days',
+      one: '1 Day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String percentCompleted(int percent) {
+    return '$percent% completed';
+  }
+
+  @override
+  String get overallProgress => 'Overall Progress';
+
+  @override
+  String get dayAbbreviation => 'DAY';
+
+  @override
+  String get featuredVerseContent =>
+      'You are the light of the world. A city set on a hill cannot be hidden.';
+
+  @override
+  String get featuredVerseReference => 'Matthew 5:14';
+
+  @override
+  String get featuredVerseBook => 'Gospel of Matthew';
+
+  @override
+  String get featuredVerseQuery => 'light';
+
+  @override
+  String get recentActivity1Subtitle => 'Psalms - Get-9';
+
+  @override
+  String get recentActivity2Subtitle => 'Gospel of John 3';
+
+  @override
+  String get continueReadingBook => 'Genesis';
+
+  @override
+  String get selectChapterDesc =>
+      'Select the chapter you want and start reading.';
+
+  @override
+  String aboutBook(Object book) {
+    return 'About $book';
+  }
+
+  @override
+  String get genesisDescription =>
+      'Genesis is the first book of the Bible, recounting the creation of the world, the beginning of humanity, and God\'s first covenant with mankind.';
+
+  @override
+  String get keywordCreation => 'Creation';
+
+  @override
+  String get keywordNoah => 'Noah';
+
+  @override
+  String get keywordAbraham => 'Abraham';
+
+  @override
+  String get keywordIsaac => 'Isaac';
+
+  @override
+  String get keywordJacob => 'Jacob';
+
+  @override
+  String get keywordJoseph => 'Joseph';
+
+  @override
+  String get dailyReflectionQuote => '\"In the beginning was the Word...\"';
+
+  @override
+  String get dailyReflectionReference => '— John 1:1';
+
+  @override
+  String get oldTranslation => '1954 Translation (Old)';
+
+  @override
+  String get chapterLabel => 'Chapter';
+
+  @override
+  String get geeNumber1 => '1';
+
+  @override
+  String get geeNumber2 => '2';
+
+  @override
+  String get geeNumber3 => '3';
+
+  @override
+  String get geeNumber4 => '4';
 }

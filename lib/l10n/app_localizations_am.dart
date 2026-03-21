@@ -304,7 +304,7 @@ class AppLocalizationsAm extends AppLocalizations {
   String get nowPlaying => 'አሁን በመጫወት ላይ';
 
   @override
-  String get gospelDescriptor => 'የጌታችን የኢየሱስ ክርስቶስ ወንጌል';
+  String get gospelDescriptor => 'የዮሐንስ መልእክት';
 
   @override
   String get nextChapters => 'የሚቀጥሉት ምዕራፎች';
@@ -316,7 +316,7 @@ class AppLocalizationsAm extends AppLocalizations {
   String get chapterTwo => 'ምዕራፍ ሁለት';
 
   @override
-  String get chapterThree => 'ምዕራፍ ሶስት';
+  String get chapterThree => 'ምዕራፍ ሦስት';
 
   @override
   String get chapterFour => 'ምዕራፍ አራት';
@@ -459,4 +459,102 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get edit => 'አስተካክል';
+
+  @override
+  String daysCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ቀናት',
+      one: '1 ቀን',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String percentCompleted(int percent) {
+    return '$percent% ተጠናቋል';
+  }
+
+  @override
+  String get overallProgress => 'አጠቃላይ ዕድገት';
+
+  @override
+  String get dayAbbreviation => 'ቀን';
+
+  @override
+  String get featuredVerseContent =>
+      'እናንተ የዓለም ብርሃን ናችሁ። በተራራ ላይ ያለች ከተማ ልትሰወር አትችልም::';
+
+  @override
+  String get featuredVerseReference => 'ምዕራፍ ፭ : ቁጥር ፲፬';
+
+  @override
+  String get featuredVerseBook => 'የማቴዎስ ወንጌል';
+
+  @override
+  String get featuredVerseQuery => 'ብርሃን';
+
+  @override
+  String get recentActivity1Subtitle => 'መዝሙረ ዳዊት  Get-፱';
+
+  @override
+  String get recentActivity2Subtitle => 'ወንጌል ቅዱስ ዮሐንስ ፫';
+
+  @override
+  String get continueReadingBook => 'ኦሪት ዘፍጥረት';
+
+  @override
+  String get selectChapterDesc => 'የሚፈልጉትን ምዕራፍ በመንካት ንባብዎን ይጀምሩ።';
+
+  @override
+  String aboutBook(Object book) {
+    return 'ስለ $book';
+  }
+
+  @override
+  String get genesisDescription =>
+      'ኦሪት ዘፍጥረት የመጽሐፍ ቅዱስ የመጀመሪያው መጽሐፍ ሲሆን የዓለምን መፈጠር፣ የሰውን ልጅ መጀመሪያ እና የእግዚአብሔርን ከሰው ልጆች ጋር ያለውን የመጀመሪያ ኪዳን ይተርካል።';
+
+  @override
+  String get keywordCreation => 'ፍጥረት';
+
+  @override
+  String get keywordNoah => 'ኖኅ';
+
+  @override
+  String get keywordAbraham => 'አብርሃም';
+
+  @override
+  String get keywordIsaac => 'ይስሐቅ';
+
+  @override
+  String get keywordJacob => 'ያዕቆብ';
+
+  @override
+  String get keywordJoseph => 'ዮሴፍ';
+
+  @override
+  String get dailyReflectionQuote => '\"ቃልም በመጀመሪያ ነበረ...\"';
+
+  @override
+  String get dailyReflectionReference => '— ዮሐንስ 1:1';
+
+  @override
+  String get oldTranslation => 'የ1954 ትርጉም (Old)';
+
+  @override
+  String get chapterLabel => 'ምዕራፍ';
+
+  @override
+  String get geeNumber1 => '፩';
+
+  @override
+  String get geeNumber2 => '፪';
+
+  @override
+  String get geeNumber3 => '፫';
+
+  @override
+  String get geeNumber4 => '፬';
 }
