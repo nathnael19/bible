@@ -88,7 +88,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildReadingPlans(AppLocalizations l10n) {
     return SizedBox(
-      height: 180,
+      height: 220,
       child: ListView(
         scrollDirection: Axis.horizontal,
         clipBehavior: Clip.none,
@@ -399,6 +399,8 @@ class _ReadingPlanCard extends StatelessWidget {
               fontWeight: FontWeight.bold,
               color: SabaColors.onSurface,
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 4),
           Text(
