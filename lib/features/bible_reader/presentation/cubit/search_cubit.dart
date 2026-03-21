@@ -39,7 +39,7 @@ class SearchCubit extends Cubit<SearchState> {
 
   SearchCubit(this._searchVerses) : super(SearchInitial());
 
-  Future<void> search(String query, {SearchFilter filter = SearchFilter.all}) async {
+  Future<void> search(String query, {SearchFilter filter = SearchFilter.all, String? versionId}) async {
     if (query.trim().isEmpty) {
       emit(SearchInitial());
       return;
@@ -47,7 +47,7 @@ class SearchCubit extends Cubit<SearchState> {
 
     emit(SearchLoading());
     try {
-      final results = await _searchVerses(query, filter: filter);
+      final results = await _searchVerses(query, filter: filter, versionId: versionId ?? 'amh_standard');
       emit(SearchLoaded(results));
     } catch (e) {
       emit(SearchError(e.toString()));
