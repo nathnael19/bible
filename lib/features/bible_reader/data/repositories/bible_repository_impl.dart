@@ -15,13 +15,13 @@ class BibleRepositoryImpl implements IBibleRepository {
   }
 
   @override
-  Future<List<Book>> getBooks() async {
-    return localDataSource.getBooks();
+  Future<List<Book>> getBooks({String versionId = 'amh_standard'}) async {
+    return localDataSource.getBooks(versionId: versionId);
   }
 
   @override
-  Future<int> getChapterCount(String book) async {
-    return localDataSource.getChapterCount(book);
+  Future<int> getChapterCount(String book, {String versionId = 'amh_standard'}) async {
+    return localDataSource.getChapterCount(book, versionId: versionId);
   }
 
   @override
@@ -38,7 +38,10 @@ class BibleRepositoryImpl implements IBibleRepository {
   }
 
   @override
-  Future<List<Verse>> searchVerses(String query, {SearchFilter filter = SearchFilter.all}) async {
-    return localDataSource.searchVerses(query, filter: filter);
+  Future<List<Verse>> searchVerses(String query, {
+    String versionId = 'amh_standard',
+    SearchFilter filter = SearchFilter.all,
+  }) async {
+    return localDataSource.searchVerses(query, versionId: versionId, filter: filter);
   }
 }
