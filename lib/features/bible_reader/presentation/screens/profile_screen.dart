@@ -6,6 +6,7 @@ import '../../../../core/services/local_storage.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../cubit/bookmarks_cubit.dart';
 import '../cubit/locale_cubit.dart';
+import '../cubit/navigation_cubit.dart';
 import 'downloads_screen.dart';
 import 'bookmarked_screen.dart';
 
@@ -124,9 +125,9 @@ class ProfileScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _ActionButton(label: l10n.profileDash, isActive: true),
+                _ActionButton(label: l10n.profileDash, isActive: true, onTap: () {}),
                 const SizedBox(width: 12),
-                _ActionButton(label: l10n.share, isActive: false),
+                _ActionButton(label: l10n.share, isActive: false, onTap: () {}),
               ],
             ),
 
@@ -249,6 +250,9 @@ class ProfileScreen extends StatelessWidget {
                         _MenuTile(
                           icon: Icons.note_alt_outlined,
                           label: l10n.myArchives,
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => const DownloadsScreen()));
+                          },
                         ),
                         _MenuTile(
                           icon: Icons.bookmark_outline,
@@ -269,6 +273,10 @@ class ProfileScreen extends StatelessWidget {
                           subLabel:
                               '${sl.get<LocalStorage>().getLastReadBook() ?? l10n.notReadYet} ${l10n.chapter} ${sl.get<LocalStorage>().getLastReadChapter()}',
                           isLast: true,
+                          onTap: () {
+                            context.read<NavigationCubit>().setTab(2);
+                            Navigator.popUntil(context, (route) => route.isFirst);
+                          },
                         ),
                       ],
                     ),
@@ -302,6 +310,9 @@ class ProfileScreen extends StatelessWidget {
                         _MenuTile(
                           icon: Icons.settings_outlined,
                           label: l10n.appSettings,
+                          onTap: () {
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Settings Coming Soon')));
+                          },
                         ),
                         _MenuTile(
                           icon: Icons.language_outlined,
@@ -415,42 +426,46 @@ class ProfileScreen extends StatelessWidget {
 class _ActionButton extends StatelessWidget {
   final String label;
   final bool isActive;
-  const _ActionButton({required this.label, required this.isActive});
+  final VoidCallback? onTap;
+  const _ActionButton({required this.label, required this.isActive, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-      decoration: BoxDecoration(
-        color: isActive
-            ? theme.colorScheme.primary
-            : theme.colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
-        border: isActive
-            ? null
-            : Border.all(
-                color: theme.colorScheme.outlineVariant.withValues(alpha: 0.1),
-              ),
-        boxShadow: isActive
-            ? [
-                BoxShadow(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-            : null,
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+        decoration: BoxDecoration(
           color: isActive
-              ? theme.colorScheme.onPrimary
-              : theme.colorScheme.onSurface,
-          fontWeight: FontWeight.bold,
-          fontSize: 13,
-          fontFamily: 'Noto Serif Ethiopic',
+              ? theme.colorScheme.primary
+              : theme.colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(12),
+          border: isActive
+              ? null
+              : Border.all(
+                  color: theme.colorScheme.outlineVariant.withValues(alpha: 0.1),
+                ),
+          boxShadow: isActive
+              ? [
+                  BoxShadow(
+                    color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : null,
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isActive
+                ? theme.colorScheme.onPrimary
+                : theme.colorScheme.onSurface,
+            fontWeight: FontWeight.bold,
+            fontSize: 13,
+            fontFamily: 'Noto Serif Ethiopic',
+          ),
         ),
       ),
     );
