@@ -31,15 +31,21 @@ class VerseCard extends StatelessWidget {
       onDoubleTap: onDoubleTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        padding: const EdgeInsets.all(12),
+        margin: const EdgeInsets.symmetric(vertical: 0.0), // Reduced from 4
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12,
+        ), // Reduced vertical from 12
         decoration: BoxDecoration(
           color: isActive
               ? Theme.of(context).colorScheme.surfaceContainerHigh
               : highlightColor ?? Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: isActive
-              ? Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3))
+              ? Border.all(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.3),
+                )
               : null,
         ),
         child: IntrinsicHeight(
@@ -62,31 +68,31 @@ class VerseCard extends StatelessWidget {
               // ── Verse number (editorial large numeral) ─────────────────
               SizedBox(
                 width: 36,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Text(
-                          '${verse.number}',
-                          style: tt.bodySmall!.copyWith(
-                            fontSize: 13 * fontSizeFactor,
-                            color: Theme.of(context).colorScheme.secondary,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Noto Serif Ethiopic',
-                          ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        '${verse.number}',
+                        style: tt.bodySmall!.copyWith(
+                          fontSize: 13 * fontSizeFactor,
+                          color: Theme.of(context).colorScheme.secondary,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Noto Serif Ethiopic',
                         ),
                       ),
-                      if (isBookmarked) ...[
-                        const SizedBox(height: 4),
-                        Icon(
-                          Icons.bookmark_rounded,
-                          size: 14,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ],
+                    ),
+                    if (isBookmarked) ...[
+                      const SizedBox(height: 4),
+                      Icon(
+                        Icons.bookmark_rounded,
+                        size: 14,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                     ],
-                  ),
+                  ],
                 ),
+              ),
               const SizedBox(width: 12),
               // ── Verse text ────────────────────────────────────────────
               Expanded(
