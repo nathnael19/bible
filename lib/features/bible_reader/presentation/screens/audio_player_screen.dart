@@ -161,7 +161,7 @@ class _PlayerMetadata extends StatelessWidget {
     return Column(
       children: [
         Text(
-          '${l10n.chapter} ፩ (1)',
+          '${l10n.chapterLabel} ፩ (1)',
           style: tt.headlineSmall!.copyWith(
             fontWeight: FontWeight.bold,
             fontFamily: 'Noto Serif Ethiopic',
@@ -378,7 +378,7 @@ class _PlaylistSection extends StatelessWidget {
         const SizedBox(height: 20),
         // Active Tile
         _PlayingNextTile(
-          number: '፩',
+          number: l10n.geeNumber1,
           title: l10n.chapterOne,
           subtitle: l10n.nowPlaying,
           duration: '12:45',
@@ -386,7 +386,7 @@ class _PlaylistSection extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         _PlayingNextTile(
-          number: '፪',
+          number: l10n.geeNumber2,
           title: l10n.chapterTwo,
           duration: '10:30',
         ),
@@ -395,7 +395,7 @@ class _PlaylistSection extends StatelessWidget {
           children: [
             Expanded(
               child: _SmallNextCard(
-                number: '፫',
+                number: l10n.geeNumber3,
                 title: l10n.chapterThree,
                 duration: '09:15',
               ),
@@ -403,7 +403,7 @@ class _PlaylistSection extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: _SmallNextCard(
-                number: '፬',
+                number: l10n.geeNumber4,
                 title: l10n.chapterFour,
                 duration: '14:20',
               ),
