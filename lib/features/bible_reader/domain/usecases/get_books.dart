@@ -6,7 +6,7 @@ class GetBooks {
 
   GetBooks(this.repository);
 
-  Future<List<Book>> call() async {
-    return repository.getBooks();
+  Future<List<Book>> call({String versionId = 'amh_standard'}) async {
+    return repository.getBooks(versionId: versionId);
   }
 }
