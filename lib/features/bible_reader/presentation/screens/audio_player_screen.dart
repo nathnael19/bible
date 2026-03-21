@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bible/l10n/app_localizations.dart';
 
 class AudioPlayerScreen extends StatefulWidget {
   const AudioPlayerScreen({super.key});
@@ -82,6 +83,7 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
 class _PlayerArtwork extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Container(
       width: double.infinity,
@@ -124,7 +126,7 @@ class _PlayerArtwork extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'አሁን በመጫወት ላይ',
+                  l10n.nowPlaying,
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.7),
                     fontSize: 12,
@@ -133,7 +135,7 @@ class _PlayerArtwork extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'የዮሐንስ ወንጌል',
+                  l10n.johnGospel,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 28,
@@ -153,12 +155,13 @@ class _PlayerArtwork extends StatelessWidget {
 class _PlayerMetadata extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final tt = theme.textTheme;
     return Column(
       children: [
         Text(
-          'ምዕራፍ ፩ (1)',
+          '${l10n.chapter} ፩ (1)',
           style: tt.headlineSmall!.copyWith(
             fontWeight: FontWeight.bold,
             fontFamily: 'Noto Serif Ethiopic',
@@ -166,7 +169,7 @@ class _PlayerMetadata extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          'የጌታችን የኢየሱስ ክርስቶስ ወንጌል',
+          l10n.gospelDescriptor,
           style: tt.bodySmall!.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
             fontFamily: 'Noto Serif Ethiopic',
@@ -288,6 +291,7 @@ class _PlayerSecondaryControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         Expanded(
@@ -301,7 +305,7 @@ class _PlayerSecondaryControls extends StatelessWidget {
         Expanded(
           child: _SecondaryAction(
             icon: Icons.nights_stay_outlined,
-            label: 'Sleep',
+            label: l10n.sleep,
             onTap: () {},
           ),
         ),
@@ -352,6 +356,7 @@ class _PlaylistSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final tt = theme.textTheme;
     return Column(
@@ -361,7 +366,7 @@ class _PlaylistSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'ተከታታይ ምዕራፎች',
+              l10n.nextChapters,
               style: tt.titleMedium!.copyWith(
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Noto Serif Ethiopic',
@@ -372,17 +377,17 @@ class _PlaylistSection extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         // Active Tile
-        const _PlayingNextTile(
+        _PlayingNextTile(
           number: '፩',
-          title: 'ምዕራፍ አንድ',
-          subtitle: 'አሁን በመጫወት ላይ',
+          title: l10n.chapterOne,
+          subtitle: l10n.nowPlaying,
           duration: '12:45',
           isActive: true,
         ),
         const SizedBox(height: 12),
-        const _PlayingNextTile(
+        _PlayingNextTile(
           number: '፪',
-          title: 'ምዕራፍ ሁለት',
+          title: l10n.chapterTwo,
           duration: '10:30',
         ),
         const SizedBox(height: 12),
@@ -391,7 +396,7 @@ class _PlaylistSection extends StatelessWidget {
             Expanded(
               child: _SmallNextCard(
                 number: '፫',
-                title: 'ምዕራፍ ሦስት',
+                title: l10n.chapterThree,
                 duration: '09:15',
               ),
             ),
@@ -399,7 +404,7 @@ class _PlaylistSection extends StatelessWidget {
             Expanded(
               child: _SmallNextCard(
                 number: '፬',
-                title: 'ምዕራፍ አራት',
+                title: l10n.chapterFour,
                 duration: '14:20',
               ),
             ),
