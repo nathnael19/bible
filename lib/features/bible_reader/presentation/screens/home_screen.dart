@@ -11,6 +11,7 @@ import 'search_screen.dart';
 import 'library_screen.dart';
 import '../../../reading_plans/presentation/screens/plan_detail_screen.dart';
 import '../../../../core/services/local_storage.dart';
+import '../../../../core/services/daily_verse_service.dart';
 import '../../../reading_plans/data/datasources/scripture_reference_mapper.dart';
 
 /// Home / Discover screen redesigned to match reference image.
@@ -260,6 +261,10 @@ class _DailyVerseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final verse = DailyVerseService.getToday();
+    final now = DateTime.now();
+    final dayName = _getDayName(l10n.localeName, now.weekday);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -279,7 +284,7 @@ class _DailyVerseCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.auto_awesome, color: Colors.white, size: 20),
+              const Icon(Icons.auto_awesome, color: Colors.white, size: 18),
               const SizedBox(width: 8),
               Text(
                 l10n.dailyVerse,
@@ -288,28 +293,65 @@ class _DailyVerseCard extends StatelessWidget {
                   letterSpacing: 1.2,
                 ),
               ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  dayName,
+                  style: SabaTypography.labelSmall().copyWith(
+                    color: Colors.white,
+                    fontSize: 11,
+                  ),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 20),
           Text(
-            '«እግዚአብሔር ብርሃኔና መድኃኒቴ ነው፤ የሚያስፈራኝ ማን ነው?»',
+            verse.text,
             style: SabaTypography.headlineMedium().copyWith(
               color: Colors.white,
               fontWeight: FontWeight.bold,
               fontFamily: 'Noto Serif Ethiopic',
+              height: 1.4,
+              fontSize: 18,
             ),
           ),
           const SizedBox(height: 16),
-          Text(
-            'መዝሙረ ዳዊት ፳፯:፩',
-            style: SabaTypography.bodyMedium().copyWith(
-              color: Colors.white.withValues(alpha: 0.8),
-              fontWeight: FontWeight.w600,
-            ),
+          Row(
+            children: [
+              Container(
+                width: 30,
+                height: 2,
+                color: Colors.white.withValues(alpha: 0.5),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                verse.reference,
+                style: SabaTypography.bodyMedium().copyWith(
+                  color: Colors.white.withValues(alpha: 0.9),
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Noto Serif Ethiopic',
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
+  }
+
+  String _getDayName(String locale, int weekday) {
+    if (locale == 'am') {
+      const amharic = ['ሰኞ', 'ማክሰኞ', 'ረቡዕ', 'ሐሙስ', 'አርብ', 'ቅዳሜ', 'እሁድ'];
+      return amharic[(weekday - 1) % 7];
+    }
+    const english = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    return english[(weekday - 1) % 7];
   }
 }
 
