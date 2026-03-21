@@ -66,4 +66,59 @@ class LocalStorage {
   String? getUsername() => _prefs.getString(_usernameKey);
   Future<void> setUsername(String value) async => await _prefs.setString(_usernameKey, value);
   Future<void> clearUsername() async => await _prefs.remove(_usernameKey);
+
+  // ── Stats & History ────────────────────────────────────────────────────────
+  static const String _lastReadBookKey = 'last_read_book';
+  static const String _lastReadChapterKey = 'last_read_chapter';
+  static const String _totalVersesReadKey = 'total_verses_read';
+  static const String _readingHistoryKey = 'reading_history'; // List of ISO strings
+
+  Future<void> recordReadingEvent(String book, int chapter) async {
+    await _prefs.setString(_lastReadBookKey, book);
+    await _prefs.setInt(_lastReadChapterKey, chapter);
+
+    final today = DateTime.now().toIso8601String().split('T')[0];
+    final history = _prefs.getStringList(_readingHistoryKey) ?? [];
+    if (!history.contains(today)) {
+      history.add(today);
+      await _prefs.setStringList(_readingHistoryKey, history);
+    }
+  }
+
+  String? getLastReadBook() => _prefs.getString(_lastReadBookKey);
+  int getLastReadChapter() => _prefs.getInt(_lastReadChapterKey) ?? 1;
+
+  int getTotalVersesRead() => _prefs.getInt(_totalVersesReadKey) ?? 0;
+  Future<void> incrementVersesRead(int count) async {
+    final current = getTotalVersesRead();
+    await _prefs.setInt(_totalVersesReadKey, current + count);
+  }
+
+  List<String> getReadingHistory() => _prefs.getStringList(_readingHistoryKey) ?? [];
+
+  int calculateStreak() {
+    final history = getReadingHistory().toList();
+    if (history.isEmpty) return 0;
+    
+    // Sort descending
+    history.sort((a, b) => b.compareTo(a));
+    
+    final today = DateTime.now().toIso8601String().split('T')[0];
+    final yesterday = DateTime.now().subtract(const Duration(days: 1)).toIso8601String().split('T')[0];
+    
+    // If last entry is not today or yesterday, streak is broken
+    if (history.first != today && history.first != yesterday) return 0;
+    
+    int streak = 1;
+    for (int i = 0; i < history.length - 1; i++) {
+      final current = DateTime.parse(history[i]);
+      final next = DateTime.parse(history[i + 1]);
+      if (current.difference(next).inDays == 1) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+    return streak;
+  }
 }
