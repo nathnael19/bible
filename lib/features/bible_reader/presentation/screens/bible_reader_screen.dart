@@ -231,8 +231,18 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
         _verseKeys.putIfAbsent(verse.number, () => GlobalKey());
       }
 
-      return CustomScrollView(
-        controller: _scrollController,
+      return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onHorizontalDragEnd: (details) {
+          if (details.primaryVelocity == null) return;
+          if (details.primaryVelocity! < -300) {
+            context.read<BibleReaderCubit>().nextChapter();
+          } else if (details.primaryVelocity! > 300) {
+            context.read<BibleReaderCubit>().previousChapter();
+          }
+        },
+        child: CustomScrollView(
+          controller: _scrollController,
         cacheExtent: 4000,
         // Using a key that changes with book/chapter forces a fresh tree for the list
         key: PageStorageKey('reader_${state.book}_${state.chapter}'),
@@ -285,9 +295,10 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
           ),
           const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
         ],
-      );
-    }
-    return const SizedBox.shrink();
+      ),
+    );
+  }
+  return const SizedBox.shrink();
   }
 
   Widget _buildScrubber(BuildContext context, BibleReaderState state) {
