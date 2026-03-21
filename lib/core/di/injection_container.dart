@@ -23,6 +23,7 @@ import '../../features/reading_plans/presentation/cubit/reading_plan_cubit.dart'
 
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/services/local_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 final sl = GetIt.instance;
 
@@ -58,7 +59,8 @@ Future<void> initDependencies() async {
   sl.registerFactory(() => LibraryCubit(sl()));
   sl.registerFactory(() => SearchCubit(sl()));
   sl.registerFactory(() => BookmarksCubit(sl(), sl(), sl()));
-  sl.registerLazySingleton(() => AuthCubit(sl()));
+  sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
+  sl.registerLazySingleton(() => AuthCubit(sl(), sl()));
   sl.registerLazySingleton(() => ThemeCubit(sl()));
   sl.registerLazySingleton(() => LocaleCubit(sl()));
   sl.registerLazySingleton(() => OnboardingCubit(sl()));
