@@ -58,14 +58,38 @@ class LocalStorage {
   Map<String, Set<int>> getAllBookmarksKeys() {
     final keys = _prefs.getKeys().where((k) => k.startsWith(_bookmarksPrefix));
     final allBookmarks = <String, Set<int>>{};
-    for (final key in keys) {
-      final list = _prefs.getStringList(key);
-      if (list != null) {
-        allBookmarks[key] = list.map((e) => int.parse(e)).toSet();
+    for (var key in keys) {
+      final parts = key.replaceFirst(_bookmarksPrefix, '').split('_');
+      if (parts.length == 2) {
+        allBookmarks[parts[0]] = getBookmarks(parts[0], int.parse(parts[1]));
       }
     }
     return allBookmarks;
   }
+
+  // ── Last Read Location ─────────────────────────────────────────────────────
+
+  static const String _lastReadBookKey = 'last_read_book';
+  static const String _lastReadBookIdKey = 'last_read_book_id';
+  static const String _lastReadChapterKey = 'last_read_chapter';
+
+  Future<void> saveLastReadLocation(String book, String bookId, int chapter) async {
+    await _prefs.setString(_lastReadBookKey, book);
+    await _prefs.setString(_lastReadBookIdKey, bookId);
+    await _prefs.setInt(_lastReadChapterKey, chapter);
+  }
+
+  Map<String, dynamic>? getLastReadLocation() {
+    final book = _prefs.getString(_lastReadBookKey);
+    final bookId = _prefs.getString(_lastReadBookIdKey);
+    final chapter = _prefs.getInt(_lastReadChapterKey);
+    if (book != null && bookId != null && chapter != null) {
+      return {'book': book, 'bookId': bookId, 'chapter': chapter};
+    }
+    return null;
+  }
+
+
 
   // ── Auth ───────────────────────────────────────────────────────────────────
   static const String _authKey = 'is_logged_in';
@@ -79,14 +103,13 @@ class LocalStorage {
   Future<void> clearUsername() async => await _prefs.remove(_usernameKey);
 
   // ── Stats & History ────────────────────────────────────────────────────────
-  static const String _lastReadBookKey = 'last_read_book';
-  static const String _lastReadChapterKey = 'last_read_chapter';
+  // Constants defined above
+
   static const String _totalVersesReadKey = 'total_verses_read';
   static const String _readingHistoryKey = 'reading_history'; // List of ISO strings
 
-  Future<void> recordReadingEvent(String book, int chapter) async {
-    await _prefs.setString(_lastReadBookKey, book);
-    await _prefs.setInt(_lastReadChapterKey, chapter);
+  Future<void> recordReadingEvent(String book, String bookId, int chapter) async {
+    await saveLastReadLocation(book, bookId, chapter);
 
     final today = DateTime.now().toIso8601String().split('T')[0];
     final history = _prefs.getStringList(_readingHistoryKey) ?? [];
@@ -97,6 +120,7 @@ class LocalStorage {
   }
 
   String? getLastReadBook() => _prefs.getString(_lastReadBookKey);
+  String? getLastReadBookId() => _prefs.getString(_lastReadBookIdKey);
   int getLastReadChapter() => _prefs.getInt(_lastReadChapterKey) ?? 1;
 
   int getTotalVersesRead() => _prefs.getInt(_totalVersesReadKey) ?? 0;
@@ -106,6 +130,7 @@ class LocalStorage {
   }
 
   List<String> getReadingHistory() => _prefs.getStringList(_readingHistoryKey) ?? [];
+
 
   int calculateStreak() {
     final history = getReadingHistory().toList();
