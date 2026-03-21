@@ -9,6 +9,9 @@ import 'features/bible_reader/presentation/cubit/library_cubit.dart';
 import 'features/bible_reader/presentation/cubit/search_cubit.dart';
 import 'features/bible_reader/presentation/cubit/theme_cubit.dart';
 import 'features/bible_reader/presentation/cubit/bookmarks_cubit.dart';
+import 'features/auth/presentation/cubit/auth_cubit.dart';
+import 'features/auth/presentation/screens/login_screen.dart';
+import 'features/bible_reader/presentation/screens/app_shell.dart';
 
 
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -43,6 +46,7 @@ class BibleApp extends StatelessWidget {
         BlocProvider(create: (_) => sl<SearchCubit>()),
         BlocProvider(create: (_) => sl<ThemeCubit>()),
         BlocProvider(create: (_) => sl<BookmarksCubit>()..loadBookmarks()),
+        BlocProvider(create: (_) => sl<AuthCubit>()..checkAuthStatus()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, mode) {
@@ -52,9 +56,18 @@ class BibleApp extends StatelessWidget {
             theme: SabaTheme.light(),
             darkTheme: SabaTheme.dark(),
             themeMode: mode,
-            home: const SplashScreen(),
+            home: BlocBuilder<AuthCubit, AuthState>(
+              builder: (context, state) {
+                if (state.status == AuthStatus.initial) {
+                  return const SplashScreen();
+                }
+                if (state.status == AuthStatus.authenticated) {
+                  return const AppShell();
+                }
+                return const LoginScreen();
+              },
+            ),
           );
-
         },
       ),
     );
