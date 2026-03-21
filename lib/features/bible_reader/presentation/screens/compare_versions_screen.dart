@@ -18,10 +18,11 @@ class CompareVersionsScreen extends StatefulWidget {
 
 class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
   String _leftVersionId = 'amh_standard';
-  String _rightVersionId = 'amh_full';
+  String _rightVersionId = 'eng_kjv';
 
   List<Verse>? _leftVerses;
   List<Verse>? _rightVerses;
+  List<BibleVersion>? _allVersions;
   bool _isLoading = false;
 
   @override
@@ -38,16 +39,17 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
 
     try {
       final repository = sl<IBibleRepository>();
+      final allVersions = await repository.getBibleVersions();
 
       final results = await Future.wait([
         repository.getVerses(
           versionId: _leftVersionId,
-          book: readerState.book,
+          book: readerState.bookId,
           chapter: readerState.chapter,
         ),
         repository.getVerses(
           versionId: _rightVersionId,
-          book: readerState.book,
+          book: readerState.bookId,
           chapter: readerState.chapter,
         ),
       ]);
@@ -55,6 +57,7 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
       setState(() {
         _leftVerses = results[0];
         _rightVerses = results[1];
+        _allVersions = allVersions;
         _isLoading = false;
       });
     } catch (e) {
@@ -203,13 +206,18 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
   }
 
   Widget _buildVersionSelectors(String title) {
-    final l10n = AppLocalizations.of(context)!;
-    final leftName = _leftVersionId == 'amh_standard'
-        ? l10n.amharicStandard
-        : l10n.oldTranslation;
-    final rightName = _rightVersionId == 'amh_standard'
-        ? l10n.amharicStandard
-        : l10n.oldTranslation;
+    String? leftName;
+    String? rightName;
+    
+    if (_allVersions != null) {
+      for (final v in _allVersions!) {
+        if (v.id == _leftVersionId) leftName = v.name;
+        if (v.id == _rightVersionId) rightName = v.name;
+      }
+    }
+    
+    leftName ??= _leftVersionId;
+    rightName ??= _rightVersionId;
 
     final theme = Theme.of(context);
     return Container(
