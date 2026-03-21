@@ -156,6 +156,7 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
       emit(loaded.copyWith(
         bookmarks: newBookmarks,
         highlights: newHighlights,
+        activeVerseNumber: const Value(null),
       ));
     }
   }
