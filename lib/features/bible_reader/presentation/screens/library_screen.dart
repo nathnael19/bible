@@ -1,3 +1,4 @@
+import 'package:bible/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,9 +13,10 @@ class LibraryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: _buildAppBar(context),
+      appBar: _buildAppBar(context, l10n),
       body: BlocBuilder<LibraryCubit, LibraryState>(
         builder: (context, state) {
           if (state is LibraryLoading) {
@@ -33,11 +35,11 @@ class LibraryScreen extends StatelessWidget {
 
             return CustomScrollView(
               slivers: [
-                const SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                   sliver: SliverToBoxAdapter(
                     child: _SectionHeader(
-                      title: 'ብሉይ ኪዳን',
+                      title: l10n.oldTestament,
                       subtitle: 'Old Testament',
                     ),
                   ),
@@ -65,11 +67,11 @@ class LibraryScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SliverPadding(
-                  padding: EdgeInsets.fromLTRB(24, 40, 24, 16),
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(24, 40, 24, 16),
                   sliver: SliverToBoxAdapter(
                     child: _SectionHeader(
-                      title: 'ሐዲስ ኪዳን',
+                      title: l10n.newTestament,
                       subtitle: 'New Testament',
                     ),
                   ),
@@ -97,9 +99,9 @@ class LibraryScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SliverPadding(
-                  padding: EdgeInsets.symmetric(vertical: 40, horizontal: 24),
-                  sliver: SliverToBoxAdapter(child: _DailyReflectionCard()),
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+                  sliver: const SliverToBoxAdapter(child: _DailyReflectionCard()),
                 ),
                 const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
               ],
@@ -198,14 +200,14 @@ class LibraryScreen extends StatelessWidget {
   }
 
 
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
+  PreferredSizeWidget _buildAppBar(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
     return AppBar(
       backgroundColor: theme.colorScheme.surface,
       elevation: 0,
       centerTitle: true,
       title: Text(
-        'መጻሕፍት',
+        l10n.books,
         style: TextStyle(
           color: theme.colorScheme.primary,
           fontWeight: FontWeight.bold,
@@ -338,6 +340,7 @@ class _DailyReflectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(32),
@@ -361,9 +364,9 @@ class _DailyReflectionCard extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Text(
-              'DAILY REFLECTION',
-              style: TextStyle(
+            child: Text(
+              l10n.dailyReflection.toUpperCase(),
+              style: const TextStyle(
                 color: Colors.white70,
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
@@ -407,9 +410,9 @@ class _DailyReflectionCard extends StatelessWidget {
               ),
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
             ),
-            child: const Text(
-              'አንብብ',
-              style: TextStyle(fontWeight: FontWeight.bold),
+            child: Text(
+              l10n.read,
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
         ],
