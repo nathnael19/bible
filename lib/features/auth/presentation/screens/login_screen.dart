@@ -1,4 +1,3 @@
-import 'package:bible/features/onboarding/presentation/cubit/onboarding_cubit.dart';
 import 'package:bible/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';

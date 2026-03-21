@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bible/l10n/app_localizations.dart';
 
 class DownloadsScreen extends StatelessWidget {
   const DownloadsScreen({super.key});
@@ -7,6 +8,7 @@ class DownloadsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final tt = theme.textTheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -18,7 +20,7 @@ class DownloadsScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'የድምጽ ቅጂዎች',
+          l10n.audioRecordings,
           style: TextStyle(
             color: theme.colorScheme.onSurface,
             fontWeight: FontWeight.bold,
@@ -42,7 +44,7 @@ class DownloadsScreen extends StatelessWidget {
                 const SizedBox(height: 32),
                 // --- Downloading Section ---
                 Text(
-                  'በውረድ ላይ ያሉ',
+                  l10n.downloading,
                   style: tt.titleMedium!.copyWith(
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Noto Serif Ethiopic',
@@ -57,7 +59,7 @@ class DownloadsScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'የወረዱ መጻሕፍት',
+                      l10n.downloadedBooks,
                       style: tt.titleMedium!.copyWith(
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Noto Serif Ethiopic',
@@ -66,8 +68,8 @@ class DownloadsScreen extends StatelessWidget {
                     TextButton.icon(
                       onPressed: () {},
                       icon: const Icon(Icons.delete_sweep_outlined, size: 18),
-                      label: const Text(
-                        'ሁሉንም አጥፋ',
+                      label: Text(
+                        l10n.clearAll,
                         style: TextStyle(fontSize: 12, fontFamily: 'Noto Serif Ethiopic'),
                       ),
                       style: TextButton.styleFrom(
@@ -116,6 +118,7 @@ class _StorageUsageCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final tt = theme.textTheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       width: double.infinity,
@@ -128,7 +131,7 @@ class _StorageUsageCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'የማህደረ ትውስታ አጠቃቀም',
+            l10n.storageUsage,
             style: tt.labelLarge!.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
               fontFamily: 'Noto Serif Ethiopic',
@@ -148,7 +151,7 @@ class _StorageUsageCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                'ከ 5.0 GB ጥቅም ላይ ውሏል',
+                l10n.usedOutOf('5.0 GB'),
                 style: tt.bodySmall!.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontFamily: 'Noto Serif Ethiopic',
@@ -176,9 +179,9 @@ class _StorageUsageCard extends StatelessWidget {
           const SizedBox(height: 16),
           Row(
             children: [
-              _LegendItem(label: 'መጻሕፍት', color: theme.colorScheme.primary),
+              _LegendItem(label: l10n.booksLegend, color: theme.colorScheme.primary),
               const SizedBox(width: 16),
-              _LegendItem(label: 'ድምጽ', color: Colors.amber.withValues(alpha: 0.5)),
+              _LegendItem(label: l10n.audioLegend, color: Colors.amber.withValues(alpha: 0.5)),
             ],
           ),
         ],
@@ -375,6 +378,7 @@ class _BottomCTA extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       width: double.infinity,
       height: 84,
@@ -404,7 +408,7 @@ class _BottomCTA extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'ተጨማሪ ይዘቶችን ያውርዱ',
+                        l10n.downloadMoreTitle,
                         style: TextStyle(
                           color: theme.colorScheme.onPrimary,
                           fontWeight: FontWeight.bold,
@@ -414,7 +418,7 @@ class _BottomCTA extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'ያለ ኢንተርኔት በማንኛውም ቦታ ለማንበብ',
+                        l10n.downloadMoreSubtitle,
                         style: TextStyle(
                           color: theme.colorScheme.onPrimary.withValues(alpha: 0.7),
                           fontSize: 11,
