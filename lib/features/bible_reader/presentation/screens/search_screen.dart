@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:bible/l10n/app_localizations.dart';
 
 import '../../domain/entities/verse.dart';
 import '../../domain/entities/search_filter.dart';
@@ -45,6 +46,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final tt = Theme.of(context).textTheme;
 
     return Scaffold(
@@ -54,7 +56,7 @@ class _SearchScreenState extends State<SearchScreen> {
         backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         title: Text(
-          'መጽሐፍ ቅዱስ', // Gospel title as per image
+          l10n.appTitle, // Gospel title as per image
           style: tt.headlineSmall!.copyWith(
             fontWeight: FontWeight.bold,
             color: Theme.of(context).colorScheme.onSurface,
@@ -83,7 +85,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 child: TextField(
                   controller: _controller,
                   decoration: InputDecoration(
-                    hintText: 'ፈልግ...',
+                    hintText: l10n.searchHint,
                     prefixIcon: Icon(
                       Icons.search,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -105,25 +107,25 @@ class _SearchScreenState extends State<SearchScreen> {
               child: Row(
                 children: [
                   _FilterChip(
-                    label: 'ሁሉም',
+                    label: l10n.all,
                     filter: SearchFilter.all,
                     activeFilter: _activeFilter,
                     onSelected: _onFilterSelected,
                   ),
                   _FilterChip(
-                    label: 'ብሉይ ኪዳን',
+                    label: l10n.oldTestament,
                     filter: SearchFilter.oldTestament,
                     activeFilter: _activeFilter,
                     onSelected: _onFilterSelected,
                   ),
                   _FilterChip(
-                    label: 'ሐዲስ ኪዳን',
+                    label: l10n.newTestament,
                     filter: SearchFilter.newTestament,
                     activeFilter: _activeFilter,
                     onSelected: _onFilterSelected,
                   ),
                   _FilterChip(
-                    label: 'መዝሙረ ዳዊት',
+                    label: l10n.psalms,
                     filter: SearchFilter.psalms,
                     activeFilter: _activeFilter,
                     onSelected: _onFilterSelected,
@@ -150,9 +152,9 @@ class _SearchScreenState extends State<SearchScreen> {
                 if (state is SearchLoaded) {
                   final results = state.results;
                   if (results.isEmpty) {
-                    return const Padding(
-                      padding: EdgeInsets.all(40),
-                      child: Center(child: Text('ምንም ውጤት አልተገኘም')),
+                    return Padding(
+                      padding: const EdgeInsets.all(40),
+                      child: Center(child: Text(l10n.noResults)),
                     );
                   }
 
@@ -164,7 +166,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'የተገኙ ውጤቶች (${results.length})',
+                              '${l10n.resultsFound} (${results.length})',
                               style: tt.labelLarge!.copyWith(
                                 color: Theme.of(
                                   context,
@@ -181,7 +183,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  'አቀማመጥ',
+                                  l10n.layout,
                                   style: tt.labelSmall!.copyWith(
                                     color: Theme.of(
                                       context,
@@ -225,7 +227,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   vertical: 18,
                                 ),
                               ),
-                              child: const Text('ተጨማሪ ውጤቶችን አሳይ'),
+                              child: Text(l10n.showMore),
                             ),
                           ),
                         ),
@@ -309,6 +311,7 @@ class _SearchResultTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final tt = Theme.of(context).textTheme;
     return Material(
       color: Colors.transparent,
@@ -387,9 +390,9 @@ class _SearchResultTile extends StatelessWidget {
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        _IconLink(Icons.copy_rounded, 'ቅዳ'),
+                        _IconLink(Icons.copy_rounded, l10n.copy),
                         const SizedBox(width: 20),
-                        _IconLink(Icons.share_outlined, 'አጋራ'),
+                        _IconLink(Icons.share_outlined, l10n.share),
                       ],
                     ),
                   ],
@@ -408,6 +411,7 @@ class _FeaturedHighlightCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final tt = Theme.of(context).textTheme;
     return Container(
       width: double.infinity,
@@ -432,7 +436,7 @@ class _FeaturedHighlightCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  'ተለይቶ የቀረበ',
+                  l10n.featured,
                   style: tt.labelSmall!.copyWith(
                     color: Colors.white,
                     fontSize: 10,
