@@ -17,6 +17,7 @@ import 'features/bible_reader/presentation/screens/app_shell.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'features/splash/presentation/screens/splash_screen.dart';
 import 'features/bible_reader/presentation/cubit/locale_cubit.dart';
+import 'features/bible_reader/presentation/cubit/version_selector_cubit.dart';
 import 'features/onboarding/presentation/cubit/onboarding_cubit.dart';
 import 'features/onboarding/presentation/screens/onboarding_screen.dart';
 
@@ -42,6 +43,7 @@ class BibleApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => NavigationCubit()),
         BlocProvider(create: (_) => sl<LibraryCubit>()..loadBooks()),
+        BlocProvider(create: (_) => sl<VersionSelectorCubit>()..loadVersions()),
         BlocProvider(
           create: (_) => sl<BibleReaderCubit>()..loadInitialLocation(),
         ),
