@@ -143,6 +143,18 @@ class ScriptureReferenceMapper {
     return _localizedNames[lang]?[abbreviation];
   }
 
+  static String getLocalizedBookName(String id, String locale) {
+    try {
+      final index = int.parse(id) - 1;
+      final keys = _localizedNames['en']!.keys.toList();
+      if (index >= 0 && index < keys.length) {
+        final abbreviation = keys[index];
+        return getName(abbreviation, locale: locale) ?? abbreviation;
+      }
+    } catch (_) {}
+    return 'Unknown';
+  }
+
   static String? getId(String abbreviation) {
     // For simplicity, we assume book_id starts from 1 based on the list above
     final keys = _localizedNames['en']!.keys.toList();
