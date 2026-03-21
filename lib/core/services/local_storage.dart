@@ -43,4 +43,16 @@ class LocalStorage {
     if (list == null) return {};
     return list.map((e) => int.parse(e)).toSet();
   }
+
+  Map<String, Set<int>> getAllBookmarksKeys() {
+    final keys = _prefs.getKeys().where((k) => k.startsWith(_bookmarksPrefix));
+    final allBookmarks = <String, Set<int>>{};
+    for (final key in keys) {
+      final list = _prefs.getStringList(key);
+      if (list != null) {
+        allBookmarks[key] = list.map((e) => int.parse(e)).toSet();
+      }
+    }
+    return allBookmarks;
+  }
 }
