@@ -1,10 +1,11 @@
+import 'package:bible/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../core/services/local_storage.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../cubit/bookmarks_cubit.dart';
-
+import '../cubit/locale_cubit.dart';
 import 'downloads_screen.dart';
 import 'bookmarked_screen.dart';
 
@@ -14,6 +15,8 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final locale = context.watch<LocaleCubit>().state;
     final tt = theme.textTheme;
 
     return Scaffold(
@@ -22,7 +25,7 @@ class ProfileScreen extends StatelessWidget {
         backgroundColor: theme.colorScheme.surface,
         elevation: 0,
         title: Text(
-          'የቅዱስ ጽሑፋት',
+          l10n.appTitle,
           style: TextStyle(
             color: theme.colorScheme.primary,
             fontWeight: FontWeight.bold,
@@ -169,7 +172,7 @@ class ProfileScreen extends StatelessWidget {
                     child: _InfoCard(
                       icon: Icons.menu_book_rounded,
                       value: '${sl.get<LocalStorage>().getTotalVersesRead()}',
-                      label: 'ያነበቧቸው ጥቅሶች',
+                      label: l10n.versesRead,
                       color: Colors.blue,
                     ),
                   ),
@@ -177,11 +180,13 @@ class ProfileScreen extends StatelessWidget {
                   Expanded(
                     child: BlocBuilder<BookmarksCubit, BookmarksState>(
                       builder: (context, state) {
-                        final count = state is BookmarksLoaded ? state.bookmarks.length : 0;
+                        final count = state is BookmarksLoaded
+                            ? state.bookmarks.length
+                            : 0;
                         return _InfoCard(
                           icon: Icons.bookmarks_rounded,
                           value: '$count',
-                          label: 'የተቀመጡ ጥቅሶች',
+                          label: l10n.bookmarks,
                           color: Colors.orange,
                         );
                       },
@@ -232,11 +237,11 @@ class ProfileScreen extends StatelessWidget {
                       children: [
                         _MenuTile(
                           icon: Icons.note_alt_outlined,
-                          label: 'የኔ ማህደሮች',
+                          label: l10n.myArchives,
                         ),
                         _MenuTile(
                           icon: Icons.bookmark_outline,
-                          label: 'ምዕራፍ የተደረገባቸው',
+                          label: l10n.bookmarkedChapters,
                           onTap: () {
                             context.read<BookmarksCubit>().loadBookmarks();
                             Navigator.push(
@@ -249,8 +254,9 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         _MenuTile(
                           icon: Icons.history,
-                          label: 'የመጨረሻ ንባብ',
-                          subLabel: '${sl.get<LocalStorage>().getLastReadBook() ?? 'ገና አልተነበበም'} ምዕራፍ ${sl.get<LocalStorage>().getLastReadChapter()}',
+                          label: l10n.lastRead,
+                          subLabel:
+                              '${sl.get<LocalStorage>().getLastReadBook() ?? l10n.notReadYet} ${l10n.chapter} ${sl.get<LocalStorage>().getLastReadChapter()}',
                           isLast: true,
                         ),
                       ],
@@ -288,9 +294,12 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         _MenuTile(
                           icon: Icons.language_outlined,
-                          label: 'ቋንቋ',
-                          subLabel: 'አማርኛ',
+                          label: l10n.language,
+                          subLabel: locale.languageCode == 'am'
+                              ? 'አማርኛ'
+                              : 'English',
                           isLast: true,
+                          onTap: () => _showLanguagePicker(context),
                         ),
                       ],
                     ),
@@ -309,9 +318,9 @@ class ProfileScreen extends StatelessWidget {
                   context.read<AuthCubit>().logout();
                 },
                 icon: const Icon(Icons.logout_outlined, size: 20),
-                label: const Text(
-                  'ከመለያ ውጣ',
-                  style: TextStyle(
+                label: Text(
+                  l10n.logout,
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Noto Serif Ethiopic',
                   ),
@@ -336,6 +345,58 @@ class ProfileScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _showLanguagePicker(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return BlocBuilder<LocaleCubit, Locale>(
+          builder: (context, currentLocale) {
+            return Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.language,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Noto Serif Ethiopic',
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  _LanguageOption(
+                    label: 'አማርኛ',
+                    isSelected: currentLocale.languageCode == 'am',
+                    onTap: () {
+                      context.read<LocaleCubit>().setLocale(const Locale('am'));
+                      Navigator.pop(context);
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  _LanguageOption(
+                    label: 'English',
+                    isSelected: currentLocale.languageCode == 'en',
+                    onTap: () {
+                      context.read<LocaleCubit>().setLocale(const Locale('en'));
+                      Navigator.pop(context);
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
@@ -583,6 +644,56 @@ class _MenuTile extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+class _LanguageOption extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _LanguageOption({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? theme.colorScheme.primary.withValues(alpha: 0.1)
+              : theme.colorScheme.surfaceContainerHigh,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected
+                ? theme.colorScheme.primary.withValues(alpha: 0.5)
+                : Colors.transparent,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                color: isSelected ? theme.colorScheme.primary : null,
+                fontFamily: 'Noto Serif Ethiopic',
+              ),
+            ),
+            if (isSelected)
+              Icon(Icons.check_circle, color: theme.colorScheme.primary),
+          ],
+        ),
+      ),
     );
   }
 }
