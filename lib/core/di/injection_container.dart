@@ -13,6 +13,7 @@ import '../../features/bible_reader/presentation/cubit/version_selector_cubit.da
 import '../../features/bible_reader/presentation/cubit/library_cubit.dart';
 import '../../features/bible_reader/presentation/cubit/search_cubit.dart';
 import '../../features/bible_reader/presentation/cubit/theme_cubit.dart';
+import '../../features/bible_reader/presentation/cubit/bookmarks_cubit.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/services/local_storage.dart';
@@ -47,6 +48,7 @@ Future<void> initDependencies() async {
   sl.registerFactory(() => VersionSelectorCubit(sl()));
   sl.registerFactory(() => LibraryCubit(sl()));
   sl.registerFactory(() => SearchCubit(sl()));
+  sl.registerFactory(() => BookmarksCubit(sl(), sl(), sl()));
   sl.registerLazySingleton(() => ThemeCubit(sl()));
 }
 
