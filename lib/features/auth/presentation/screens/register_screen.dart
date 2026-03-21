@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../features/bible_reader/presentation/screens/app_shell.dart';
+import '../cubit/auth_cubit.dart';
 import '../widgets/social_button.dart';
 import 'login_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -14,6 +17,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
   bool _agreedToTerms = false;
+
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _fullNameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,8 +104,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     children: [
                       _buildFieldTitle('ሙሉ ስም'),
                       const SizedBox(height: 8),
-                      const TextField(
-                        decoration: InputDecoration(
+                      TextField(
+                        controller: _fullNameController,
+                        decoration: const InputDecoration(
                           hintText: 'ሙሉ ስምዎን እዚህ ያስገቡ',
                           prefixIcon: Icon(Icons.person_outline, size: 20),
                         ),
@@ -97,8 +115,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                       _buildFieldTitle('ኢሜይል'),
                       const SizedBox(height: 8),
-                      const TextField(
-                        decoration: InputDecoration(
+                      TextField(
+                        controller: _emailController,
+                        decoration: const InputDecoration(
                           hintText: 'email@example.com',
                           prefixIcon: Icon(Icons.alternate_email, size: 20),
                         ),
@@ -108,6 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       _buildFieldTitle('የይለፍ ቃል'),
                       const SizedBox(height: 8),
                       TextField(
+                        controller: _passwordController,
                         obscureText: !_isPasswordVisible,
                         decoration: InputDecoration(
                           hintText: '••••••••',
@@ -130,6 +150,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       _buildFieldTitle('የይለፍ ቃል ያረጋግጡ'),
                       const SizedBox(height: 8),
                       TextField(
+                        controller: _confirmPasswordController,
                         obscureText: !_isConfirmPasswordVisible,
                         decoration: InputDecoration(
                           hintText: '••••••••',
@@ -202,32 +223,65 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 32),
 
                       // ── Register Button ────────────────────────────────────
-                      SizedBox(
-                        width: double.infinity,
-                        height: 56,
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: SabaColors.primary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'አሁን ይመዝገቡ',
-                                style: SabaTypography.labelLarge().copyWith(
-                                  color: Colors.white,
-                                  fontSize: 18,
+                      BlocConsumer<AuthCubit, AuthState>(
+                        listener: (context, state) {
+                          if (state.status == AuthStatus.authenticated) {
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(builder: (_) => const AppShell()),
+                              (route) => false,
+                            );
+                          } else if (state.status == AuthStatus.error) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(state.errorMessage ?? 'Registration failed')),
+                            );
+                          }
+                        },
+                        builder: (context, state) {
+                          return SizedBox(
+                            width: double.infinity,
+                            height: 56,
+                            child: ElevatedButton(
+                              onPressed: state.status == AuthStatus.loading || !_agreedToTerms
+                                  ? null
+                                  : () {
+                                      if (_passwordController.text != _confirmPasswordController.text) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text('የይለፍ ቃሎች አይመሳሰሉም')),
+                                        );
+                                        return;
+                                      }
+                                      context.read<AuthCubit>().register(
+                                            _fullNameController.text,
+                                            _emailController.text,
+                                            _passwordController.text,
+                                          );
+                                    },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: SabaColors.primary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              const Icon(Icons.arrow_forward, color: Colors.white, size: 20),
-                            ],
-                          ),
-                        ),
+                              child: state.status == AuthStatus.loading
+                                  ? const CircularProgressIndicator(color: Colors.white)
+                                  : Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'አሁን ይመዝገቡ',
+                                          style: SabaTypography.labelLarge().copyWith(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Icon(Icons.arrow_forward, color: Colors.white, size: 20),
+                                      ],
+                                    ),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
