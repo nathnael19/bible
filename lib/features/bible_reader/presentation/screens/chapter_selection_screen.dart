@@ -10,12 +10,14 @@ class ChapterSelectionScreen extends StatefulWidget {
   final String bookId;
   final String englishName;
   final int chapterCount;
+  final String? versionId;
   const ChapterSelectionScreen({
     super.key,
     required this.bookName,
     required this.bookId,
     required this.englishName,
     required this.chapterCount,
+    this.versionId,
   });
 
   @override
@@ -100,6 +102,7 @@ class _ChapterSelectionScreenState extends State<ChapterSelectionScreen> {
                       book: widget.bookName,
                       bookId: widget.bookId,
                       chapter: index,
+                      versionId: widget.versionId ?? 'amh_standard',
                     );
 
                     // 2. Switch to Reader Tab (index 2)
