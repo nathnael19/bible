@@ -4,6 +4,7 @@ import '../cubit/bookmarks_cubit.dart';
 import '../cubit/bible_reader_cubit.dart';
 import '../cubit/navigation_cubit.dart';
 import '../../domain/entities/bookmark.dart';
+import 'package:bible/l10n/app_localizations.dart';
 
 class BookmarkedScreen extends StatelessWidget {
   const BookmarkedScreen({super.key});
@@ -15,7 +16,7 @@ class BookmarkedScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        title: const Text('ምዕራፍ የተደረገባቸው'),
+        title: Text(AppLocalizations.of(context)!.bookmarkedChapters),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
           onPressed: () => Navigator.pop(context),
@@ -26,7 +27,7 @@ class BookmarkedScreen extends StatelessWidget {
           if (state is BookmarksLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is BookmarksError) {
-            return Center(child: Text('Error: ${state.message}'));
+            return Center(child: Text('${AppLocalizations.of(context)!.defaultError}: ${state.message}'));
           } else if (state is BookmarksLoaded) {
             final bookmarks = state.bookmarks;
             if (bookmarks.isEmpty) {
@@ -41,7 +42,7 @@ class BookmarkedScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'ምንም የተቀመጡ ጥቅሶች የሉም',
+                      AppLocalizations.of(context)!.noSavedVerses,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                         fontFamily: 'Noto Serif Ethiopic',
