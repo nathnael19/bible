@@ -235,7 +235,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             );
                           } else if (state.status == AuthStatus.error) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(state.errorMessage ?? 'Registration failed')),
+                              SnackBar(content: Text(state.errorMessage ?? l10n.registrationFailed)),
                             );
                           }
                         },
