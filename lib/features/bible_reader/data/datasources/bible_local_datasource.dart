@@ -14,9 +14,6 @@ class BibleLocalDataSource {
     
     String fileName;
     switch (versionId) {
-      case 'amh_full':
-        fileName = 'amharic_full.json';
-        break;
       case 'eng_kjv':
         fileName = 'english_kjv.json';
         break;
@@ -42,12 +39,6 @@ class BibleLocalDataSource {
         name: 'አማርኛ መደበኛ',
         language: 'አማርኛ',
         abbreviation: 'ASV',
-      ),
-      BibleVersionModel(
-        id: 'amh_full',
-        name: 'የ1954 ትርጉም (Old)',
-        language: 'አማርኛ',
-        abbreviation: 'OAM',
       ),
       BibleVersionModel(
         id: 'eng_kjv',
