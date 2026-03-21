@@ -33,7 +33,7 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
             if (state is ReadingPlanLoading) {
               return const Center(child: CircularProgressIndicator());
             } else if (state is ReadingPlanError) {
-              return Center(child: Text(state.message));
+              return Center(child: Text('${AppLocalizations.of(context)!.defaultError}: ${state.message}'));
             } else if (state is ReadingPlanDetailLoaded) {
               final plan = state.plan;
               final completed = state.completedTaskIds;
