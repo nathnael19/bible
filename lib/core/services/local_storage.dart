@@ -7,12 +7,23 @@ class LocalStorage {
   LocalStorage(this._prefs);
 
   static const String _themeKey = 'app_theme_mode';
+  static const String _localeKey = 'app_locale';
   static const String _bookmarksPrefix = 'bookmarks_';
 
   // ── Theme ──────────────────────────────────────────────────────────────────
 
   Future<void> setThemeMode(ThemeMode mode) async {
     await _prefs.setString(_themeKey, mode.name);
+  }
+
+  // ── Locale ─────────────────────────────────────────────────────────────────
+
+  String getLocale() {
+    return _prefs.getString(_localeKey) ?? 'am';
+  }
+
+  Future<void> setLocale(String languageCode) async {
+    await _prefs.setString(_localeKey, languageCode);
   }
 
   ThemeMode getThemeMode() {
