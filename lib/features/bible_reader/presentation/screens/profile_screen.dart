@@ -40,26 +40,35 @@ class ProfileScreen extends StatelessWidget {
           children: [
             const SizedBox(height: 24),
             // --- Avatar Section ---
-            Center(
-              child: Stack(
-                children: [
-                  Container(
-                    width: 110,
-                    height: 110,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                        width: 4,
-                      ),
-                      image: const DecorationImage(
-                        image: NetworkImage(
-                          'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+            BlocBuilder<AuthCubit, AuthState>(
+              builder: (context, state) {
+                final initial = (state.username?.isNotEmpty == true) 
+                    ? state.username!.trim().substring(0, 1).toUpperCase() 
+                    : '?';
+                return Center(
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: 110,
+                        height: 110,
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(
+                            color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                            width: 4,
+                          ),
                         ),
-                        fit: BoxFit.cover,
+                        alignment: Alignment.center,
+                        child: Text(
+                          initial,
+                          style: TextStyle(
+                            fontSize: 48,
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.primary,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
                   Positioned(
                     bottom: -4,
                     right: -4,
@@ -84,8 +93,10 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                ],
-              ),
+                    ],
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 16),
             BlocBuilder<AuthCubit, AuthState>(
@@ -505,6 +516,13 @@ class _LevelCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    
+    // Dynamic Level Calculation
+    final totalVerses = sl.get<LocalStorage>().getTotalVersesRead();
+    final level = (totalVerses ~/ 100) + 1; // Level up every 100 verses
+    final progress = (totalVerses % 100) / 100.0;
+    final percentage = (progress * 100).toInt();
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -529,8 +547,8 @@ class _LevelCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                  child: Text(
-                  '${l10n.levelTitle.toUpperCase()} 4',
-                  style: TextStyle(
+                  '${l10n.levelTitle.toUpperCase()} $level',
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
@@ -540,9 +558,9 @@ class _LevelCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          const Text(
-            '85%',
-            style: TextStyle(
+          Text(
+            '$percentage%',
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -550,7 +568,7 @@ class _LevelCard extends StatelessWidget {
           ),
                   Text(
                     l10n.growthLevel,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white70,
               fontSize: 11,
               fontFamily: 'Noto Serif Ethiopic',
@@ -560,7 +578,7 @@ class _LevelCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
-              value: 0.85,
+              value: progress,
               backgroundColor: Colors.white.withValues(alpha: 0.1),
               valueColor: const AlwaysStoppedAnimation<Color>(
                 Color(0xFFFFD700),
