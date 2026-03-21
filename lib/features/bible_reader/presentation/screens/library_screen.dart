@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../cubit/library_cubit.dart';
+import '../cubit/version_selector_cubit.dart';
 import '../../domain/entities/book.dart';
 import '../screens/chapter_selection_screen.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -17,103 +18,115 @@ class LibraryScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _buildAppBar(context, l10n),
-      body: BlocBuilder<LibraryCubit, LibraryState>(
-        builder: (context, state) {
-          if (state is LibraryLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (state is LibraryError) {
-            return Center(child: Text(state.message));
-          }
-          if (state is LibraryLoaded) {
-            final oldTestament = state.books
-                .where((b) => int.parse(b.id) <= 39)
-                .toList();
-            final newTestament = state.books
-                .where((b) => int.parse(b.id) > 39)
-                .toList();
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<VersionSelectorCubit, VersionSelectorState>(
+            listener: (context, state) {
+              if (state is VersionSelectorLoaded && state.selectedId != null) {
+                context.read<LibraryCubit>().loadBooks(versionId: state.selectedId!);
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<LibraryCubit, LibraryState>(
+          builder: (context, state) {
+            if (state is LibraryLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state is LibraryError) {
+              return Center(child: Text(state.message));
+            }
+            if (state is LibraryLoaded) {
+              final oldTestament = state.books
+                  .where((b) => int.parse(b.id) <= 39)
+                  .toList();
+              final newTestament = state.books
+                  .where((b) => int.parse(b.id) > 39)
+                  .toList();
 
-            return CustomScrollView(
-              slivers: [
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  sliver: SliverToBoxAdapter(
-                    child: _SectionHeader(
-                      title: l10n.oldTestament,
-                      subtitle: 'Old Testament',
+              return CustomScrollView(
+                slivers: [
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    sliver: SliverToBoxAdapter(
+                      child: _SectionHeader(
+                        title: l10n.oldTestament,
+                        subtitle: 'Old Testament',
+                      ),
                     ),
                   ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  sliver: SliverGrid(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 12,
-                      crossAxisSpacing: 12,
-                      childAspectRatio: 1.4,
-                    ),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final book = oldTestament[index];
-                        return _BookCard(
-                          number: book.id.padLeft(2, '0'),
-                          title: book.name,
-                          subtitle: _getEnglishName(int.parse(book.id)),
-                          onTap: () => _navigateToChapters(context, book),
-                        );
-                      },
-                      childCount: oldTestament.length,
-                    ),
-                  ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(24, 40, 24, 16),
-                  sliver: SliverToBoxAdapter(
-                    child: _SectionHeader(
-                      title: l10n.newTestament,
-                      subtitle: 'New Testament',
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    sliver: SliverGrid(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12,
+                        childAspectRatio: 1.4,
+                      ),
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final book = oldTestament[index];
+                          return _BookCard(
+                            number: book.id.padLeft(2, '0'),
+                            title: book.name,
+                            subtitle: book.englishName,
+                            onTap: () => _navigateToChapters(context, book),
+                          );
+                        },
+                        childCount: oldTestament.length,
+                      ),
                     ),
                   ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  sliver: SliverGrid(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 12,
-                      crossAxisSpacing: 12,
-                      childAspectRatio: 1.4,
-                    ),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final book = newTestament[index];
-                        return _BookCard(
-                          number: book.id.padLeft(2, '0'),
-                          title: book.name,
-                          subtitle: _getEnglishName(int.parse(book.id)),
-                          onTap: () => _navigateToChapters(context, book),
-                        );
-                      },
-                      childCount: newTestament.length,
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(24, 40, 24, 16),
+                    sliver: SliverToBoxAdapter(
+                      child: _SectionHeader(
+                        title: l10n.newTestament,
+                        subtitle: 'New Testament',
+                      ),
                     ),
                   ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
-                  sliver: const SliverToBoxAdapter(child: _DailyReflectionCard()),
-                ),
-                const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
-              ],
-            );
-          }
-          return const SizedBox.shrink();
-        },
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    sliver: SliverGrid(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12,
+                        childAspectRatio: 1.4,
+                      ),
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final book = newTestament[index];
+                          return _BookCard(
+                            number: book.id.padLeft(2, '0'),
+                            title: book.name,
+                            subtitle: book.englishName,
+                            onTap: () => _navigateToChapters(context, book),
+                          );
+                        },
+                        childCount: newTestament.length,
+                      ),
+                    ),
+                  ),
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+                    sliver: const SliverToBoxAdapter(child: _DailyReflectionCard()),
+                  ),
+                  const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
+                ],
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }
 
   void _navigateToChapters(BuildContext context, Book book) {
+    final versionId = (context.read<VersionSelectorCubit>().state as VersionSelectorLoaded).selectedId;
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -122,83 +135,13 @@ class LibraryScreen extends StatelessWidget {
           bookId: book.id,
           englishName: book.englishName,
           chapterCount: book.chapterCount,
+          versionId: versionId,
         ),
       ),
     );
   }
 
-  String _getEnglishName(int id) {
-    final names = {
-      1: 'GENESIS',
-      2: 'EXODUS',
-      3: 'LEVITICUS',
-      4: 'NUMBERS',
-      5: 'DEUTERONOMY',
-      6: 'JOSHUA',
-      7: 'JUDGES',
-      8: 'RUTH',
-      9: '1 SAMUEL',
-      10: '2 SAMUEL',
-      11: '1 KINGS',
-      12: '2 KINGS',
-      13: '1 CHRONICLES',
-      14: '2 CHRONICLES',
-      15: 'EZRA',
-      16: 'NEHEMIAH',
-      17: 'ESTHER',
-      18: 'JOB',
-      19: 'PSALMS',
-      20: 'PROVERBS',
-      21: 'ECCLESIASTES',
-      22: 'SONG OF SOLOMON',
-      23: 'ISAIAH',
-      24: 'JEREMIAH',
-      25: 'LAMENTATIONS',
-      26: 'EZEKIEL',
-      27: 'DANIEL',
-      28: 'HOSEA',
-      29: 'JOEL',
-      30: 'AMOS',
-      31: 'OBADIAH',
-      32: 'JONAH',
-      33: 'MICAH',
-      34: 'NAHUM',
-      35: 'HABAKKUK',
-      36: 'ZEPHANIAH',
-      37: 'HAGGAI',
-      38: 'ZECHARIAH',
-      39: 'MALACHI',
-      40: 'MATTHEW',
-      41: 'MARK',
-      42: 'LUKE',
-      43: 'JOHN',
-      44: 'ACTS',
-      45: 'ROMANS',
-      46: '1 CORINTHIANS',
-      47: '2 CORINTHIANS',
-      48: 'GALATIANS',
-      49: 'EPHESIANS',
-      50: 'PHILIPPIANS',
-      51: 'COLOSSIANS',
-      52: '1 THESSALONIANS',
-      53: '2 THESSALONIANS',
-      54: '1 TIMOTHY',
-      55: '2 TIMOTHY',
-      56: 'TITUS',
-      57: 'PHILEMON',
-      58: 'HEBREWS',
-      59: 'JAMES',
-      60: '1 PETER',
-      61: '2 PETER',
-      62: '1 JOHN',
-      63: '2 JOHN',
-      64: '3 JOHN',
-      65: 'JUDE',
-      66: 'REVELATION',
-    };
-    return names[id] ?? 'BOOK $id';
-  }
-
+  // Remove _getEnglishName as it's now redundant (we use book.englishName)
 
   PreferredSizeWidget _buildAppBar(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
@@ -216,6 +159,33 @@ class LibraryScreen extends StatelessWidget {
         ),
       ),
       actions: [
+        BlocBuilder<VersionSelectorCubit, VersionSelectorState>(
+          builder: (context, state) {
+            if (state is VersionSelectorLoaded) {
+              return PopupMenuButton<String>(
+                icon: Icon(Icons.language, color: theme.colorScheme.primary),
+                onSelected: (id) {
+                  context.read<VersionSelectorCubit>().selectVersion(id);
+                },
+                itemBuilder: (context) {
+                  return state.versions.map((v) {
+                    return PopupMenuItem(
+                      value: v.id,
+                      child: Text(
+                        v.name,
+                        style: TextStyle(
+                          fontWeight:
+                              state.selectedId == v.id ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                    );
+                  }).toList();
+                },
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
         Padding(
           padding: const EdgeInsets.only(right: 16),
           child: Icon(Icons.search_rounded, color: theme.colorScheme.onSurfaceVariant),
