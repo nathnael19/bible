@@ -66,7 +66,9 @@ class DownloadsScreen extends StatelessWidget {
                       ),
                     ),
                     TextButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Clearing downloads...')));
+                      },
                       icon: const Icon(Icons.delete_sweep_outlined, size: 18),
                       label: Text(
                         l10n.clearAll,
@@ -270,7 +272,9 @@ class _ActiveDownloadCard extends StatelessWidget {
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Download cancelled')));
+                },
                 icon: Icon(Icons.close_rounded, color: theme.colorScheme.onSurfaceVariant),
               ),
             ],
@@ -365,7 +369,9 @@ class _DownloadedItem extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Item deleted')));
+            },
             icon: Icon(Icons.delete_outline_rounded, color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
           ),
         ],
@@ -396,7 +402,9 @@ class _BottomCTA extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {},
+          onTap: () {
+            Navigator.pop(context);
+          },
           borderRadius: BorderRadius.circular(24),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
