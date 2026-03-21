@@ -369,4 +369,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get splashTagline => 'ILLUMINATING THE WORD';
+
+  @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String get onboardingGetStarted => 'Get Started';
+
+  @override
+  String get onboardingSkip => 'Skip';
+
+  @override
+  String get onboardingTitle1 => 'Your Daily Scripture Companion';
+
+  @override
+  String get onboardingDesc1 =>
+      'Embark on a meaningful journey with the Word of God, personalized for you.';
+
+  @override
+  String get onboardingTitle2 => 'Read the Bible Daily';
+
+  @override
+  String get onboardingDesc2 =>
+      'Immerse yourself in scripture with customizable reading plans and insightful study tools.';
+
+  @override
+  String get onboardingTitle3 => 'Grow Your Faith';
+
+  @override
+  String get onboardingDesc3 =>
+      'Track your spiritual growth, monitor your reading streaks, and reflect on your daily journey.';
+
+  @override
+  String get onboardingTitle4 => 'Daily Reflections';
+
+  @override
+  String get onboardingDesc4 =>
+      'Start each day with guidance, prayers, and reflections tailored for your spiritual growth.';
 }
