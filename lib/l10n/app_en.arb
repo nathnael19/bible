@@ -209,7 +209,11 @@
   "geeNumber1": "1",
   "geeNumber2": "2",
   "geeNumber3": "3",
-  "geeNumber4": "4"
+  "geeNumber4": "4",
+  "authFailed": "Authentication failed",
+  "registrationFailed": "Registration failed",
+  "defaultError": "Error occurred",
+  "noSavedVerses": "No saved verses found"
 }
 
 

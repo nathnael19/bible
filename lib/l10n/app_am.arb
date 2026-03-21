@@ -209,7 +209,11 @@
   "geeNumber1": "፩",
   "geeNumber2": "፪",
   "geeNumber3": "፫",
-  "geeNumber4": "፬"
+  "geeNumber4": "፬",
+  "authFailed": "ማረጋገጥ አልተሳካም",
+  "registrationFailed": "ምዝገባው አልተሳካም",
+  "defaultError": "ችግር ተከስቷል",
+  "noSavedVerses": "ምንም የተቀመጡ ጥቅሶች የሉም"
 }
 
 
