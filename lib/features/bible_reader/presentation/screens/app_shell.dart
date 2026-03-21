@@ -1,7 +1,7 @@
+import 'package:bible/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 
 import '../cubit/navigation_cubit.dart';
 
@@ -69,6 +69,7 @@ class _CustomBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       height: 85,
       decoration: BoxDecoration(
@@ -89,19 +90,19 @@ class _CustomBottomBar extends StatelessWidget {
           children: [
             _NavItem(
               icon: Icons.home_rounded,
-              label: 'መጀመሪያ',
+              label: l10n.home,
               isSelected: selectedIndex == 0,
               onTap: () => onTap(0),
             ),
             _NavItem(
               icon: Icons.auto_stories_rounded,
-              label: 'ንባብ',
+              label: l10n.reading,
               isSelected: selectedIndex == 1,
               onTap: () => onTap(1),
             ),
             _NavItem(
               icon: Icons.person_rounded,
-              label: 'መገለጫ',
+              label: l10n.profile,
               isSelected: selectedIndex == 2,
               onTap: () => onTap(2),
             ),
