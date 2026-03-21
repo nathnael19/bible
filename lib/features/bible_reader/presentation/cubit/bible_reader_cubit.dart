@@ -26,6 +26,7 @@ class BibleReaderLoading extends BibleReaderState {
 }
 
 class BibleReaderLoaded extends BibleReaderState {
+  final String versionId;
   final List<Verse> verses;
   final String book;
   final String bookId;
@@ -36,6 +37,7 @@ class BibleReaderLoaded extends BibleReaderState {
   final Map<int, int> highlights; // Map<VerseNumber, ColorValue>
 
   const BibleReaderLoaded({
+    required this.versionId,
     required this.verses,
     required this.book,
     required this.bookId,
@@ -47,6 +49,7 @@ class BibleReaderLoaded extends BibleReaderState {
   });
 
   BibleReaderLoaded copyWith({
+    String? versionId,
     List<Verse>? verses,
     String? book,
     String? bookId,
@@ -57,6 +60,7 @@ class BibleReaderLoaded extends BibleReaderState {
     Map<int, int>? highlights,
   }) =>
       BibleReaderLoaded(
+        versionId: versionId ?? this.versionId,
         verses: verses ?? this.verses,
         book: book ?? this.book,
         bookId: bookId ?? this.bookId,
@@ -69,6 +73,7 @@ class BibleReaderLoaded extends BibleReaderState {
 
   @override
   List<Object?> get props => [
+        versionId,
         verses,
         book,
         bookId,
@@ -103,22 +108,25 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
   ) : super(const BibleReaderLoading());
 
   Future<void> loadVerses({
-    String versionId = 'amh_standard',
+    String? versionId,
     required String book,
     required int chapter,
     String? bookId,
     int? targetVerse,
   }) async {
+    final effectiveVersionId = versionId ?? 
+      (state is BibleReaderLoaded ? (state as BibleReaderLoaded).versionId : 'amh_standard');
+      
     emit(const BibleReaderLoading());
     try {
       final verses = await _getVerses(
-        versionId: versionId,
+        versionId: effectiveVersionId,
         book: book,
         chapter: chapter,
       );
-      final chapterCount = await _getChapterCount(book);
+      final chapterCount = await _getChapterCount(book, versionId: effectiveVersionId);
       // Fallback for default load
-      String effectiveBookId = bookId ?? (book == 'ኦሪት ዘፍጥረት' ? '1' : '0');
+      String effectiveBookId = bookId ?? (book == 'ኦሪት ዘፍጥረት' || book == 'Genesis' ? '1' : '0');
       final bookmarks = _storage.getBookmarks(effectiveBookId, chapter);
       
       // Record reading event and stats
@@ -126,13 +134,15 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
       _storage.logActivity('chapter', {
         'bookId': effectiveBookId,
         'chapter': chapter,
+        'versionId': effectiveVersionId,
       });
       _storage.incrementVersesRead(verses.length);
 
       // Save last read location
-      _storage.saveLastReadLocation(book, effectiveBookId, chapter);
+      _storage.saveLastReadLocation(book, effectiveBookId, chapter, versionId: effectiveVersionId);
 
       emit(BibleReaderLoaded(
+        versionId: effectiveVersionId,
         verses: verses,
         book: book,
         bookId: effectiveBookId,
@@ -150,12 +160,14 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
     final lastRead = _storage.getLastReadLocation();
     if (lastRead != null) {
       await loadVerses(
+        versionId: lastRead['versionId'] as String?,
         book: lastRead['book'] as String,
         bookId: lastRead['bookId'] as String,
         chapter: lastRead['chapter'] as int,
       );
     } else {
       await loadVerses(
+        versionId: 'amh_standard',
         book: 'ኦሪት ዘፍጥረት',
         chapter: 1,
         bookId: '1',
@@ -214,11 +226,12 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
         chapter: currentState.chapter + 1,
       );
     } else {
-      final books = await _getBooks();
+      final books = await _getBooks(versionId: currentState.versionId);
       final currentIndex = books.indexWhere((b) => b.id.toString() == currentState.bookId);
       if (currentIndex != -1 && currentIndex < books.length - 1) {
         final nextBook = books[currentIndex + 1];
         await loadVerses(
+          versionId: currentState.versionId,
           book: nextBook.name,
           bookId: nextBook.id.toString(),
           chapter: 1,
@@ -238,12 +251,13 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
         chapter: currentState.chapter - 1,
       );
     } else {
-      final books = await _getBooks();
+      final books = await _getBooks(versionId: currentState.versionId);
       final currentIndex = books.indexWhere((b) => b.id.toString() == currentState.bookId);
       if (currentIndex > 0) {
         final prevBook = books[currentIndex - 1];
-        final prevBookChapterCount = await _getChapterCount(prevBook.name);
+        final prevBookChapterCount = await _getChapterCount(prevBook.name, versionId: currentState.versionId);
         await loadVerses(
+          versionId: currentState.versionId,
           book: prevBook.name,
           bookId: prevBook.id.toString(),
           chapter: prevBookChapterCount,
