@@ -1,0 +1,100 @@
+[
+  {
+    "id": "7-days-of-peace",
+    "title": "፯ የሰላም ቀናት",
+    "description": "በእነዚህ የተመረጡ ጥቅሶች አማካኝነት መረጋጋትን እና ሰላምን ያግኙ።",
+    "category": "መንፈሳዊ ደህንነት",
+    "durationDays": 7,
+    "days": [
+      {
+        "dayNumber": 1,
+        "tasks": [
+          {
+            "id": "7dop-d1-t1",
+            "description": "ፊልጵስዩስ 4:6-7",
+            "reference": "PHP.4.6-PHP.4.7"
+          }
+        ]
+      },
+      {
+        "dayNumber": 2,
+        "tasks": [
+          {
+            "id": "7dop-d2-t1",
+            "description": "ዮሐንስ 14:27",
+            "reference": "JHN.14.27"
+          }
+        ]
+      },
+      {
+        "dayNumber": 3,
+        "tasks": [
+          {
+            "id": "7dop-d3-t1",
+            "description": "ኢሳይያስ 26:3",
+            "reference": "ISA.26.3"
+          }
+        ]
+      },
+      {
+        "dayNumber": 4,
+        "tasks": [
+          {
+            "id": "7dop-d4-t1",
+            "description": "መዝሙረ ዳዊት 34:14",
+            "reference": "PSA.34.14"
+          }
+        ]
+      },
+      {
+        "dayNumber": 5,
+        "tasks": [
+          {
+            "id": "7dop-d5-t1",
+            "description": "ማቴዎስ 5:9",
+            "reference": "MAT.5.9"
+          }
+        ]
+      },
+      {
+        "dayNumber": 6,
+        "tasks": [
+          {
+            "id": "7dop-d6-t1",
+            "description": "ቆላስይስ 3:15",
+            "reference": "COL.3.15"
+          }
+        ]
+      },
+      {
+        "dayNumber": 7,
+        "tasks": [
+          {
+            "id": "7dop-d7-t1",
+            "description": "2 ተሰሎንቄ 3:16",
+            "reference": "2TH.3.16"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "bible-in-a-year",
+    "title": "መጽሐፍ ቅዱስ በአንድ ዓመት",
+    "description": "መላውን መጽሐፍ ቅዱስ ከዘፍጥረት እስከ ራእይ በአንድ ዓመት ውስጥ ያንብቡ።",
+    "category": "መሠረት",
+    "durationDays": 365,
+    "days": [
+      {
+        "dayNumber": 1,
+        "tasks": [
+          {
+            "id": "biay-d1-t1",
+            "description": "ዘፍጥረት 1-3",
+            "reference": "GEN.1.1-GEN.3.24"
+          }
+        ]
+      }
+    ]
+  }
+]
