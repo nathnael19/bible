@@ -93,7 +93,7 @@ class ProfileScreen extends StatelessWidget {
                 return Column(
                   children: [
                     Text(
-                      state.username ?? 'አበባ ከበደ',
+                      state.username ?? l10n.usernamePlaceholder,
                       style: tt.headlineSmall!.copyWith(
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Noto Serif Ethiopic',
@@ -113,9 +113,9 @@ class ProfileScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _ActionButton(label: 'የመገለጫ ሰረዝ', isActive: true),
+                _ActionButton(label: l10n.profileDash, isActive: true),
                 const SizedBox(width: 12),
-                _ActionButton(label: 'አጋራ', isActive: false),
+                _ActionButton(label: l10n.share, isActive: false),
               ],
             ),
 
@@ -151,7 +151,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'ተከታታይ ቀናት',
+                      l10n.streakDays,
                       style: tt.bodySmall!.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -213,7 +213,7 @@ class ProfileScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'መለያ እና ምርጫዎች',
+                    l10n.accountAndPreferences,
                     style: tt.titleMedium!.copyWith(
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Noto Serif Ethiopic',
@@ -280,7 +280,7 @@ class ProfileScreen extends StatelessWidget {
                       children: [
                         _MenuTile(
                           icon: Icons.audiotrack_rounded,
-                          label: 'የድምጽ ቅጂዎች',
+                          label: l10n.audioRecordings,
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -290,14 +290,14 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         _MenuTile(
                           icon: Icons.settings_outlined,
-                          label: 'የመተግበሪያ ቅንብሮች',
+                          label: l10n.appSettings,
                         ),
                         _MenuTile(
                           icon: Icons.language_outlined,
                           label: l10n.language,
                           subLabel: locale.languageCode == 'am'
-                              ? 'አማርኛ'
-                              : 'English',
+                              ? l10n.amharic
+                              : l10n.english,
                           isLast: true,
                           onTap: () => _showLanguagePicker(context),
                         ),
@@ -374,7 +374,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   _LanguageOption(
-                    label: 'አማርኛ',
+                    label: l10n.amharic,
                     isSelected: currentLocale.languageCode == 'am',
                     onTap: () {
                       context.read<LocaleCubit>().setLocale(const Locale('am'));
@@ -383,7 +383,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   _LanguageOption(
-                    label: 'English',
+                    label: l10n.english,
                     isSelected: currentLocale.languageCode == 'en',
                     onTap: () {
                       context.read<LocaleCubit>().setLocale(const Locale('en'));
@@ -504,6 +504,7 @@ class _LevelCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -527,8 +528,8 @@ class _LevelCard extends StatelessWidget {
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
-                  'LEVEL 4',
+                 child: Text(
+                  '${l10n.levelTitle.toUpperCase()} 4',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 10,
@@ -547,8 +548,8 @@ class _LevelCard extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const Text(
-            'የዕድገት ደረጃ',
+                  Text(
+                    l10n.growthLevel,
             style: TextStyle(
               color: Colors.white70,
               fontSize: 11,

@@ -160,7 +160,25 @@
   "downloadMoreSubtitle": "ያለ ኢንተርኔት በማንኛውም ቦታ ለማንበብ",
   "booksLegend": "መጻሕፍት",
   "audioLegend": "ድምጽ",
-  "edit": "አስተካክል"
+  "edit": "አስተካክል",
+  "daysCount": "{count, plural, =1{1 ቀን} other{{count} ቀናት}}",
+  "@daysCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "percentCompleted": "{percent}% ተጠናቋል",
+  "@percentCompleted": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "overallProgress": "አጠቃላይ ዕድገት",
+  "dayAbbreviation": "ቀን"
 }
 
 

@@ -877,6 +877,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Start each day with guidance, prayers, and reflections tailored for your spiritual growth.'**
   String get onboardingDesc4;
+
+  /// No description provided for @usernamePlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Abebe Kebede'**
+  String get usernamePlaceholder;
+
+  /// No description provided for @profileDash.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Dash'**
+  String get profileDash;
+
+  /// No description provided for @streakDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak Days'**
+  String get streakDays;
+
+  /// No description provided for @accountAndPreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Account and Preferences'**
+  String get accountAndPreferences;
+
+  /// No description provided for @audioRecordings.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio Recordings'**
+  String get audioRecordings;
+
+  /// No description provided for @appSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'App Settings'**
+  String get appSettings;
+
+  /// No description provided for @growthLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Growth Level'**
+  String get growthLevel;
+
+  /// No description provided for @levelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Level'**
+  String get levelTitle;
+
+  /// No description provided for @storageUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage Usage'**
+  String get storageUsage;
+
+  /// No description provided for @usedOutOf.
+  ///
+  /// In en, this message translates to:
+  /// **'used of {total}'**
+  String usedOutOf(String total);
+
+  /// No description provided for @downloading.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading'**
+  String get downloading;
+
+  /// No description provided for @downloadedBooks.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloaded Books'**
+  String get downloadedBooks;
+
+  /// No description provided for @clearAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear All'**
+  String get clearAll;
+
+  /// No description provided for @downloadMoreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Download More Content'**
+  String get downloadMoreTitle;
+
+  /// No description provided for @downloadMoreSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'To read offline anywhere'**
+  String get downloadMoreSubtitle;
+
+  /// No description provided for @booksLegend.
+  ///
+  /// In en, this message translates to:
+  /// **'Books'**
+  String get booksLegend;
+
+  /// No description provided for @audioLegend.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio'**
+  String get audioLegend;
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
 }
 
 class _AppLocalizationsDelegate

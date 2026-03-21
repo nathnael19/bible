@@ -406,4 +406,60 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get onboardingDesc4 =>
       'Start each day with guidance, prayers, and reflections tailored for your spiritual growth.';
+
+  @override
+  String get usernamePlaceholder => 'Abebe Kebede';
+
+  @override
+  String get profileDash => 'Profile Dash';
+
+  @override
+  String get streakDays => 'Streak Days';
+
+  @override
+  String get accountAndPreferences => 'Account and Preferences';
+
+  @override
+  String get audioRecordings => 'Audio Recordings';
+
+  @override
+  String get appSettings => 'App Settings';
+
+  @override
+  String get growthLevel => 'Growth Level';
+
+  @override
+  String get levelTitle => 'Level';
+
+  @override
+  String get storageUsage => 'Storage Usage';
+
+  @override
+  String usedOutOf(String total) {
+    return 'used of $total';
+  }
+
+  @override
+  String get downloading => 'Downloading';
+
+  @override
+  String get downloadedBooks => 'Downloaded Books';
+
+  @override
+  String get clearAll => 'Clear All';
+
+  @override
+  String get downloadMoreTitle => 'Download More Content';
+
+  @override
+  String get downloadMoreSubtitle => 'To read offline anywhere';
+
+  @override
+  String get booksLegend => 'Books';
+
+  @override
+  String get audioLegend => 'Audio';
+
+  @override
+  String get edit => 'Edit';
 }

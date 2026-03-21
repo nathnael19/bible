@@ -160,7 +160,25 @@
   "downloadMoreSubtitle": "To read offline anywhere",
   "booksLegend": "Books",
   "audioLegend": "Audio",
-  "edit": "Edit"
+  "edit": "Edit",
+  "daysCount": "{count, plural, =1{1 Day} other{{count} Days}}",
+  "@daysCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "percentCompleted": "{percent}% completed",
+  "@percentCompleted": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "overallProgress": "Overall Progress",
+  "dayAbbreviation": "DAY"
 }
 
 

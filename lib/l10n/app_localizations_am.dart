@@ -403,4 +403,60 @@ class AppLocalizationsAm extends AppLocalizations {
   @override
   String get onboardingDesc4 =>
       'ለእርስዎ መንፈሳዊ ዕድገት በተዘጋጁ መመሪያዎች፣ ጸሎቶች እና አስተንትኖዎች እያንዳንዱን ቀን ይጀምሩ።';
+
+  @override
+  String get usernamePlaceholder => 'አበባ ከበደ';
+
+  @override
+  String get profileDash => 'የመገለጫ ሰረዝ';
+
+  @override
+  String get streakDays => 'ተከታታይ ቀናት';
+
+  @override
+  String get accountAndPreferences => 'መለያ እና ምርጫዎች';
+
+  @override
+  String get audioRecordings => 'የድምጽ ቅጂዎች';
+
+  @override
+  String get appSettings => 'የመተግበሪያ ቅንብሮች';
+
+  @override
+  String get growthLevel => 'የዕድገት ደረጃ';
+
+  @override
+  String get levelTitle => 'ደረጃ';
+
+  @override
+  String get storageUsage => 'የማህደረ ትውስታ አጠቃቀም';
+
+  @override
+  String usedOutOf(String total) {
+    return 'ከ $total ጥቅም ላይ ውሏል';
+  }
+
+  @override
+  String get downloading => 'በውረድ ላይ ያሉ';
+
+  @override
+  String get downloadedBooks => 'የወረዱ መጻሕፍት';
+
+  @override
+  String get clearAll => 'ሁሉንም አጥፋ';
+
+  @override
+  String get downloadMoreTitle => 'ተጨማሪ ይዘቶችን ያውርዱ';
+
+  @override
+  String get downloadMoreSubtitle => 'ያለ ኢንተርኔት በማንኛውም ቦታ ለማንበብ';
+
+  @override
+  String get booksLegend => 'መጻሕፍት';
+
+  @override
+  String get audioLegend => 'ድምጽ';
+
+  @override
+  String get edit => 'አስተካክል';
 }
