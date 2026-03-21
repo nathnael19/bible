@@ -73,19 +73,29 @@ class LocalStorage {
   static const String _lastReadBookKey = 'last_read_book';
   static const String _lastReadBookIdKey = 'last_read_book_id';
   static const String _lastReadChapterKey = 'last_read_chapter';
+  static const String _lastReadVersionKey = 'last_read_version';
 
-  Future<void> saveLastReadLocation(String book, String bookId, int chapter) async {
+  Future<void> saveLastReadLocation(String book, String bookId, int chapter, {String? versionId}) async {
     await _prefs.setString(_lastReadBookKey, book);
     await _prefs.setString(_lastReadBookIdKey, bookId);
     await _prefs.setInt(_lastReadChapterKey, chapter);
+    if (versionId != null) {
+      await _prefs.setString(_lastReadVersionKey, versionId);
+    }
   }
 
   Map<String, dynamic>? getLastReadLocation() {
     final book = _prefs.getString(_lastReadBookKey);
     final bookId = _prefs.getString(_lastReadBookIdKey);
     final chapter = _prefs.getInt(_lastReadChapterKey);
+    final versionId = _prefs.getString(_lastReadVersionKey);
     if (book != null && bookId != null && chapter != null) {
-      return {'book': book, 'bookId': bookId, 'chapter': chapter};
+      return {
+        'book': book,
+        'bookId': bookId,
+        'chapter': chapter,
+        'versionId': versionId,
+      };
     }
     return null;
   }
