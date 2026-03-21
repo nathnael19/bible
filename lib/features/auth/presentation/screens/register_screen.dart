@@ -315,7 +315,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: SocialButton(
                         icon: Icons.g_mobiledata,
                         label: 'Google',
-                        onPressed: () {},
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Google Sign-up Coming Soon')),
+                          );
+                        },
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -323,7 +327,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: SocialButton(
                         icon: Icons.apple,
                         label: 'Apple',
-                        onPressed: () {},
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Apple Sign-up Coming Soon')),
+                          );
+                        },
                       ),
                     ),
                   ],
