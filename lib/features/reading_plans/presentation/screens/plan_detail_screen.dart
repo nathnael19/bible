@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:bible/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -23,8 +24,9 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return BlocProvider(
-      create: (context) => sl<ReadingPlanCubit>()..loadPlanDetail(widget.planId),
+      create: (context) => sl<ReadingPlanCubit>()..loadPlanDetail(widget.planId, locale: l10n.localeName),
       child: Scaffold(
         body: BlocBuilder<ReadingPlanCubit, ReadingPlanState>(
           builder: (context, state) {
@@ -74,6 +76,7 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
 
   Widget _buildAppBar(BuildContext context, ReadingPlan plan, double progress) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     
     return SliverAppBar(
       expandedHeight: 280,
@@ -108,7 +111,7 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
               child: Icon(
                 Icons.auto_stories,
                 size: 250,
-                color: Colors.white.withValues(alpha: 0.1),
+                color: Colors.white.withOpacity(0.1),
               ),
             ),
             // Content
@@ -122,7 +125,7 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color: Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -143,7 +146,7 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    _buildProgressInfo(theme, progress, plan.durationDays),
+                    _buildProgressInfo(theme, l10n, progress, plan.durationDays),
                   ],
                 ),
               ),
@@ -154,7 +157,7 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
     );
   }
 
-  Widget _buildProgressInfo(ThemeData theme, double progress, int totalDays) {
+  Widget _buildProgressInfo(ThemeData theme, AppLocalizations l10n, double progress, int totalDays) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -162,7 +165,7 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Overall Progress',
+              l10n.overallProgress,
               style: theme.textTheme.labelMedium?.copyWith(color: Colors.white70),
             ),
             Text(
@@ -179,7 +182,7 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
             value: progress,
-            backgroundColor: Colors.white.withValues(alpha: 0.2),
+            backgroundColor: Colors.white.withOpacity(0.2),
             valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
             minHeight: 8,
           ),
@@ -189,6 +192,7 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
   }
 
   Widget _buildDaySelector(ReadingPlan plan) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       height: 90,
       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -222,7 +226,7 @@ class _PlanDetailScreenState extends State<PlanDetailScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'DAY',
+                    l10n.dayAbbreviation,
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
@@ -270,7 +274,7 @@ class _TaskCard extends StatelessWidget {
         border: Border.all(
           color: isDone 
               ? theme.colorScheme.primary.withValues(alpha: 0.2)
-              : theme.colorScheme.outlineVariant.withValues(alpha: 0.1),
+              : theme.colorScheme.outlineVariant.withOpacity(0.1),
         ),
         boxShadow: [
           BoxShadow(
@@ -337,6 +341,7 @@ class _TaskCard extends StatelessWidget {
   }
 
   void _navigateToReader(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final ref = task.reference!;
     final parts = ref.split('-')[0].split('.');
     if (parts.length >= 2) {
@@ -344,7 +349,7 @@ class _TaskCard extends StatelessWidget {
       final chapter = int.tryParse(parts[1]) ?? 1;
       final verse = parts.length > 2 ? int.tryParse(parts[2]) : null;
       
-      final bookName = ScriptureReferenceMapper.getName(bookAbbr);
+      final bookName = ScriptureReferenceMapper.getName(bookAbbr, locale: l10n.localeName) ?? bookAbbr;
       final bookId = ScriptureReferenceMapper.getId(bookAbbr);
       
       if (bookName != null) {
