@@ -316,9 +316,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         icon: Icons.g_mobiledata,
                         label: 'Google',
                         onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Google Sign-up Coming Soon')),
-                          );
+                          context.read<AuthCubit>().signInWithGoogle();
                         },
                       ),
                     ),
