@@ -1,5 +1,6 @@
 import 'package:bible/features/bible_reader/presentation/screens/audio_player_screen.dart';
 import 'package:bible/features/bible_reader/presentation/screens/search_screen.dart';
+import 'package:bible/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -304,6 +305,7 @@ class _ChapterHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final tt = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -323,7 +325,7 @@ class _ChapterHeader extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            'ምዕራፍ ${state.chapter}',
+            '${l10n.chapter} ${state.chapter}',
             style: tt.headlineMedium!.copyWith(
               color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.bold,
@@ -355,6 +357,7 @@ class _CustomReaderAppBar extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final tt = theme.textTheme;
 
@@ -382,7 +385,7 @@ class _CustomReaderAppBar extends StatelessWidget
                       ),
                     ),
                     Text(
-                      int.parse(loaded.bookId) <= 39 ? 'ብሉይ ኪዳን' : 'ሐዲስ ኪዳን',
+                      int.parse(loaded.bookId) <= 39 ? l10n.oldTestament : l10n.newTestament,
                       style: tt.labelSmall!.copyWith(
                         color: SabaColors.onSurfaceVariant,
                         fontSize: 10,
@@ -465,6 +468,7 @@ class _VerseActionToolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final cubit = context.read<BibleReaderCubit>();
     final state = cubit.state as BibleReaderLoaded;
@@ -494,14 +498,14 @@ class _VerseActionToolbar extends StatelessWidget {
             icon: isBookmarked
                 ? Icons.bookmark_rounded
                 : Icons.bookmark_outline_rounded,
-            label: 'መዝግብ',
+            label: l10n.record,
             isActive: isBookmarked,
             onTap: () => cubit.toggleBookmark(verseNumber),
           ),
           _divider(theme),
           _ActionButton(
             icon: Icons.copy_rounded,
-            label: 'ቅዳ',
+            label: l10n.copy,
             onTap: () {
               // Copy logic would go here
               cubit.selectVerse(null);
@@ -510,7 +514,7 @@ class _VerseActionToolbar extends StatelessWidget {
           _divider(theme),
           _ActionButton(
             icon: Icons.close_rounded,
-            label: 'ዝጋ',
+            label: l10n.close,
             onTap: () => cubit.selectVerse(null),
           ),
         ],
