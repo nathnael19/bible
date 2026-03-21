@@ -132,4 +132,28 @@ class LocalStorage {
     }
     return streak;
   }
+
+  // ── Reading Plans ──────────────────────────────────────────────────────────
+  static const String _planProgressPrefix = 'plan_progress_';
+
+  Future<void> toggleTaskCompletion(String planId, String taskId) async {
+    final key = '$_planProgressPrefix$planId';
+    final completed = _prefs.getStringList(key) ?? [];
+    if (completed.contains(taskId)) {
+      completed.remove(taskId);
+    } else {
+      completed.add(taskId);
+    }
+    await _prefs.setStringList(key, completed);
+  }
+
+  List<String> getCompletedTaskIds(String planId) {
+    final key = '$_planProgressPrefix$planId';
+    return _prefs.getStringList(key) ?? [];
+  }
+
+  Future<void> clearPlanProgress(String planId) async {
+    final key = '$_planProgressPrefix$planId';
+    await _prefs.remove(key);
+  }
 }
