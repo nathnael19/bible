@@ -7,7 +7,10 @@ class SearchVerses {
 
   SearchVerses(this.repository);
 
-  Future<List<Verse>> call(String query, {SearchFilter filter = SearchFilter.all}) async {
-    return repository.searchVerses(query, filter: filter);
+  Future<List<Verse>> call(String query, {
+    String versionId = 'amh_standard',
+    SearchFilter filter = SearchFilter.all,
+  }) async {
+    return repository.searchVerses(query, versionId: versionId, filter: filter);
   }
 }
