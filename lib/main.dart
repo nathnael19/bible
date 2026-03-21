@@ -8,6 +8,7 @@ import 'features/bible_reader/presentation/cubit/navigation_cubit.dart';
 import 'features/bible_reader/presentation/cubit/library_cubit.dart';
 import 'features/bible_reader/presentation/cubit/search_cubit.dart';
 import 'features/bible_reader/presentation/cubit/theme_cubit.dart';
+import 'features/bible_reader/presentation/cubit/bookmarks_cubit.dart';
 
 
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -41,6 +42,7 @@ class BibleApp extends StatelessWidget {
         ),
         BlocProvider(create: (_) => sl<SearchCubit>()),
         BlocProvider(create: (_) => sl<ThemeCubit>()),
+        BlocProvider(create: (_) => sl<BookmarksCubit>()..loadBookmarks()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, mode) {
