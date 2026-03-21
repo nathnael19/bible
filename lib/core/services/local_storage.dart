@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -131,7 +132,21 @@ class LocalStorage {
 
   List<String> getReadingHistory() => _prefs.getStringList(_readingHistoryKey) ?? [];
 
+  static const String _activityLogKey = 'activity_log';
 
+  void logActivity(String type, Map<String, dynamic> data) {
+    final log = _prefs.getStringList(_activityLogKey) ?? [];
+    data['type'] = type;
+    data['timestamp'] = DateTime.now().toIso8601String();
+    log.insert(0, jsonEncode(data));
+    if (log.length > 50) log.removeLast();
+    _prefs.setStringList(_activityLogKey, log);
+  }
+
+  List<Map<String, dynamic>> getActivityLog() {
+    final log = _prefs.getStringList(_activityLogKey) ?? [];
+    return log.map((e) => jsonDecode(e) as Map<String, dynamic>).toList();
+  }
   int calculateStreak() {
     final history = getReadingHistory().toList();
     if (history.isEmpty) return 0;
