@@ -112,8 +112,8 @@ class _BookmarkCard extends StatelessWidget {
               targetVerse: bookmark.verseNumber,
             );
             
-            // 2. Switch to Reader Tab (Index 1)
-            context.read<NavigationCubit>().setTab(1);
+            // 2. Switch to Reader Tab (Index 2)
+            context.read<NavigationCubit>().setTab(2);
             
             // 3. Close this screen
             Navigator.pop(context);
