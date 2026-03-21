@@ -124,6 +124,18 @@
   "psalms": "Psalms",
   "splashTitle": "Saba Sacred Script",
   "splashSubtitle": "SABA SACRED SCRIPT",
-  "splashTagline": "ILLUMINATING THE WORD"
+  "splashTagline": "ILLUMINATING THE WORD",
+  "onboardingNext": "Next",
+  "onboardingGetStarted": "Get Started",
+  "onboardingSkip": "Skip",
+  "onboardingTitle1": "Your Daily Scripture Companion",
+  "onboardingDesc1": "Embark on a meaningful journey with the Word of God, personalized for you.",
+  "onboardingTitle2": "Read the Bible Daily",
+  "onboardingDesc2": "Immerse yourself in scripture with customizable reading plans and insightful study tools.",
+  "onboardingTitle3": "Grow Your Faith",
+  "onboardingDesc3": "Track your spiritual growth, monitor your reading streaks, and reflect on your daily journey.",
+  "onboardingTitle4": "Daily Reflections",
+  "onboardingDesc4": "Start each day with guidance, prayers, and reflections tailored for your spiritual growth."
 }
+
 

@@ -124,6 +124,18 @@
   "tapToChange": "ምዕራፍ ወይም ቁጥር ለመቀየር ይንኩ",
   "splashTitle": "ሳባ ቅዱስ ስነ-ጽሁፍ",
   "splashSubtitle": "SABA SACRED SCRIPT",
-  "splashTagline": "የቃሉ ብርሃን"
+  "splashTagline": "የቃሉ ብርሃን",
+  "onboardingNext": "ቀጥል",
+  "onboardingGetStarted": "ጀምር",
+  "onboardingSkip": "ዝለል",
+  "onboardingTitle1": "የዕለቱ የቃል ጓደኛዎት",
+  "onboardingDesc1": "ለእርስዎ በሚመች መልኩ በተዘጋጀው የእግዚአብሔር ቃል ትርጉም ያለው ጉዞ ይጀምሩ።",
+  "onboardingTitle2": "መጽሐፍ ቅዱስን በየቀኑ ያንብቡ",
+  "onboardingDesc2": "በሚመቹ የንባብ ዕቅዶች እና ጥልቅ የጥናት መሣሪያዎች በቅዱሳት መጻሕፍት ውስጥ ይጥለቁ።",
+  "onboardingTitle3": "እምነትዎን ያሳድጉ",
+  "onboardingDesc3": "መንፈሳዊ ዕድገትዎን ይከታተሉ፣ የንባብ ቀናትዎን ይመዝግቡ እና በዕለታዊ ጉዞዎ ላይ ያሰላስሉ።",
+  "onboardingTitle4": "የዕለቱ አስተንትኖ",
+  "onboardingDesc4": "ለእርስዎ መንፈሳዊ ዕድገት በተዘጋጁ መመሪያዎች፣ ጸሎቶች እና አስተንትኖዎች እያንዳንዱን ቀን ይጀምሩ።"
 }
+
 
