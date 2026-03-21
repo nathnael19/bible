@@ -51,10 +51,10 @@ class ReadingPlanCubit extends Cubit<ReadingPlanState> {
 
   ReadingPlanCubit(this._repository) : super(ReadingPlanInitial());
 
-  Future<void> loadPlans() async {
+  Future<void> loadPlans({String locale = 'en'}) async {
     emit(ReadingPlanLoading());
     try {
-      final plans = await _repository.getReadingPlans();
+      final plans = await _repository.getReadingPlans(locale: locale);
       final progressMap = <String, double>{};
       for (final plan in plans) {
         final completed = await _repository.getCompletedTaskIds(plan.id);
@@ -67,12 +67,12 @@ class ReadingPlanCubit extends Cubit<ReadingPlanState> {
     }
   }
 
-  Future<void> loadPlanDetail(String planId) async {
+  Future<void> loadPlanDetail(String planId, {String locale = 'en'}) async {
     // Current state could be ReadingPlansLoaded or ReadingPlanDetailLoaded
     // We want to preserve the plan if we already have it, or fetch it if not.
     emit(ReadingPlanLoading());
     try {
-      final plan = await _repository.getReadingPlanById(planId);
+      final plan = await _repository.getReadingPlanById(planId, locale: locale);
       if (plan != null) {
         final completed = await _repository.getCompletedTaskIds(planId);
         emit(ReadingPlanDetailLoaded(plan: plan, completedTaskIds: completed));
