@@ -16,6 +16,7 @@ import '../../features/bible_reader/presentation/cubit/theme_cubit.dart';
 import '../../features/bible_reader/presentation/cubit/bookmarks_cubit.dart';
 import '../../features/bible_reader/presentation/cubit/locale_cubit.dart';
 import '../../features/auth/presentation/cubit/auth_cubit.dart';
+import '../../features/onboarding/presentation/cubit/onboarding_cubit.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/services/local_storage.dart';
@@ -54,5 +55,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => AuthCubit(sl()));
   sl.registerLazySingleton(() => ThemeCubit(sl()));
   sl.registerLazySingleton(() => LocaleCubit(sl()));
+  sl.registerLazySingleton(() => OnboardingCubit(sl()));
 }
+
 
