@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/verse.dart';
 import '../../domain/usecases/get_verses.dart';
 import '../../domain/usecases/get_chapter_count.dart';
+import '../../domain/usecases/get_books.dart';
 import 'package:bible/core/services/local_storage.dart';
 
 // Helper for copyWith to distinguish between null and not passed
@@ -92,8 +93,14 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
   final GetVerses _getVerses;
   final GetChapterCount _getChapterCount;
   final LocalStorage _storage;
+  final GetBooks _getBooks;
 
-  BibleReaderCubit(this._getVerses, this._getChapterCount, this._storage) : super(const BibleReaderLoading());
+  BibleReaderCubit(
+    this._getVerses,
+    this._getChapterCount,
+    this._storage,
+    this._getBooks,
+  ) : super(const BibleReaderLoading());
 
   Future<void> loadVerses({
     String versionId = 'amh_standard',
@@ -115,8 +122,11 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
       final bookmarks = _storage.getBookmarks(effectiveBookId, chapter);
       
       // Record reading event and stats
-      _storage.recordReadingEvent(book, chapter);
+      _storage.recordReadingEvent(book, effectiveBookId, chapter);
       _storage.incrementVersesRead(verses.length);
+
+      // Save last read location
+      _storage.saveLastReadLocation(book, effectiveBookId, chapter);
 
       emit(BibleReaderLoaded(
         verses: verses,
@@ -132,11 +142,29 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
     }
   }
 
+  Future<void> loadInitialLocation() async {
+    final lastRead = _storage.getLastReadLocation();
+    if (lastRead != null) {
+      await loadVerses(
+        book: lastRead['book'] as String,
+        bookId: lastRead['bookId'] as String,
+        chapter: lastRead['chapter'] as int,
+      );
+    } else {
+      await loadVerses(
+        book: 'ኦሪት ዘፍጥረት',
+        chapter: 1,
+        bookId: '1',
+      );
+    }
+  }
+
   void selectVerse(int? verseNumber) {
     if (state is BibleReaderLoaded) {
       emit((state as BibleReaderLoaded).copyWith(activeVerseNumber: Value(verseNumber)));
     }
   }
+
 
   void toggleBookmark(int verseNumber) {
     if (state is BibleReaderLoaded) {
@@ -163,6 +191,55 @@ class BibleReaderCubit extends Cubit<BibleReaderState> {
         highlights: newHighlights,
         activeVerseNumber: const Value(null),
       ));
+    }
+  }
+
+  Future<void> nextChapter() async {
+    if (state is! BibleReaderLoaded) return;
+    final currentState = state as BibleReaderLoaded;
+    
+    if (currentState.chapter < currentState.chapterCount) {
+      await loadVerses(
+        book: currentState.book,
+        bookId: currentState.bookId,
+        chapter: currentState.chapter + 1,
+      );
+    } else {
+      final books = await _getBooks();
+      final currentIndex = books.indexWhere((b) => b.id.toString() == currentState.bookId);
+      if (currentIndex != -1 && currentIndex < books.length - 1) {
+        final nextBook = books[currentIndex + 1];
+        await loadVerses(
+          book: nextBook.name,
+          bookId: nextBook.id.toString(),
+          chapter: 1,
+        );
+      }
+    }
+  }
+
+  Future<void> previousChapter() async {
+    if (state is! BibleReaderLoaded) return;
+    final currentState = state as BibleReaderLoaded;
+    
+    if (currentState.chapter > 1) {
+      await loadVerses(
+        book: currentState.book,
+        bookId: currentState.bookId,
+        chapter: currentState.chapter - 1,
+      );
+    } else {
+      final books = await _getBooks();
+      final currentIndex = books.indexWhere((b) => b.id.toString() == currentState.bookId);
+      if (currentIndex > 0) {
+        final prevBook = books[currentIndex - 1];
+        final prevBookChapterCount = await _getChapterCount(prevBook.name);
+        await loadVerses(
+          book: prevBook.name,
+          bookId: prevBook.id.toString(),
+          chapter: prevBookChapterCount,
+        );
+      }
     }
   }
 
