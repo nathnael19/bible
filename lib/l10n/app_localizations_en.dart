@@ -232,6 +232,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get twoHoursAgo => '2 hours ago';
 
   @override
+  String get justNow => 'Just now';
+
+  @override
+  String get today => 'Today';
+
+  @override
   String get yesterday => 'Yesterday';
 
   @override

@@ -226,7 +226,13 @@ class AppLocalizationsAm extends AppLocalizations {
   String get finishedChapter => 'ምዕራፍ አጠናቀዋል';
 
   @override
-  String get twoHoursAgo => 'ከ2 ሰዓት በፊት';
+  String get twoHoursAgo => 'ከሁለት ሰዓት በፊት';
+
+  @override
+  String get justNow => 'አሁን';
+
+  @override
+  String get today => 'ዛሬ';
 
   @override
   String get yesterday => 'ትናንት';

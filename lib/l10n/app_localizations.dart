@@ -536,6 +536,18 @@ abstract class AppLocalizations {
   /// **'2 hours ago'**
   String get twoHoursAgo;
 
+  /// No description provided for @justNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get justNow;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
   /// No description provided for @yesterday.
   ///
   /// In en, this message translates to:
