@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../features/bible_reader/presentation/screens/app_shell.dart';
+import '../cubit/auth_cubit.dart';
 import '../widgets/social_button.dart';
 import 'register_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,6 +15,15 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _isPasswordVisible = false;
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 8),
                     TextField(
+                      controller: _usernameController,
                       decoration: InputDecoration(
                         hintText: 'username@heritage.com',
                         prefixIcon: const Icon(Icons.person_outline, size: 20),
@@ -119,6 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 4),
                     TextField(
+                      controller: _passwordController,
                       obscureText: !_isPasswordVisible,
                       decoration: InputDecoration(
                         hintText: '••••••••',
@@ -143,27 +157,53 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 40),
 
                 // ── Login Button ─────────────────────────────────────────────
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: SabaColors.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                BlocConsumer<AuthCubit, AuthState>(
+                  listener: (context, state) {
+                    if (state.status == AuthStatus.authenticated) {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (_) => const AppShell()),
+                        (route) => false,
+                      );
+                    } else if (state.status == AuthStatus.error) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(state.errorMessage ?? 'Authentication failed')),
+                      );
+                    }
+                  },
+                  builder: (context, state) {
+                    return SizedBox(
+                      width: double.infinity,
+                      height: 56,
+                      child: ElevatedButton(
+                        onPressed: state.status == AuthStatus.loading
+                            ? null
+                            : () {
+                                context.read<AuthCubit>().login(
+                                      _usernameController.text,
+                                      _passwordController.text,
+                                    );
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: SabaColors.primary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 4,
+                          shadowColor: SabaColors.primary.withValues(alpha: 0.3),
+                        ),
+                        child: state.status == AuthStatus.loading
+                            ? const CircularProgressIndicator(color: Colors.white)
+                            : Text(
+                                'ግባ',
+                                style: SabaTypography.headlineSmall().copyWith(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                ),
+                              ),
                       ),
-                      elevation: 4,
-                      shadowColor: SabaColors.primary.withValues(alpha: 0.3),
-                    ),
-                    child: Text(
-                      'ግባ',
-                      style: SabaTypography.headlineSmall().copyWith(
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 32),
 
