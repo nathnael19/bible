@@ -53,7 +53,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(() => SearchVerses(sl()));
 
   // ── Cubits (factory — new instance each time) ─────────────────────────────
-  sl.registerFactory(() => BibleReaderCubit(sl(), sl(), sl()));
+  sl.registerFactory(() => BibleReaderCubit(sl(), sl(), sl(), sl()));
   sl.registerFactory(() => VersionSelectorCubit(sl()));
   sl.registerFactory(() => LibraryCubit(sl()));
   sl.registerFactory(() => SearchCubit(sl()));
