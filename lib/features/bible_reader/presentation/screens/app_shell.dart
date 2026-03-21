@@ -8,6 +8,7 @@ import '../cubit/navigation_cubit.dart';
 import '../screens/home_screen.dart';
 import '../screens/bible_reader_screen.dart';
 import '../screens/profile_screen.dart';
+import '../../../reading_plans/presentation/screens/reading_plans_screen.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
@@ -19,6 +20,7 @@ class AppShell extends StatefulWidget {
 class _AppShellState extends State<AppShell> {
   static const List<Widget> _pages = [
     HomeScreen(),
+    ReadingPlansScreen(),
     BibleReaderScreen(),
     ProfileScreen(),
   ];
@@ -95,16 +97,22 @@ class _CustomBottomBar extends StatelessWidget {
               onTap: () => onTap(0),
             ),
             _NavItem(
-              icon: Icons.auto_stories_rounded,
-              label: l10n.reading,
+              icon: Icons.calendar_month_rounded,
+              label: l10n.readingPlans,
               isSelected: selectedIndex == 1,
               onTap: () => onTap(1),
             ),
             _NavItem(
-              icon: Icons.person_rounded,
-              label: l10n.profile,
+              icon: Icons.auto_stories_rounded,
+              label: l10n.reading,
               isSelected: selectedIndex == 2,
               onTap: () => onTap(2),
+            ),
+            _NavItem(
+              icon: Icons.person_rounded,
+              label: l10n.profile,
+              isSelected: selectedIndex == 3,
+              onTap: () => onTap(3),
             ),
           ],
         ),
