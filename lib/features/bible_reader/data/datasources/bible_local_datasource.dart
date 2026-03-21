@@ -12,9 +12,19 @@ class BibleLocalDataSource {
   Future<void> _init(String versionId) async {
     if (_cachedBibles.containsKey(versionId)) return;
     
-    String fileName = versionId == 'amh_full' 
-        ? 'amharic_full.json' 
-        : 'amharic_bible.json';
+    String fileName;
+    switch (versionId) {
+      case 'amh_full':
+        fileName = 'amharic_full.json';
+        break;
+      case 'eng_kjv':
+        fileName = 'english_kjv.json';
+        break;
+      case 'amh_standard':
+      default:
+        fileName = 'amharic_bible.json';
+        break;
+    }
 
     try {
       final String response = await rootBundle.loadString('assets/bible/$fileName');
@@ -39,11 +49,16 @@ class BibleLocalDataSource {
         language: 'አማርኛ',
         abbreviation: 'OAM',
       ),
+      BibleVersionModel(
+        id: 'eng_kjv',
+        name: 'King James Version',
+        language: 'English',
+        abbreviation: 'KJV',
+      ),
     ];
   }
 
-  Future<List<BookModel>> getBooks() async {
-    const versionId = 'amh_standard';
+  Future<List<BookModel>> getBooks({String versionId = 'amh_standard'}) async {
     await _init(versionId);
     final List<BookModel> books = [];
     final bible = _cachedBibles[versionId];
@@ -129,8 +144,7 @@ class BibleLocalDataSource {
     return names[id] ?? 'BOOK $id';
   }
 
-  Future<int> getChapterCount(String book) async {
-    const versionId = 'amh_standard';
+  Future<int> getChapterCount(String book, {String versionId = 'amh_standard'}) async {
     await _init(versionId);
     final bible = _cachedBibles[versionId];
     final bookData = bible?.firstWhere(
@@ -173,8 +187,10 @@ class BibleLocalDataSource {
     }).toList();
   }
 
-  Future<List<VerseModel>> searchVerses(String query, {SearchFilter filter = SearchFilter.all}) async {
-    const versionId = 'amh_standard';
+  Future<List<VerseModel>> searchVerses(String query, {
+    String versionId = 'amh_standard',
+    SearchFilter filter = SearchFilter.all,
+  }) async {
     await _init(versionId);
     final bible = _cachedBibles[versionId];
     if (query.trim().isEmpty || bible == null) return [];
