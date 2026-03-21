@@ -110,7 +110,8 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (mounted) _scrollToVerse(state.activeVerseNumber!);
             });
-          } else if (state.book != _currentBook || state.chapter != _currentChapter) {
+          } else if (state.book != _currentBook ||
+              state.chapter != _currentChapter) {
             // Scroll to top on chapter change if no verse targeted
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (mounted && _scrollController.hasClients) {
@@ -139,14 +140,16 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
             child: Stack(
               children: [
                 _buildContent(context, state),
-                
+
                 // ── Hiding AppBar ──────────────────────────────────────────
                 BlocBuilder<NavigationCubit, NavigationState>(
                   builder: (context, navState) {
                     return AnimatedPositioned(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
-                      top: navState.isBottomNavVisible ? 0 : -(kToolbarHeight + 50),
+                      top: navState.isBottomNavVisible
+                          ? 0
+                          : -(kToolbarHeight + 50),
                       left: 0,
                       right: 0,
                       child: _CustomReaderAppBar(state: state),
@@ -191,7 +194,8 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
                 // ── Verse Action Toolbar ──────────────────────────────────
                 BlocBuilder<NavigationCubit, NavigationState>(
                   builder: (context, navState) {
-                    if (state is BibleReaderLoaded && state.activeVerseNumber != null) {
+                    if (state is BibleReaderLoaded &&
+                        state.activeVerseNumber != null) {
                       return AnimatedPositioned(
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeInOut,
@@ -259,9 +263,12 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
                     isBookmarked: isBookmarked,
                     highlightColor: highlightColor,
                     onTap: () => context.read<BibleReaderCubit>().selectVerse(
-                      state.activeVerseNumber == verse.number ? null : verse.number,
+                      state.activeVerseNumber == verse.number
+                          ? null
+                          : verse.number,
                     ),
-                    onDoubleTap: () => context.read<BibleReaderCubit>().selectVerse(null),
+                    onDoubleTap: () =>
+                        context.read<BibleReaderCubit>().selectVerse(null),
                   );
                 },
                 childCount: state.verses.length,
@@ -385,7 +392,9 @@ class _CustomReaderAppBar extends StatelessWidget
                       ),
                     ),
                     Text(
-                      int.parse(loaded.bookId) <= 39 ? l10n.oldTestament : l10n.newTestament,
+                      int.parse(loaded.bookId) <= 39
+                          ? l10n.oldTestament
+                          : l10n.newTestament,
                       style: tt.labelSmall!.copyWith(
                         color: SabaColors.onSurfaceVariant,
                         fontSize: 10,
@@ -421,11 +430,7 @@ class _FloatingControl extends StatelessWidget {
   final bool isPrimary;
   final VoidCallback? onTap;
 
-  const _FloatingControl({
-    this.iconData,
-    this.isPrimary = false,
-    this.onTap,
-  });
+  const _FloatingControl({this.iconData, this.isPrimary = false, this.onTap});
 
   @override
   Widget build(BuildContext context) {
