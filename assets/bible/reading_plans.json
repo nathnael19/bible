@@ -1,0 +1,100 @@
+[
+  {
+    "id": "7-days-of-peace",
+    "title": "7 Days of Peace",
+    "description": "Find comfort and tranquility through these selected scriptures.",
+    "category": "Emotional Wellbeing",
+    "durationDays": 7,
+    "days": [
+      {
+        "dayNumber": 1,
+        "tasks": [
+          {
+            "id": "7dop-d1-t1",
+            "description": "Philippians 4:6-7",
+            "reference": "PHP.4.6-PHP.4.7"
+          }
+        ]
+      },
+      {
+        "dayNumber": 2,
+        "tasks": [
+          {
+            "id": "7dop-d2-t1",
+            "description": "John 14:27",
+            "reference": "JHN.14.27"
+          }
+        ]
+      },
+      {
+        "dayNumber": 3,
+        "tasks": [
+          {
+            "id": "7dop-d3-t1",
+            "description": "Isaiah 26:3",
+            "reference": "ISA.26.3"
+          }
+        ]
+      },
+      {
+        "dayNumber": 4,
+        "tasks": [
+          {
+            "id": "7dop-d4-t1",
+            "description": "Psalm 34:14",
+            "reference": "PSA.34.14"
+          }
+        ]
+      },
+      {
+        "dayNumber": 5,
+        "tasks": [
+          {
+            "id": "7dop-d5-t1",
+            "description": "Matthew 5:9",
+            "reference": "MAT.5.9"
+          }
+        ]
+      },
+      {
+        "dayNumber": 6,
+        "tasks": [
+          {
+            "id": "7dop-d6-t1",
+            "description": "Colossians 3:15",
+            "reference": "COL.3.15"
+          }
+        ]
+      },
+      {
+        "dayNumber": 7,
+        "tasks": [
+          {
+            "id": "7dop-d7-t1",
+            "description": "2 Thessalonians 3:16",
+            "reference": "2TH.3.16"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "bible-in-a-year",
+    "title": "Bible in a Year",
+    "description": "Read the entire Bible from Genesis to Revelation in one year.",
+    "category": "Foundation",
+    "durationDays": 365,
+    "days": [
+      {
+        "dayNumber": 1,
+        "tasks": [
+          {
+            "id": "biay-d1-t1",
+            "description": "Genesis 1-3",
+            "reference": "GEN.1.1-GEN.3.24"
+          }
+        ]
+      }
+    ]
+  }
+]
