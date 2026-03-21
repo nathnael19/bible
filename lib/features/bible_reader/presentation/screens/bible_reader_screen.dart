@@ -2,7 +2,9 @@ import 'package:bible/features/bible_reader/presentation/screens/audio_player_sc
 import 'package:bible/features/bible_reader/presentation/screens/search_screen.dart';
 import 'package:bible/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../cubit/bible_reader_cubit.dart';
@@ -182,9 +184,16 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
                                 context.read<ThemeCubit>().toggleTheme(),
                           ),
                           const SizedBox(height: 12),
-                          const _FloatingControl(
+                          _FloatingControl(
                             iconData: Icons.share_rounded,
                             isPrimary: true,
+                            onTap: () {
+                              if (state is BibleReaderLoaded) {
+                                final text = state.verses.map((v) => '${v.number}. ${v.text}').join('\n');
+                                final title = '${state.book} ${state.chapter}';
+                                Share.share('$title\n\n$text');
+                              }
+                            },
                           ),
                         ],
                       ),
@@ -523,7 +532,12 @@ class _VerseActionToolbar extends StatelessWidget {
             icon: Icons.copy_rounded,
             label: l10n.copy,
             onTap: () {
-              // Copy logic would go here
+              final verseText = state.verses.firstWhere((v) => v.number == verseNumber).text;
+              final copyText = '${state.book} ${state.chapter}:$verseNumber\n"$verseText"';
+              Clipboard.setData(ClipboardData(text: copyText));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('${l10n.copy} - $verseNumber')),
+              );
               cubit.selectVerse(null);
             },
           ),
