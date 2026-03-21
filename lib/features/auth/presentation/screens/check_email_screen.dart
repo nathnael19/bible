@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bible/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../cubit/auth_cubit.dart';
@@ -30,6 +31,7 @@ class _CheckEmailScreenState extends State<CheckEmailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: SabaColors.surface,
       appBar: AppBar(
@@ -63,7 +65,7 @@ class _CheckEmailScreenState extends State<CheckEmailScreen> {
               ),
               const SizedBox(height: 32),
               Text(
-                'ኢሜይልዎን ያረጋግጡ',
+                l10n.checkEmailTitle,
                 style: SabaTypography.headlineLarge().copyWith(
                   color: SabaColors.primary,
                   fontWeight: FontWeight.bold,
@@ -78,7 +80,7 @@ class _CheckEmailScreenState extends State<CheckEmailScreen> {
                     height: 1.5,
                   ),
                   children: [
-                    const TextSpan(text: 'ባለ 4-አሃዝ ኮድ ወደ '),
+                    TextSpan(text: l10n.checkEmailSubtitle1),
                     TextSpan(
                       text: widget.email,
                       style: const TextStyle(
@@ -86,7 +88,7 @@ class _CheckEmailScreenState extends State<CheckEmailScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const TextSpan(text: ' ልከናል፡፡ እባክዎን ከታች ያስገቡ።'),
+                    TextSpan(text: l10n.checkEmailSubtitle2),
                   ],
                 ),
               ),
@@ -144,13 +146,15 @@ class _CheckEmailScreenState extends State<CheckEmailScreen> {
                 listener: (context, state) {
                   if (state.status == AuthStatus.error) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.errorMessage ?? 'Error occurred')),
+                      SnackBar(content: Text(state.errorMessage ?? l10n.errorOccurred)),
                     );
                   } else if (state.status == AuthStatus.initial && _code.length == 4) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('የይለፍ ቃል በትክክል ተቀይሯል!')),
+                      SnackBar(content: Text(l10n.passwordChangedSuccess)),
                     );
-                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    if (context.mounted) {
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                    }
                   }
                 },
                 builder: (context, state) {
@@ -170,7 +174,7 @@ class _CheckEmailScreenState extends State<CheckEmailScreen> {
                       child: state.status == AuthStatus.loading
                           ? const CircularProgressIndicator(color: Colors.white)
                           : Text(
-                              'አረጋግጥ',
+                              l10n.verify,
                               style: SabaTypography.labelLarge().copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -187,20 +191,22 @@ class _CheckEmailScreenState extends State<CheckEmailScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'ኮዱ አልደረሰዎትም? ',
+                    l10n.didNotReceiveCode,
                     style: SabaTypography.bodyMedium().copyWith(
                       color: SabaColors.onSurfaceVariant,
                     ),
                   ),
                   TextButton(
-                    onPressed: () {
-                      context.read<AuthCubit>().sendResetCode(widget.email);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('ኮዱ በድጋሚ ተልኳል')),
-                      );
+                    onPressed: () async {
+                      await context.read<AuthCubit>().sendResetCode(widget.email);
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l10n.codeResent)),
+                        );
+                      }
                     },
                     child: Text(
-                      'በድጋሚ ላክ',
+                      l10n.resend,
                       style: SabaTypography.bodyMedium().copyWith(
                         color: SabaColors.primary,
                         fontWeight: FontWeight.bold,
