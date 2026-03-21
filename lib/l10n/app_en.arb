@@ -135,7 +135,32 @@
   "onboardingTitle3": "Grow Your Faith",
   "onboardingDesc3": "Track your spiritual growth, monitor your reading streaks, and reflect on your daily journey.",
   "onboardingTitle4": "Daily Reflections",
-  "onboardingDesc4": "Start each day with guidance, prayers, and reflections tailored for your spiritual growth."
+  "onboardingDesc4": "Start each day with guidance, prayers, and reflections tailored for your spiritual growth.",
+  "usernamePlaceholder": "Abebe Kebede",
+  "profileDash": "Profile Dash",
+  "streakDays": "Streak Days",
+  "accountAndPreferences": "Account and Preferences",
+  "audioRecordings": "Audio Recordings",
+  "appSettings": "App Settings",
+  "growthLevel": "Growth Level",
+  "levelTitle": "Level",
+  "storageUsage": "Storage Usage",
+  "usedOutOf": "used of {total}",
+  "@usedOutOf": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "downloading": "Downloading",
+  "downloadedBooks": "Downloaded Books",
+  "clearAll": "Clear All",
+  "downloadMoreTitle": "Download More Content",
+  "downloadMoreSubtitle": "To read offline anywhere",
+  "booksLegend": "Books",
+  "audioLegend": "Audio",
+  "edit": "Edit"
 }
 
 

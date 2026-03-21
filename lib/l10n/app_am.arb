@@ -135,7 +135,32 @@
   "onboardingTitle3": "እምነትዎን ያሳድጉ",
   "onboardingDesc3": "መንፈሳዊ ዕድገትዎን ይከታተሉ፣ የንባብ ቀናትዎን ይመዝግቡ እና በዕለታዊ ጉዞዎ ላይ ያሰላስሉ።",
   "onboardingTitle4": "የዕለቱ አስተንትኖ",
-  "onboardingDesc4": "ለእርስዎ መንፈሳዊ ዕድገት በተዘጋጁ መመሪያዎች፣ ጸሎቶች እና አስተንትኖዎች እያንዳንዱን ቀን ይጀምሩ።"
+  "onboardingDesc4": "ለእርስዎ መንፈሳዊ ዕድገት በተዘጋጁ መመሪያዎች፣ ጸሎቶች እና አስተንትኖዎች እያንዳንዱን ቀን ይጀምሩ።",
+  "usernamePlaceholder": "አበባ ከበደ",
+  "profileDash": "የመገለጫ ሰረዝ",
+  "streakDays": "ተከታታይ ቀናት",
+  "accountAndPreferences": "መለያ እና ምርጫዎች",
+  "audioRecordings": "የድምጽ ቅጂዎች",
+  "appSettings": "የመተግበሪያ ቅንብሮች",
+  "growthLevel": "የዕድገት ደረጃ",
+  "levelTitle": "ደረጃ",
+  "storageUsage": "የማህደረ ትውስታ አጠቃቀም",
+  "usedOutOf": "ከ {total} ጥቅም ላይ ውሏል",
+  "@usedOutOf": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "downloading": "በውረድ ላይ ያሉ",
+  "downloadedBooks": "የወረዱ መጻሕፍት",
+  "clearAll": "ሁሉንም አጥፋ",
+  "downloadMoreTitle": "ተጨማሪ ይዘቶችን ያውርዱ",
+  "downloadMoreSubtitle": "ያለ ኢንተርኔት በማንኛውም ቦታ ለማንበብ",
+  "booksLegend": "መጻሕፍት",
+  "audioLegend": "ድምጽ",
+  "edit": "አስተካክል"
 }
 
 
