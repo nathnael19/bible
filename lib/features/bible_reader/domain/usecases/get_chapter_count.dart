@@ -5,7 +5,7 @@ class GetChapterCount {
 
   GetChapterCount(this.repository);
 
-  Future<int> call(String book) async {
-    return repository.getChapterCount(book);
+  Future<int> call(String book, {String versionId = 'amh_standard'}) async {
+    return repository.getChapterCount(book, versionId: versionId);
   }
 }
