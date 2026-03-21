@@ -1,3 +1,4 @@
+import 'package:bible/features/onboarding/presentation/cubit/onboarding_cubit.dart';
 import 'package:bible/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -125,7 +126,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
+                              MaterialPageRoute(
+                                builder: (_) => const ForgotPasswordScreen(),
+                              ),
                             );
                           },
                           child: Text(
@@ -175,7 +178,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       );
                     } else if (state.status == AuthStatus.error) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(state.errorMessage ?? 'Authentication failed')),
+                        SnackBar(
+                          content: Text(
+                            state.errorMessage ?? 'Authentication failed',
+                          ),
+                        ),
                       );
                     }
                   },
@@ -188,9 +195,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             ? null
                             : () {
                                 context.read<AuthCubit>().login(
-                                      _usernameController.text,
-                                      _passwordController.text,
-                                    );
+                                  _usernameController.text,
+                                  _passwordController.text,
+                                );
                               },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: SabaColors.primary,
@@ -198,10 +205,14 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderRadius: BorderRadius.circular(16),
                           ),
                           elevation: 4,
-                          shadowColor: SabaColors.primary.withValues(alpha: 0.3),
+                          shadowColor: SabaColors.primary.withValues(
+                            alpha: 0.3,
+                          ),
                         ),
                         child: state.status == AuthStatus.loading
-                            ? const CircularProgressIndicator(color: Colors.white)
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
                             : Text(
                                 l10n.login,
                                 style: SabaTypography.headlineSmall().copyWith(
@@ -269,7 +280,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                          MaterialPageRoute(
+                            builder: (context) => const RegisterScreen(),
+                          ),
                         );
                       },
                       child: Text(
@@ -290,4 +303,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
