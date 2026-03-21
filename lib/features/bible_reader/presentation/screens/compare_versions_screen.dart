@@ -206,10 +206,10 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
     final l10n = AppLocalizations.of(context)!;
     final leftName = _leftVersionId == 'amh_standard'
         ? l10n.amharicStandard
-        : 'የ1954 ትርጉም (Old)';
+        : l10n.oldTranslation;
     final rightName = _rightVersionId == 'amh_standard'
         ? l10n.amharicStandard
-        : 'የ1954 ትርጉም (Old)';
+        : l10n.oldTranslation;
 
     final theme = Theme.of(context);
     return Container(
