@@ -1,3 +1,4 @@
+import 'package:bible/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../features/bible_reader/presentation/screens/app_shell.dart';
@@ -28,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: SabaColors.surface,
       body: SafeArea(
@@ -68,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 // ── Titles ────────────────────────────────────────────────────
                 Text(
-                  'እንኳን ደህና መጡ',
+                  l10n.welcomeBack,
                   style: SabaTypography.headlineLarge().copyWith(
                     color: SabaColors.primary,
                     height: 1.2,
@@ -77,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'የተቀደሰውን ቃል ለማንበብ ይግቡ',
+                  l10n.loginSubtitle,
                   style: SabaTypography.bodyMedium().copyWith(
                     color: SabaColors.onSurfaceVariant,
                   ),
@@ -90,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'የተጠቃሚ ስም ወይም ኢሜይል',
+                      l10n.usernameOrEmail,
                       style: SabaTypography.labelSmall().copyWith(
                         color: SabaColors.onSurfaceVariant,
                       ),
@@ -114,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'የይለፍ ቃል',
+                          l10n.password,
                           style: SabaTypography.labelSmall().copyWith(
                             color: SabaColors.onSurfaceVariant,
                           ),
@@ -127,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             );
                           },
                           child: Text(
-                            'የይለፍ ቃል ረስተዋል?',
+                            l10n.forgotPassword,
                             style: SabaTypography.labelSmall().copyWith(
                               color: SabaColors.primary,
                               fontWeight: FontWeight.w600,
@@ -201,7 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: state.status == AuthStatus.loading
                             ? const CircularProgressIndicator(color: Colors.white)
                             : Text(
-                                'ግባ',
+                                l10n.login,
                                 style: SabaTypography.headlineSmall().copyWith(
                                   color: Colors.white,
                                   fontSize: 20,
@@ -220,7 +222,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
-                        'ወይም',
+                        l10n.or,
                         style: SabaTypography.labelSmall().copyWith(
                           color: SabaColors.onSurfaceVariant,
                         ),
@@ -258,7 +260,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'አካውንት የለዎትም? ',
+                      l10n.noAccount,
                       style: SabaTypography.bodyMedium().copyWith(
                         color: SabaColors.onSurfaceVariant,
                       ),
@@ -271,7 +273,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         );
                       },
                       child: Text(
-                        'አዲስ ይፍጠሩ',
+                        l10n.createAccount,
                         style: SabaTypography.bodyMedium().copyWith(
                           color: SabaColors.primary,
                           fontWeight: FontWeight.bold,
