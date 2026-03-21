@@ -179,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            state.errorMessage ?? 'Authentication failed',
+                            state.errorMessage ?? l10n.authFailed,
                           ),
                         ),
                       );
