@@ -55,7 +55,7 @@ Future<void> initDependencies() async {
 
   // ── Cubits (factory — new instance each time) ─────────────────────────────
   sl.registerFactory(() => BibleReaderCubit(sl(), sl(), sl(), sl()));
-  sl.registerFactory(() => VersionSelectorCubit(sl()));
+  sl.registerFactory(() => VersionSelectorCubit(sl(), sl()));
   sl.registerFactory(() => LibraryCubit(sl()));
   sl.registerFactory(() => SearchCubit(sl()));
   sl.registerFactory(() => BookmarksCubit(sl(), sl(), sl()));
