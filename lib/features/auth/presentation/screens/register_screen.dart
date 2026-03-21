@@ -1,3 +1,4 @@
+import 'package:bible/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../features/bible_reader/presentation/screens/app_shell.dart';
@@ -34,6 +35,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: SabaColors.surface,
       body: SafeArea(
@@ -71,7 +73,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 // ── Titles ────────────────────────────────────────────────────
                 Text(
-                  'አዲስ አካውንት ይፍጠሩ',
+                  l10n.createAccountTitle,
                   style: SabaTypography.headlineLarge().copyWith(
                     color: SabaColors.primary,
                     height: 1.2,
@@ -80,7 +82,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'የሳባ ቅርስን ይቀላቀሉ እና የተቀደሱ መጽሐፍትን ያንብቡ',
+                  l10n.registerSubtitle,
                   style: SabaTypography.bodyMedium().copyWith(
                     color: SabaColors.onSurfaceVariant,
                   ),
@@ -102,18 +104,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildFieldTitle('ሙሉ ስም'),
+                      _buildFieldTitle(l10n.fullName),
                       const SizedBox(height: 8),
                       TextField(
                         controller: _fullNameController,
-                        decoration: const InputDecoration(
-                          hintText: 'ሙሉ ስምዎን እዚህ ያስገቡ',
-                          prefixIcon: Icon(Icons.person_outline, size: 20),
+                        decoration: InputDecoration(
+                          hintText: l10n.fullNameHint,
+                          prefixIcon: const Icon(Icons.person_outline, size: 20),
                         ),
                       ),
                       const SizedBox(height: 20),
 
-                      _buildFieldTitle('ኢሜይል'),
+                      _buildFieldTitle(l10n.email),
                       const SizedBox(height: 8),
                       TextField(
                         controller: _emailController,
@@ -124,7 +126,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 20),
 
-                      _buildFieldTitle('የይለፍ ቃል'),
+                      _buildFieldTitle(l10n.password),
                       const SizedBox(height: 8),
                       TextField(
                         controller: _passwordController,
@@ -147,7 +149,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       const SizedBox(height: 20),
 
-                      _buildFieldTitle('የይለፍ ቃል ያረጋግጡ'),
+                      _buildFieldTitle(l10n.confirmPassword),
                       const SizedBox(height: 8),
                       TextField(
                         controller: _confirmPasswordController,
@@ -195,25 +197,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   height: 1.5,
                                 ),
                                 children: [
-                                  const TextSpan(text: 'በመመዝገብ በሳባ ቅርስ '),
+                                  TextSpan(text: l10n.registerTermsPrefix),
                                   TextSpan(
-                                    text: 'ውሎች እና ሁኔታዎች',
-                                    style: TextStyle(
+                                    text: l10n.termsAndConditions,
+                                    style: const TextStyle(
                                       color: SabaColors.secondary,
                                       fontWeight: FontWeight.bold,
                                       decoration: TextDecoration.underline,
                                     ),
                                   ),
-                                  const TextSpan(text: ' እንዲሁም በ'),
+                                  TextSpan(text: l10n.registerTermsAnd),
                                   TextSpan(
-                                    text: 'ግላዊነት መመሪያው',
-                                    style: TextStyle(
+                                    text: l10n.privacyPolicy,
+                                    style: const TextStyle(
                                       color: SabaColors.secondary,
                                       fontWeight: FontWeight.bold,
                                       decoration: TextDecoration.underline,
                                     ),
                                   ),
-                                  const TextSpan(text: ' መስማማትዎን ያረጋግጣሉ።'),
+                                  TextSpan(text: l10n.registerTermsSuffix),
                                 ],
                               ),
                             ),
@@ -247,7 +249,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   : () {
                                       if (_passwordController.text != _confirmPasswordController.text) {
                                         ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('የይለፍ ቃሎች አይመሳሰሉም')),
+                                          SnackBar(content: Text(l10n.passwordsDontMatch)),
                                         );
                                         return;
                                       }
@@ -269,7 +271,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          'አሁን ይመዝገቡ',
+                                          l10n.registerNow,
                                           style: SabaTypography.labelLarge().copyWith(
                                             color: Colors.white,
                                             fontSize: 18,
@@ -295,7 +297,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
-                        'ወይም',
+                        l10n.or,
                         style: SabaTypography.labelSmall().copyWith(
                           color: SabaColors.onSurfaceVariant,
                         ),
@@ -333,7 +335,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'አስቀድመው አካውንት አለዎት? ',
+                      l10n.alreadyHaveAccount,
                       style: SabaTypography.bodyMedium().copyWith(
                         color: SabaColors.onSurfaceVariant,
                       ),
@@ -346,7 +348,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         );
                       },
                       child: Text(
-                        'ይግቡ (Log In)',
+                        l10n.loginLink,
                         style: SabaTypography.bodyMedium().copyWith(
                           color: SabaColors.primary,
                           fontWeight: FontWeight.bold,
