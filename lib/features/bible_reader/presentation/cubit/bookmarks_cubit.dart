@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bible/core/services/local_storage.dart';
 import '../../domain/entities/bookmark.dart';
+import '../../domain/entities/book.dart';
+import '../../domain/entities/verse.dart';
 import '../../domain/usecases/get_verses.dart';
 import '../../domain/usecases/get_books.dart';
 
@@ -44,7 +46,7 @@ class BookmarksCubit extends Cubit<BookmarksState> {
       final bookmarkKeys = _storage.getAllBookmarksKeys();
       final List<Bookmark> allBookmarks = [];
       
-      final books = await _getBooks();
+      final List<Book> books = (await _getBooks()).cast<Book>();
       
       for (final entry in bookmarkKeys.entries) {
         // key format: bookmarks_{bookId}_{chapter}
@@ -60,11 +62,11 @@ class BookmarksCubit extends Cubit<BookmarksState> {
           orElse: () => books.firstWhere((b) => b.name == bookId, orElse: () => books.first),
         );
 
-        final verses = await _getVerses(
+        final List<Verse> verses = (await _getVerses(
           versionId: 'amh_standard',
           book: book.name,
           chapter: chapter,
-        );
+        )).cast<Verse>();
 
         for (final verseNumber in verseNumbers) {
           final verse = verses.firstWhere(
