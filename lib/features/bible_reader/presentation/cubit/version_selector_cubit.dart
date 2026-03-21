@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/entities/bible_version.dart';
 import '../../domain/usecases/get_bible_versions.dart';
+import '../../../../core/services/local_storage.dart';
 
 // ── States ────────────────────────────────────────────────────────────────────
 
@@ -46,15 +47,18 @@ class VersionSelectorError extends VersionSelectorState {
 
 class VersionSelectorCubit extends Cubit<VersionSelectorState> {
   final GetBibleVersions _getBibleVersions;
+  final LocalStorage _storage;
 
-  VersionSelectorCubit(this._getBibleVersions)
+  VersionSelectorCubit(this._getBibleVersions, this._storage)
       : super(const VersionSelectorLoading());
 
   Future<void> loadVersions() async {
     emit(const VersionSelectorLoading());
     try {
       final versions = await _getBibleVersions();
-      emit(VersionSelectorLoaded(versions: versions));
+      final lastRead = _storage.getLastReadLocation();
+      final selectedId = lastRead?['versionId'] as String? ?? 'amh_standard';
+      emit(VersionSelectorLoaded(versions: versions, selectedId: selectedId));
     } catch (e) {
       emit(VersionSelectorError(e.toString()));
     }
