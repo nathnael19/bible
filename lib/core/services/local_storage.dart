@@ -55,4 +55,15 @@ class LocalStorage {
     }
     return allBookmarks;
   }
+
+  // ── Auth ───────────────────────────────────────────────────────────────────
+  static const String _authKey = 'is_logged_in';
+  static const String _usernameKey = 'user_name';
+
+  bool isLoggedIn() => _prefs.getBool(_authKey) ?? false;
+  Future<void> setLoggedIn(bool value) async => await _prefs.setBool(_authKey, value);
+
+  String? getUsername() => _prefs.getString(_usernameKey);
+  Future<void> setUsername(String value) async => await _prefs.setString(_usernameKey, value);
+  Future<void> clearUsername() async => await _prefs.remove(_usernameKey);
 }
