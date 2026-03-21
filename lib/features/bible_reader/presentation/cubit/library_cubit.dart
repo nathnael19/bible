@@ -34,10 +34,10 @@ class LibraryCubit extends Cubit<LibraryState> {
 
   LibraryCubit(this._getBooks) : super(LibraryLoading());
 
-  Future<void> loadBooks() async {
+  Future<void> loadBooks({String versionId = 'amh_standard'}) async {
     emit(LibraryLoading());
     try {
-      final books = await _getBooks();
+      final books = await _getBooks(versionId: versionId);
       emit(LibraryLoaded(books));
     } catch (e) {
       emit(LibraryError(e.toString()));
