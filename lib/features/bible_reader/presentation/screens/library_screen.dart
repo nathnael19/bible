@@ -375,9 +375,9 @@ class _DailyReflectionCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          const Text(
-            '"ቃልም በመጀመሪያ ነበረ..."',
-            style: TextStyle(
+          Text(
+            l10n.dailyReflectionQuote,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 28,
               fontWeight: FontWeight.bold,
@@ -385,11 +385,11 @@ class _DailyReflectionCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          const Row(
+          Row(
             children: [
               Text(
-                '— ዮሐንስ 1:1',
-                style: TextStyle(
+                l10n.dailyReflectionReference,
+                style: const TextStyle(
                   color: Colors.white70,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
