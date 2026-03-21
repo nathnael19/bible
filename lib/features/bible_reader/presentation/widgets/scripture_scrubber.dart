@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bible/l10n/app_localizations.dart';
 
 /// The "Scripture Scrubber" with horizontal auto-centering for the active item.
 class ScriptureScrubber extends StatefulWidget {
@@ -63,7 +64,6 @@ class _ScriptureScrubberState extends State<ScriptureScrubber> {
     }
   }
 
-
   @override
   void dispose() {
     _scrollController.dispose();
@@ -104,12 +104,16 @@ class _ScriptureScrubberState extends State<ScriptureScrubber> {
                     width: 60,
                     margin: const EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
-                      color: isActive ? theme.colorScheme.primary : Colors.transparent,
+                      color: isActive
+                          ? theme.colorScheme.primary
+                          : Colors.transparent,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: isActive
                           ? [
                               BoxShadow(
-                                color: theme.colorScheme.primary.withValues(alpha: 0.4),
+                                color: theme.colorScheme.primary.withValues(
+                                  alpha: 0.4,
+                                ),
                                 blurRadius: 15,
                                 offset: const Offset(0, 6),
                               ),
@@ -123,7 +127,9 @@ class _ScriptureScrubberState extends State<ScriptureScrubber> {
                         fontSize: isActive ? 28 : 20,
                         color: isActive
                             ? theme.colorScheme.onPrimary
-                            : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                            : theme.colorScheme.onSurfaceVariant.withValues(
+                                alpha: 0.3,
+                              ),
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Noto Serif Ethiopic',
                       ),
@@ -135,7 +141,9 @@ class _ScriptureScrubberState extends State<ScriptureScrubber> {
           ),
           const SizedBox(height: 16),
           Text(
-            widget.isChapterMode ? 'ምዕራፍ ይምረጡ' : 'ቁጥር ይምረጡ',
+            widget.isChapterMode
+                ? AppLocalizations.of(context)!.selectChapter
+                : AppLocalizations.of(context)!.selectVerse,
             style: tt.labelMedium!.copyWith(
               color: theme.colorScheme.primary,
               fontWeight: FontWeight.bold,
@@ -145,7 +153,7 @@ class _ScriptureScrubberState extends State<ScriptureScrubber> {
           ),
           const SizedBox(height: 12),
           Text(
-            'ምዕራፍ ወይም ቁጥር ለመቀየር ይንኩ',
+            AppLocalizations.of(context)!.tapToChange,
             style: tt.labelSmall!.copyWith(
               color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
               fontSize: 11,
