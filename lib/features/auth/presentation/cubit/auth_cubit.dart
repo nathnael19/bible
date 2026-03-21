@@ -116,7 +116,9 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> signInWithGoogle() async {
     emit(state.copyWith(status: AuthStatus.loading));
     try {
-      await GoogleSignIn.instance.initialize();
+      await GoogleSignIn.instance.initialize(
+        serverClientId: '835970401631-cisj2uscr8tsrjjkijeru8jfbg2636k3.apps.googleusercontent.com',
+      );
       final GoogleSignInAccount googleUser = await GoogleSignIn.instance.authenticate();
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
