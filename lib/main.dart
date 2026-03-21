@@ -37,13 +37,7 @@ class BibleApp extends StatelessWidget {
         BlocProvider(create: (_) => NavigationCubit()),
         BlocProvider(create: (_) => sl<LibraryCubit>()..loadBooks()),
         BlocProvider(
-          create: (_) => sl<BibleReaderCubit>()
-            ..loadVerses(
-              versionId: 'amh_standard',
-              book: 'ኦሪት ዘፍጥረት',
-              bookId: '1',
-              chapter: 1,
-            ),
+          create: (_) => sl<BibleReaderCubit>()..loadInitialLocation(),
         ),
         BlocProvider(create: (_) => sl<SearchCubit>()),
         BlocProvider(create: (_) => sl<ThemeCubit>()),
