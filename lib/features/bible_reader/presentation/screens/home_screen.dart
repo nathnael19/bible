@@ -9,6 +9,8 @@ import '../../../reading_plans/domain/entities/reading_plan.dart';
 import '../../../../core/di/injection_container.dart';
 import 'search_screen.dart';
 import '../../../reading_plans/presentation/screens/plan_detail_screen.dart';
+import '../../../../core/services/local_storage.dart';
+import '../../../reading_plans/data/datasources/scripture_reference_mapper.dart';
 
 /// Home / Discover screen redesigned to match reference image.
 class HomeScreen extends StatelessWidget {
@@ -131,26 +133,61 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildRecentActivity(AppLocalizations l10n) {
-    return Column(
-      children: [
-        _buildActivityItem(
-          Icons.edit_note_rounded,
-          l10n.recordedVerse,
-          l10n.recentActivity1Subtitle,
-          l10n.twoHoursAgo,
-          SabaColors.secondary,
-        ),
-        const SizedBox(height: 12),
-        _buildActivityItem(
-          Icons.check_circle_rounded,
-          l10n.finishedChapter,
-          l10n.recentActivity2Subtitle,
-          l10n.yesterday,
-          SabaColors.primary,
-        ),
-      ],
-    );
+    final storage = sl<LocalStorage>();
+    final logs = storage.getActivityLog();
+    if (logs.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final children = <Widget>[];
+    for (int i = 0; i < logs.length && i < 3; i++) {
+      final log = logs[i];
+      final type = log['type'];
+      final bookId = log['bookId']?.toString() ?? '1';
+      final chapter = log['chapter']?.toString() ?? '1';
+      final timestampStr = log['timestamp'] as String?;
+      final timestamp = timestampStr != null ? DateTime.parse(timestampStr) : DateTime.now();
+      
+      final bookName = ScriptureReferenceMapper.getLocalizedBookName(bookId, l10n.localeName);
+      
+      String title = '';
+      String subtitle = '';
+      IconData icon = Icons.check_circle_rounded;
+      Color color = SabaColors.primary;
+
+      if (type == 'bookmark') {
+        title = l10n.recordedVerse;
+        subtitle = '$bookName - ${log['verse']}';
+        icon = Icons.edit_note_rounded;
+        color = SabaColors.secondary;
+      } else {
+        title = l10n.finishedChapter;
+        subtitle = '$bookName $chapter';
+        icon = Icons.check_circle_rounded;
+        color = SabaColors.primary;
+      }
+      
+      children.add(_buildActivityItem(icon, title, subtitle, _formatTimeAgo(timestamp, l10n), color));
+      if (i < 2 && i < logs.length - 1) {
+        children.add(const SizedBox(height: 12));
+      }
+    }
+
+    return Column(children: children);
   }
+
+  String _formatTimeAgo(DateTime time, AppLocalizations l10n) {
+    final now = DateTime.now();
+    final diff = now.difference(time);
+    if (diff.inMinutes < 5) return l10n.justNow;
+    if (diff.inHours < 24 && now.day == time.day) {
+      if (diff.inHours >= 1 && diff.inHours <= 3) return l10n.twoHoursAgo;
+      return l10n.today;
+    }
+    if (diff.inDays == 1 || (diff.inHours < 48 && now.day != time.day)) return l10n.yesterday;
+    return '${diff.inDays} ${l10n.daysCount(diff.inDays)}';
+  }
+
 
   Widget _buildActivityItem(
     IconData icon,
