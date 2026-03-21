@@ -330,7 +330,7 @@ class _SearchResultTile extends StatelessWidget {
             targetVerse: verse.number,
           );
 
-          navigationCubit.setTab(1);
+          navigationCubit.setTab(2);
           navigator.popUntil((route) => route.isFirst);
         },
         borderRadius: BorderRadius.circular(12),
@@ -452,7 +452,7 @@ class _FeaturedHighlightCard extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            'የማቴዎስ ወንጌል',
+            l10n.featuredVerseBook,
             style: tt.titleLarge!.copyWith(
               color: SabaColors.primary,
               fontWeight: FontWeight.bold,
@@ -460,13 +460,13 @@ class _FeaturedHighlightCard extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'ምዕራፍ ፭ : ቁጥር ፲፬',
+            l10n.featuredVerseReference,
             style: tt.labelMedium!.copyWith(color: SabaColors.onSurfaceVariant),
           ),
           const SizedBox(height: 20),
           _RichSnippet(
-            text: '"እናንተ የዓለም ብርሃን ናችሁ። በተራራ ላይ ያለች ከተማ ልትሰወር አትችልም::"',
-            query: 'ብርሃን',
+            text: l10n.featuredVerseContent,
+            query: l10n.featuredVerseQuery,
             isLarge: true,
           ),
         ],
