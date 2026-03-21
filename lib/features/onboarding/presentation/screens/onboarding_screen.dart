@@ -19,7 +19,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     OnboardingData(
       titleKey: 'onboardingTitle1',
       descKey: 'onboardingDesc1',
-      image: 'assets/images/onboarding1.png', // Placeholder, using icons for now
+      image:
+          'assets/images/onboarding1.png', // Placeholder, using icons for now
       icon: Icons.auto_stories_rounded,
     ),
     OnboardingData(
@@ -52,103 +53,98 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              SabaColors.surfaceDark,
-              SabaColors.primary,
-            ],
+      backgroundColor: SabaColors.surfaceDark,
+      body: Stack(
+        children: [
+          // Background PageView
+          Positioned.fill(
+            child: PageView.builder(
+              controller: _pageController,
+              onPageChanged: (index) => setState(() => _currentPage = index),
+              itemCount: _pages.length,
+              itemBuilder: (context, index) {
+                final page = _pages[index];
+                return _OnboardingPage(data: page);
+              },
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Skip Button
-              Align(
-                alignment: Alignment.topRight,
-                child: TextButton(
-                  onPressed: () => context.read<OnboardingCubit>().completeOnboarding(),
-                  child: Text(
-                    l10n.onboardingSkip,
-                    style: SabaTypography.labelLarge().copyWith(
-                      color: Colors.white.withValues(alpha: 0.7),
+          // UI Content on top
+          SafeArea(
+            child: Column(
+              children: [
+                // Skip Button
+                Align(
+                  alignment: Alignment.topRight,
+                  child: TextButton(
+                    onPressed: () => context.read<OnboardingCubit>().completeOnboarding(),
+                    child: Text(
+                      l10n.onboardingSkip,
+                      style: SabaTypography.labelLarge().copyWith(
+                        color: Colors.white.withValues(alpha: 0.7),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              // Page View
-              Expanded(
-                child: PageView.builder(
-                  controller: _pageController,
-                  onPageChanged: (index) => setState(() => _currentPage = index),
-                  itemCount: _pages.length,
-                  itemBuilder: (context, index) {
-                    final page = _pages[index];
-                    return _OnboardingPage(data: page);
-                  },
-                ),
-              ),
-              // Bottom Controls
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
-                child: Column(
-                  children: [
-                    // Dot Indicator
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        _pages.length,
-                        (index) => Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          width: _currentPage == index ? 24 : 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: _currentPage == index ? SabaColors.secondaryContainer : Colors.white.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(4),
+                const Spacer(),
+                // Bottom Controls
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
+                  child: Column(
+                    children: [
+                      // Dot Indicator
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          _pages.length,
+                          (index) => Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            width: _currentPage == index ? 24 : 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: _currentPage == index ? SabaColors.secondaryContainer : Colors.white.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 48),
-                    // Next / Get Started Button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 56,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (_currentPage == _pages.length - 1) {
-                            context.read<OnboardingCubit>().completeOnboarding();
-                          } else {
-                            _pageController.nextPage(
-                              duration: const Duration(milliseconds: 500),
-                              curve: Curves.easeInOut,
-                            );
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: SabaColors.secondaryContainer,
-                          foregroundColor: SabaColors.onSecondaryContainer,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+                      const SizedBox(height: 48),
+                      // Next / Get Started Button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 56,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (_currentPage == _pages.length - 1) {
+                              context.read<OnboardingCubit>().completeOnboarding();
+                            } else {
+                              _pageController.nextPage(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.easeInOut,
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: SabaColors.secondaryContainer,
+                            foregroundColor: SabaColors.onSecondaryContainer,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
                           ),
-                        ),
-                        child: Text(
-                          _currentPage == _pages.length - 1 ? l10n.onboardingGetStarted : l10n.onboardingNext,
-                          style: SabaTypography.labelLarge().copyWith(
-                            fontWeight: FontWeight.bold,
+                          child: Text(
+                            _currentPage == _pages.length - 1 ? l10n.onboardingGetStarted : l10n.onboardingNext,
+                            style: SabaTypography.labelLarge().copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -179,59 +175,110 @@ class _OnboardingPage extends StatelessWidget {
     final title = _getLocalizedValue(context, data.titleKey);
     final desc = _getLocalizedValue(context, data.descKey);
 
-    return Padding(
-      padding: const EdgeInsets.all(40.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Illustration / Icon Placeholder
-          Container(
-            padding: const EdgeInsets.all(48),
+    return Stack(
+      children: [
+        // Background Image with dark overlay
+        Positioned.fill(
+          child: Image.asset(
+            data.image,
+            fit: BoxFit.cover,
+          ),
+        ),
+        Positioned.fill(
+          child: Container(
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              data.icon,
-              size: 100,
-              color: SabaColors.secondaryContainer,
-            ),
-          ),
-          const SizedBox(height: 64),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: SabaTypography.headlineLarge().copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withValues(alpha: 0.4),
+                  SabaColors.primary.withValues(alpha: 0.8),
+                ],
+              ),
             ),
           ),
-          const SizedBox(height: 24),
-          Text(
-            desc,
-            textAlign: TextAlign.center,
-            style: SabaTypography.bodyLarge().copyWith(
-              color: Colors.white.withValues(alpha: 0.8),
-              height: 1.6,
-            ),
+        ),
+        // Content (centered text)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Glassmorphic Icon Container
+              ClipRRect(
+                borderRadius: BorderRadius.circular(32),
+                child: BackdropFilter(
+                  filter: ColorFilter.mode(
+                    Colors.white.withValues(alpha: 0.1),
+                    BlendMode.overlay,
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(32),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(32),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.2),
+                      ),
+                    ),
+                    child: Icon(
+                      data.icon,
+                      size: 80,
+                      color: SabaColors.secondaryContainer,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 48),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: SabaTypography.headlineLarge().copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                desc,
+                textAlign: TextAlign.center,
+                style: SabaTypography.bodyLarge().copyWith(
+                  color: Colors.white.withValues(alpha: 0.9),
+                  height: 1.5,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              // Leave space for bottom controls (which are in the root stack)
+              const SizedBox(height: 180),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   String _getLocalizedValue(BuildContext context, String key) {
     final l10n = AppLocalizations.of(context)!;
     switch (key) {
-      case 'onboardingTitle1': return l10n.onboardingTitle1;
-      case 'onboardingDesc1': return l10n.onboardingDesc1;
-      case 'onboardingTitle2': return l10n.onboardingTitle2;
-      case 'onboardingDesc2': return l10n.onboardingDesc2;
-      case 'onboardingTitle3': return l10n.onboardingTitle3;
-      case 'onboardingDesc3': return l10n.onboardingDesc3;
-      case 'onboardingTitle4': return l10n.onboardingTitle4;
-      case 'onboardingDesc4': return l10n.onboardingDesc4;
-      default: return '';
+      case 'onboardingTitle1':
+        return l10n.onboardingTitle1;
+      case 'onboardingDesc1':
+        return l10n.onboardingDesc1;
+      case 'onboardingTitle2':
+        return l10n.onboardingTitle2;
+      case 'onboardingDesc2':
+        return l10n.onboardingDesc2;
+      case 'onboardingTitle3':
+        return l10n.onboardingTitle3;
+      case 'onboardingDesc3':
+        return l10n.onboardingDesc3;
+      case 'onboardingTitle4':
+        return l10n.onboardingTitle4;
+      case 'onboardingDesc4':
+        return l10n.onboardingDesc4;
+      default:
+        return '';
     }
   }
 }
