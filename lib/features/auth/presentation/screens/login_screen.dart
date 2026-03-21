@@ -4,6 +4,7 @@ import '../../../../features/bible_reader/presentation/screens/app_shell.dart';
 import '../cubit/auth_cubit.dart';
 import '../widgets/social_button.dart';
 import 'register_screen.dart';
+import 'forgot_password_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -119,7 +120,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
+                            );
+                          },
                           child: Text(
                             'የይለፍ ቃል ረስተዋል?',
                             style: SabaTypography.labelSmall().copyWith(
