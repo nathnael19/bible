@@ -218,7 +218,11 @@ class _SearchScreenState extends State<SearchScreen> {
                           child: SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Loading more results...')),
+                                );
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Theme.of(
                                   context,
