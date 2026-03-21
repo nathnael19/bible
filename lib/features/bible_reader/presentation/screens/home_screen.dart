@@ -76,7 +76,7 @@ class HomeScreen extends StatelessWidget {
                 }),
                 const SizedBox(height: 16),
                 BlocProvider(
-                  create: (context) => sl<ReadingPlanCubit>()..loadPlans(),
+                  create: (context) => sl<ReadingPlanCubit>()..loadPlans(locale: l10n.localeName),
                   child: BlocBuilder<ReadingPlanCubit, ReadingPlanState>(
                     builder: (context, state) {
                       if (state is ReadingPlanLoading) {
@@ -136,7 +136,7 @@ class HomeScreen extends StatelessWidget {
         _buildActivityItem(
           Icons.edit_note_rounded,
           l10n.recordedVerse,
-          'መዝሙረ ዳዊት  Get-፱',
+          l10n.recentActivity1Subtitle,
           l10n.twoHoursAgo,
           SabaColors.secondary,
         ),
@@ -144,7 +144,7 @@ class HomeScreen extends StatelessWidget {
         _buildActivityItem(
           Icons.check_circle_rounded,
           l10n.finishedChapter,
-          'ወንጌል ቅዱስ ዮሐንስ ፫',
+          l10n.recentActivity2Subtitle,
           l10n.yesterday,
           SabaColors.primary,
         ),
@@ -305,7 +305,7 @@ Widget _buildContinueReadingCard(BuildContext context, AppLocalizations l10n) {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                'ኦሪት ዘፍጥረት', // This should probably stay in Amharic or be translated list-style
+                l10n.continueReadingBook,
                 style: SabaTypography.labelSmall().copyWith(color: Colors.white),
               ),
             ),
@@ -331,7 +331,7 @@ Widget _buildContinueReadingCard(BuildContext context, AppLocalizations l10n) {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              '65% ${l10n.completed}',
+              l10n.percentCompleted(65),
               style: SabaTypography.labelSmall().copyWith(color: Colors.white.withValues(alpha: 0.7)),
             ),
             const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 20),
@@ -355,6 +355,7 @@ class _ReadingPlanCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     
     return GestureDetector(
       onTap: () {
@@ -426,7 +427,7 @@ class _ReadingPlanCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  '${(progress * 100).toInt()}%',
+                  l10n.percentCompleted((progress * 100).toInt()),
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: theme.colorScheme.primary,
                     fontWeight: FontWeight.bold,
