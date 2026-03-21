@@ -1,6 +1,6 @@
-import 'package:bible/features/auth/presentation/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../cubit/bookmarks_cubit.dart';
 
 import 'downloads_screen.dart';
@@ -83,18 +83,26 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            Text(
-              'አበባ ከበደ',
-              style: tt.headlineSmall!.copyWith(
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Noto Serif Ethiopic',
-              ),
-            ),
-            Text(
-              'abeba.kebede@example.com',
-              style: tt.bodySmall!.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+            BlocBuilder<AuthCubit, AuthState>(
+              builder: (context, state) {
+                return Column(
+                  children: [
+                    Text(
+                      state.username ?? 'አበባ ከበደ',
+                      style: tt.headlineSmall!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Noto Serif Ethiopic',
+                      ),
+                    ),
+                    Text(
+                      '${state.username?.toLowerCase().replaceAll(' ', '.')}@example.com',
+                      style: tt.bodySmall!.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
             const SizedBox(height: 20),
             Row(
@@ -289,10 +297,9 @@ class ProfileScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: OutlinedButton.icon(
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                ),
+                onPressed: () {
+                  context.read<AuthCubit>().logout();
+                },
                 icon: const Icon(Icons.logout_outlined, size: 20),
                 label: const Text(
                   'ከመለያ ውጣ',
