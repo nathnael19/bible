@@ -2,7 +2,6 @@ import 'package:bible/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/theme/app_theme.dart';
 import '../cubit/bible_reader_cubit.dart';
 import '../cubit/navigation_cubit.dart';
 
@@ -29,11 +28,12 @@ class _ChapterSelectionScreenState extends State<ChapterSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final tt = Theme.of(context).textTheme;
+    final theme = Theme.of(context);
+    final tt = theme.textTheme;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFDFBFA),
-      appBar: _buildAppBar(context),
+      backgroundColor: theme.colorScheme.surface,
+      appBar: _buildAppBar(context, theme),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
@@ -43,7 +43,7 @@ class _ChapterSelectionScreenState extends State<ChapterSelectionScreen> {
             Text(
               widget.englishName.toUpperCase(),
               style: tt.labelSmall!.copyWith(
-                color: Colors.brown.withValues(alpha: 0.6),
+                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                 letterSpacing: 2,
                 fontWeight: FontWeight.bold,
               ),
@@ -52,7 +52,7 @@ class _ChapterSelectionScreenState extends State<ChapterSelectionScreen> {
             Text(
               l10n.selectChapter,
               style: tt.headlineMedium!.copyWith(
-                color: SabaColors.primary,
+                color: theme.colorScheme.primary,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Noto Serif Ethiopic',
               ),
@@ -61,7 +61,7 @@ class _ChapterSelectionScreenState extends State<ChapterSelectionScreen> {
             Text(
               l10n.selectChapterDesc,
               style: tt.bodySmall!.copyWith(
-                color: Colors.black38,
+                color: theme.colorScheme.onSurfaceVariant,
                 fontFamily: 'Noto Serif Ethiopic',
               ),
             ),
@@ -123,19 +123,19 @@ class _ChapterSelectionScreenState extends State<ChapterSelectionScreen> {
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
+  PreferredSizeWidget _buildAppBar(BuildContext context, ThemeData theme) {
     return AppBar(
-      backgroundColor: const Color(0xFFFDFBFA),
+      backgroundColor: theme.colorScheme.surface,
       elevation: 0,
       centerTitle: true,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_rounded, color: SabaColors.secondary),
+        icon: Icon(Icons.arrow_back_rounded, color: theme.colorScheme.secondary),
         onPressed: () => Navigator.pop(context),
       ),
       title: Text(
         widget.bookName,
-        style: const TextStyle(
-          color: SabaColors.primary,
+        style: TextStyle(
+          color: theme.colorScheme.primary,
           fontWeight: FontWeight.bold,
           fontSize: 18,
           fontFamily: 'Noto Serif Ethiopic',
@@ -158,15 +158,20 @@ class _ChapterButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
           color: isActive
-              ? SabaColors.primary
-              : const Color(0xFFF4F2F1).withValues(alpha: 0.5),
+              ? theme.colorScheme.primary
+              : theme.colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
-          border: isActive ? Border.all(color: Colors.black12, width: 2) : null,
+          border: isActive
+              ? null
+              : Border.all(
+                  color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+                ),
         ),
         alignment: Alignment.center,
         child: Text(
@@ -174,7 +179,9 @@ class _ChapterButton extends StatelessWidget {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: isActive ? Colors.white : Colors.black38,
+            color: isActive
+                ? theme.colorScheme.onPrimary
+                : theme.colorScheme.onSurface,
             fontFamily: 'Noto Serif Ethiopic',
           ),
         ),
@@ -190,10 +197,11 @@ class _AboutBookCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color(0xFFF4F2F1).withValues(alpha: 0.5),
+        color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Stack(
@@ -204,9 +212,9 @@ class _AboutBookCard extends StatelessWidget {
             bottom: 0,
             child: Container(
               width: 4,
-              decoration: const BoxDecoration(
-                color: SabaColors.primary,
-                borderRadius: BorderRadius.horizontal(left: Radius.circular(4)),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary,
+                borderRadius: const BorderRadius.horizontal(left: Radius.circular(4)),
               ),
             ),
           ),
@@ -217,20 +225,20 @@ class _AboutBookCard extends StatelessWidget {
               children: [
                 Text(
                   l10n.aboutBook(bookName),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: SabaColors.secondary,
+                    color: theme.colorScheme.secondary,
                     fontFamily: 'Noto Serif Ethiopic',
                   ),
                 ),
                 const SizedBox(height: 16),
                 Text(
                   l10n.genesisDescription,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     height: 1.6,
-                    color: Colors.black54,
+                    color: theme.colorScheme.onSurfaceVariant,
                     fontFamily: 'Noto Serif Ethiopic',
                   ),
                 ),
@@ -262,14 +270,18 @@ class _KeywordChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
+            color: theme.shadowColor.withValues(alpha: 0.04),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -277,9 +289,9 @@ class _KeywordChip extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 12,
-          color: Colors.black54,
+          color: theme.colorScheme.onSurface,
           fontFamily: 'Noto Serif Ethiopic',
           fontWeight: FontWeight.bold,
         ),
