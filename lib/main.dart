@@ -17,6 +17,8 @@ import 'features/bible_reader/presentation/screens/app_shell.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'features/splash/presentation/screens/splash_screen.dart';
 import 'features/bible_reader/presentation/cubit/locale_cubit.dart';
+import 'features/onboarding/presentation/cubit/onboarding_cubit.dart';
+import 'features/onboarding/presentation/screens/onboarding_screen.dart';
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -48,6 +50,7 @@ class BibleApp extends StatelessWidget {
         BlocProvider(create: (_) => sl<BookmarksCubit>()..loadBookmarks()),
         BlocProvider(create: (_) => sl<AuthCubit>()..checkAuthStatus()),
         BlocProvider(create: (_) => sl<LocaleCubit>()),
+        BlocProvider(create: (_) => sl<OnboardingCubit>()),
       ],
       child: BlocBuilder<LocaleCubit, Locale>(
         builder: (context, locale) {
@@ -62,15 +65,25 @@ class BibleApp extends StatelessWidget {
                 locale: locale,
                 localizationsDelegates: AppLocalizations.localizationsDelegates,
                 supportedLocales: AppLocalizations.supportedLocales,
-                home: BlocBuilder<AuthCubit, AuthState>(
-                  builder: (context, state) {
-                    if (state.status == AuthStatus.initial) {
-                      return const SplashScreen();
-                    }
-                    if (state.status == AuthStatus.authenticated) {
-                      return const AppShell();
-                    }
-                    return const LoginScreen();
+                home: BlocBuilder<OnboardingCubit, bool>(
+                  builder: (context, onboardingComplete) {
+                    return BlocBuilder<AuthCubit, AuthState>(
+                      builder: (context, state) {
+                        if (state.status == AuthStatus.initial) {
+                          return const SplashScreen();
+                        }
+
+                        // If onboarding is not complete, show onboarding
+                        if (!onboardingComplete) {
+                          return const OnboardingScreen();
+                        }
+
+                        if (state.status == AuthStatus.authenticated) {
+                          return const AppShell();
+                        }
+                        return const LoginScreen();
+                      },
+                    );
                   },
                 ),
               );
