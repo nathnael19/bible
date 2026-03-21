@@ -96,7 +96,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 listener: (context, state) {
                   if (state.status == AuthStatus.error) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.errorMessage ?? 'Error occurred')),
+                      SnackBar(content: Text(state.errorMessage ?? l10n.defaultError)),
                     );
                   } else if (state.status == AuthStatus.initial && _emailController.text.isNotEmpty) {
                     // Logic to assume success and navigate
