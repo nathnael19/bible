@@ -24,7 +24,7 @@ class ReadingPlansScreen extends StatelessWidget {
             if (state is ReadingPlanLoading) {
               return const Center(child: CircularProgressIndicator());
             } else if (state is ReadingPlanError) {
-              return Center(child: Text(state.message));
+              return Center(child: Text('${l10n.defaultError}: ${state.message}'));
             } else if (state is ReadingPlansLoaded) {
               return ListView.separated(
                 padding: const EdgeInsets.all(16),
