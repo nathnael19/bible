@@ -1,3 +1,4 @@
+import 'package:bible/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -22,6 +23,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: SabaColors.surface,
       appBar: AppBar(
@@ -55,25 +57,24 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               ),
               const SizedBox(height: 32),
               Text(
-                'የይለፍ ቃልዎን ይርሱ?',
+                l10n.forgotPasswordTitle,
                 style: SabaTypography.headlineLarge().copyWith(
                   color: SabaColors.primary,
-                  fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 12),
               Text(
-                'የReset ኮድ ለመቀበል ከመለያዎ ጋር የተያያዘውን ኢሜይል ያስገቡ።',
+                l10n.forgotPasswordSubtitle,
                 style: SabaTypography.bodyMedium().copyWith(
                   color: SabaColors.onSurfaceVariant,
-                  height: 1.5,
+                  height: 1.6,
                 ),
               ),
               const SizedBox(height: 48),
 
               // ── Text Field ─────────────────────────────────────────────────
               Text(
-                'ኢሜይል',
+                l10n.email,
                 style: SabaTypography.labelSmall().copyWith(
                   color: SabaColors.onSurfaceVariant,
                   fontWeight: FontWeight.w600,
@@ -83,9 +84,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  hintText: 'email@example.com',
-                  prefixIcon: Icon(Icons.alternate_email, size: 20),
+                decoration: InputDecoration(
+                  hintText: l10n.emailHint,
+                  prefixIcon: const Icon(Icons.alternate_email, size: 20),
                 ),
               ),
               const SizedBox(height: 40),
@@ -124,10 +125,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       child: state.status == AuthStatus.loading
                           ? const CircularProgressIndicator(color: Colors.white)
                           : Text(
-                              'ኮድ ላክ',
+                              l10n.sendCode,
                               style: SabaTypography.labelLarge().copyWith(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
+                                fontSize: 18,
                               ),
                             ),
                     ),
@@ -141,7 +143,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 child: TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: Text(
-                    'ወደ መግቢያ ተመለስ',
+                    l10n.backToLogin,
                     style: SabaTypography.bodyMedium().copyWith(
                       color: SabaColors.primary,
                       fontWeight: FontWeight.bold,
