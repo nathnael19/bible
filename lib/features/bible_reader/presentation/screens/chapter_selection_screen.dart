@@ -1,3 +1,4 @@
+import 'package:bible/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -27,6 +28,7 @@ class _ChapterSelectionScreenState extends State<ChapterSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final tt = Theme.of(context).textTheme;
 
     return Scaffold(
@@ -48,7 +50,7 @@ class _ChapterSelectionScreenState extends State<ChapterSelectionScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'ምዕራፍ ይምረጡ',
+              l10n.selectChapter,
               style: tt.headlineMedium!.copyWith(
                 color: SabaColors.primary,
                 fontWeight: FontWeight.bold,
@@ -57,7 +59,7 @@ class _ChapterSelectionScreenState extends State<ChapterSelectionScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              'የሚፈልጉትን ምዕራፍ በመንካት ንባብዎን ይጀምሩ።',
+              l10n.selectChapterDesc,
               style: tt.bodySmall!.copyWith(
                 color: Colors.black38,
                 fontFamily: 'Noto Serif Ethiopic',
@@ -100,8 +102,8 @@ class _ChapterSelectionScreenState extends State<ChapterSelectionScreen> {
                       chapter: index,
                     );
 
-                    // 2. Switch to Reader Tab (index 1)
-                    navigationCubit.setTab(1);
+                    // 2. Switch to Reader Tab (index 2)
+                    navigationCubit.setTab(2);
 
                     // 3. Pop selection screen AND library screen to get back to shell
                     navigator.popUntil((route) => route.isFirst);
@@ -113,7 +115,7 @@ class _ChapterSelectionScreenState extends State<ChapterSelectionScreen> {
             const SizedBox(height: 40),
 
             // ── About Book Card ─────────────────────────────────────────
-            if (widget.bookName == 'ኦሪት ዘፍጥረት') _AboutBookCard(bookName: widget.bookName),
+            if (widget.bookId == '1') _AboutBookCard(bookName: widget.bookName),
             const SizedBox(height: 40),
           ],
         ),
@@ -139,12 +141,6 @@ class _ChapterSelectionScreenState extends State<ChapterSelectionScreen> {
           fontFamily: 'Noto Serif Ethiopic',
         ),
       ),
-      actions: const [
-        Icon(Icons.search_rounded, color: Colors.black54),
-        SizedBox(width: 16),
-        Icon(Icons.more_vert_rounded, color: Colors.black54),
-        SizedBox(width: 16),
-      ],
     );
   }
 }
@@ -193,6 +189,7 @@ class _AboutBookCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -219,7 +216,7 @@ class _AboutBookCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'ስለ $bookName',
+                  l10n.aboutBook(bookName),
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -228,9 +225,9 @@ class _AboutBookCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'ኦሪት ዘፍጥረት የመጽሐፍ ቅዱስ የመጀመሪያው መጽሐፍ ሲሆን የዓለምን መፈጠር፣ የሰውን ልጅ መጀመሪያ እና የእግዚአብሔርን ከሰው ልጆች ጋር ያለውን የመጀመሪያ ኪዳን ይተርካል።',
-                  style: TextStyle(
+                Text(
+                  l10n.genesisDescription,
+                  style: const TextStyle(
                     fontSize: 14,
                     height: 1.6,
                     color: Colors.black54,
@@ -241,13 +238,13 @@ class _AboutBookCard extends StatelessWidget {
                 Wrap(
                   spacing: 12,
                   runSpacing: 12,
-                  children: const [
-                    _KeywordChip(label: 'ፍጥረት'),
-                    _KeywordChip(label: 'ኖኅ'),
-                    _KeywordChip(label: 'አብርሃም'),
-                    _KeywordChip(label: 'ይስሐቅ'),
-                    _KeywordChip(label: 'ያዕቆብ'),
-                    _KeywordChip(label: 'ዮሴፍ'),
+                  children: [
+                    _KeywordChip(label: l10n.keywordCreation),
+                    _KeywordChip(label: l10n.keywordNoah),
+                    _KeywordChip(label: l10n.keywordAbraham),
+                    _KeywordChip(label: l10n.keywordIsaac),
+                    _KeywordChip(label: l10n.keywordJacob),
+                    _KeywordChip(label: l10n.keywordJoseph),
                   ],
                 ),
               ],
