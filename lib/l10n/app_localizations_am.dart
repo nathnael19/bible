@@ -366,4 +366,41 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get splashTagline => 'የቃሉ ብርሃን';
+
+  @override
+  String get onboardingNext => 'ቀጥል';
+
+  @override
+  String get onboardingGetStarted => 'ጀምር';
+
+  @override
+  String get onboardingSkip => 'ዝለል';
+
+  @override
+  String get onboardingTitle1 => 'የዕለቱ የቃል ጓደኛዎት';
+
+  @override
+  String get onboardingDesc1 =>
+      'ለእርስዎ በሚመች መልኩ በተዘጋጀው የእግዚአብሔር ቃል ትርጉም ያለው ጉዞ ይጀምሩ።';
+
+  @override
+  String get onboardingTitle2 => 'መጽሐፍ ቅዱስን በየቀኑ ያንብቡ';
+
+  @override
+  String get onboardingDesc2 =>
+      'በሚመቹ የንባብ ዕቅዶች እና ጥልቅ የጥናት መሣሪያዎች በቅዱሳት መጻሕፍት ውስጥ ይጥለቁ።';
+
+  @override
+  String get onboardingTitle3 => 'እምነትዎን ያሳድጉ';
+
+  @override
+  String get onboardingDesc3 =>
+      'መንፈሳዊ ዕድገትዎን ይከታተሉ፣ የንባብ ቀናትዎን ይመዝግቡ እና በዕለታዊ ጉዞዎ ላይ ያሰላስሉ።';
+
+  @override
+  String get onboardingTitle4 => 'የዕለቱ አስተንትኖ';
+
+  @override
+  String get onboardingDesc4 =>
+      'ለእርስዎ መንፈሳዊ ዕድገት በተዘጋጁ መመሪያዎች፣ ጸሎቶች እና አስተንትኖዎች እያንዳንዱን ቀን ይጀምሩ።';
 }
