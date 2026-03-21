@@ -94,6 +94,28 @@ class AuthCubit extends Cubit<AuthState> {
     emit(state.copyWith(status: AuthStatus.authenticated, username: fullName));
   }
 
+  Future<void> sendResetCode(String email) async {
+    if (email.isEmpty) {
+      emit(state.copyWith(status: AuthStatus.error, errorMessage: 'እባክዎን ኢሜይልዎን ያስገቡ'));
+      return;
+    }
+    emit(state.copyWith(status: AuthStatus.loading));
+    await Future.delayed(const Duration(seconds: 2));
+    // Mock success
+    emit(state.copyWith(status: AuthStatus.initial)); // Reset for next step
+  }
+
+  Future<void> verifyResetCode(String code) async {
+    if (code.length < 4) {
+      emit(state.copyWith(status: AuthStatus.error, errorMessage: 'እባክዎን ትክክለኛ ኮድ ያስገቡ'));
+      return;
+    }
+    emit(state.copyWith(status: AuthStatus.loading));
+    await Future.delayed(const Duration(seconds: 2));
+    // Mock success
+    emit(state.copyWith(status: AuthStatus.initial));
+  }
+
   Future<void> logout() async {
     await _storage.setLoggedIn(false);
     await _storage.clearUsername();
