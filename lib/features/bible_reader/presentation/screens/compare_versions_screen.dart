@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:bible/l10n/app_localizations.dart';
 
 import '../../../../core/di/injection_container.dart';
 import '../../domain/entities/verse.dart';
@@ -61,7 +62,7 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('ስህተት: $e')));
+        ).showSnackBar(SnackBar(content: Text('${AppLocalizations.of(context)!.errorOccurred}: $e')));
       }
     }
   }
@@ -117,7 +118,7 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
                 child: _leftVerses == null || _rightVerses == null
                     ? Center(
                         child: Text(
-                          'ምንም መረጃ አልተገኘም።',
+                          AppLocalizations.of(context)!.noDataFound,
                           style: TextStyle(
                             color: Theme.of(
                               context,
@@ -181,7 +182,7 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
         onPressed: () => Navigator.pop(context),
       ),
       title: Text(
-        'ማነጻጸሪያ',
+        AppLocalizations.of(context)!.compareVersions,
         style: TextStyle(
           color: theme.colorScheme.primary,
           fontWeight: FontWeight.bold,
@@ -202,12 +203,12 @@ class _CompareVersionsScreenState extends State<CompareVersionsScreen> {
   }
 
   Widget _buildVersionSelectors(String title) {
-    // For now, let's just find names based on IDs
+    final l10n = AppLocalizations.of(context)!;
     final leftName = _leftVersionId == 'amh_standard'
-        ? 'አማርኛ መደበኛ'
+        ? l10n.amharicStandard
         : 'የ1954 ትርጉም (Old)';
     final rightName = _rightVersionId == 'amh_standard'
-        ? 'አማርኛ መደበኛ'
+        ? l10n.amharicStandard
         : 'የ1954 ትርጉም (Old)';
 
     final theme = Theme.of(context);
@@ -441,7 +442,7 @@ class _ComparisonVersionSelector extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'ትርጉም ይምረጡ',
+            AppLocalizations.of(context)!.selectVersion,
             style: tt.titleLarge!.copyWith(
               fontWeight: FontWeight.bold,
               fontFamily: 'Noto Serif Ethiopic',
@@ -513,7 +514,7 @@ class _ComparisonNoteCard extends StatelessWidget {
               ),
               const SizedBox(width: 16),
               Text(
-                'የንጽጽር ማስታወሻ',
+                AppLocalizations.of(context)!.comparisonNoteTitle,
                 style: TextStyle(
                   color: theme.colorScheme.primary,
                   fontWeight: FontWeight.bold,
@@ -525,7 +526,7 @@ class _ComparisonNoteCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'በዚህ ሁኔታ ቃላት ትርጉሞች መካከል "ቃል" (Logos) የሚለው ቃል አጠቃቀም ተመሳሳይ ቢሆንም በአረፍተ ነገር በኩታ ሰንሰለት በያዘው መንገድ በአዲሱ መደበኛ ትርጉም ተቀይሮዋል።',
+            AppLocalizations.of(context)!.comparisonNoteBody,
             style: TextStyle(
               fontSize: 13,
               height: 1.5,
