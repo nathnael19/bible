@@ -8,6 +8,7 @@ import '../../../reading_plans/presentation/cubit/reading_plan_cubit.dart';
 import '../../../reading_plans/domain/entities/reading_plan.dart';
 import '../../../../core/di/injection_container.dart';
 import 'search_screen.dart';
+import 'library_screen.dart';
 import '../../../reading_plans/presentation/screens/plan_detail_screen.dart';
 import '../../../../core/services/local_storage.dart';
 import '../../../reading_plans/data/datasources/scripture_reference_mapper.dart';
@@ -64,7 +65,10 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 32),
 
                 // ── 2. Continue Reading ──────────────────────────────
-                _buildSectionHeader(context, l10n.continueReading, l10n.seeAll, () {}),
+                _buildSectionHeader(context, l10n.continueReading, l10n.seeAll, () {
+                  context.read<NavigationCubit>().setTab(0);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const LibraryScreen()));
+                }),
                 const SizedBox(height: 16),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
