@@ -561,4 +561,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get geeNumber4 => '4';
+
+  @override
+  String get authFailed => 'Authentication failed';
+
+  @override
+  String get registrationFailed => 'Registration failed';
+
+  @override
+  String get defaultError => 'Error occurred';
+
+  @override
+  String get noSavedVerses => 'No saved verses found';
 }

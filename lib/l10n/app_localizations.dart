@@ -1153,6 +1153,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'4'**
   String get geeNumber4;
+
+  /// No description provided for @authFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication failed'**
+  String get authFailed;
+
+  /// No description provided for @registrationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration failed'**
+  String get registrationFailed;
+
+  /// No description provided for @defaultError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error occurred'**
+  String get defaultError;
+
+  /// No description provided for @noSavedVerses.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved verses found'**
+  String get noSavedVerses;
 }
 
 class _AppLocalizationsDelegate

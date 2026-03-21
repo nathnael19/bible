@@ -557,4 +557,16 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get geeNumber4 => '፬';
+
+  @override
+  String get authFailed => 'ማረጋገጥ አልተሳካም';
+
+  @override
+  String get registrationFailed => 'ምዝገባው አልተሳካም';
+
+  @override
+  String get defaultError => 'ችግር ተከስቷል';
+
+  @override
+  String get noSavedVerses => 'ምንም የተቀመጡ ጥቅሶች የሉም';
 }
