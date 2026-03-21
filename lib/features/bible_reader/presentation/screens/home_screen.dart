@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:bible/l10n/app_localizations.dart';
 import '../../../../core/theme/app_theme.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../cubit/navigation_cubit.dart';
+import '../../../reading_plans/presentation/cubit/reading_plan_cubit.dart';
+import '../../../reading_plans/domain/entities/reading_plan.dart';
+import '../../../../core/di/injection_container.dart';
 import 'search_screen.dart';
+import '../../../reading_plans/presentation/screens/plan_detail_screen.dart';
 
 /// Home / Discover screen redesigned to match reference image.
 class HomeScreen extends StatelessWidget {
@@ -65,9 +71,26 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 32),
 
                 // ── Reading Plans ─────────────────────────────────────────
-                _buildSectionHeader(context, l10n.readingPlans, l10n.seeAll, () {}),
+                _buildSectionHeader(context, l10n.readingPlans, l10n.seeAll, () {
+                  context.read<NavigationCubit>().setTab(1);
+                }),
                 const SizedBox(height: 16),
-                _buildReadingPlans(l10n),
+                BlocProvider(
+                  create: (context) => sl<ReadingPlanCubit>()..loadPlans(),
+                  child: BlocBuilder<ReadingPlanCubit, ReadingPlanState>(
+                    builder: (context, state) {
+                      if (state is ReadingPlanLoading) {
+                        return const SizedBox(
+                          height: 220,
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      } else if (state is ReadingPlansLoaded) {
+                        return _buildReadingPlans(context, l10n, state);
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ),
                 const SizedBox(height: 32),
 
                 // ── Recent Activity ───────────────────────────────────────
@@ -86,39 +109,23 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildReadingPlans(AppLocalizations l10n) {
+  Widget _buildReadingPlans(BuildContext context, AppLocalizations l10n, ReadingPlansLoaded state) {
     return SizedBox(
       height: 220,
-      child: ListView(
+      child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         scrollDirection: Axis.horizontal,
         clipBehavior: Clip.none,
-        children: [
-          const SizedBox(width: 20),
-          _buildPlanCard(
-            l10n.peacePathPlan,
-            l10n.peacePathDesc,
-            '፰/፲፭',
-            SabaColors.secondary,
-            Icons.spa_rounded,
-          ),
-          const SizedBox(width: 16),
-          _buildPlanCard(
-            l10n.fastingSeasonPlan,
-            l10n.fastingSeasonDesc,
-            '፪/፵',
-            SabaColors.primary,
-            Icons.wb_sunny_rounded,
-          ),
-          const SizedBox(width: 16),
-          _buildPlanCard(
-            l10n.newPlan,
-            'መጽሐፈ ኢዮብ ጥናት',
-            '፟፟፟፟፟፟፟፟፟፟፟-፟፟፟፟፟፟፟፟፟፟፟/፵፪',
-            Colors.blueGrey,
-            Icons.menu_book_rounded,
-          ),
-          const SizedBox(width: 20),
-        ],
+        itemCount: state.plans.length,
+        separatorBuilder: (context, index) => const SizedBox(width: 16),
+        itemBuilder: (context, index) {
+          final plan = state.plans[index];
+          final progress = state.progressMap[plan.id] ?? 0.0;
+          return _ReadingPlanCard(
+            plan: plan,
+            progress: progress,
+          );
+        },
       ),
     );
   }
@@ -161,21 +168,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPlanCard(
-    String title,
-    String description,
-    String progress,
-    Color color,
-    IconData icon,
-  ) {
-    return _ReadingPlanCard(
-      title: title,
-      description: description,
-      progress: progress,
-      color: color,
-      icon: icon,
-    );
-  }
 }
 
 // ── Shared Components ──────────────────────────────────────────────────────
@@ -352,90 +344,111 @@ Widget _buildContinueReadingCard(BuildContext context, AppLocalizations l10n) {
 
 
 class _ReadingPlanCard extends StatelessWidget {
-  final String title;
-  final String description;
-  final String progress;
-  final Color color;
-  final IconData icon;
+  final ReadingPlan plan;
+  final double progress;
 
   const _ReadingPlanCard({
-    required this.title,
-    required this.description,
+    required this.plan,
     required this.progress,
-    required this.color,
-    required this.icon,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final tt = theme.textTheme;
-    return Container(
-      width: 280,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: color.withValues(alpha: 0.2),
-          width: 2,
+    
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PlanDetailScreen(planId: plan.id),
+          ),
+        );
+      },
+      child: Container(
+        width: 280,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.1),
+            width: 2,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.secondaryContainer,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(
+                _getIconForCategory(plan.category),
+                color: theme.colorScheme.onSecondaryContainer,
+                size: 24,
+              ),
+            ),
+            const Spacer(),
+            Text(
+              plan.title,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              plan.description,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(2),
+                    child: LinearProgressIndicator(
+                      value: progress.clamp(0.0, 1.0),
+                      backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                      valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
+                      minHeight: 4,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  '${(progress * 100).toInt()}%',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Icon(icon, color: color, size: 24),
-          ),
-          const Spacer(),
-          Text(
-            title,
-            style: tt.titleMedium!.copyWith(
-              fontWeight: FontWeight.bold,
-              color: SabaColors.onSurface,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            description,
-            style: tt.bodySmall!.copyWith(
-              color: SabaColors.onSurfaceVariant,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: LinearProgressIndicator(
-                  value: 0.5,
-                  backgroundColor: color.withValues(alpha: 0.1),
-                  valueColor: AlwaysStoppedAnimation<Color>(color),
-                  minHeight: 4,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                progress,
-                style: tt.labelSmall!.copyWith(
-                  color: color,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
     );
+  }
+
+  IconData _getIconForCategory(String category) {
+    switch (category.toLowerCase()) {
+      case 'emotional wellbeing':
+        return Icons.spa_rounded;
+      case 'foundation':
+        return Icons.menu_book_rounded;
+      default:
+        return Icons.auto_stories_rounded;
+    }
   }
 }
 
