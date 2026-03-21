@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:bible/l10n/app_localizations.dart';
 
 import '../../../../core/di/injection_container.dart';
 import '../../domain/entities/bible_version.dart';
@@ -31,6 +32,7 @@ class _VersionSelectorSheet extends StatefulWidget {
 class _VersionSelectorSheetState extends State<_VersionSelectorSheet> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final tt = Theme.of(context).textTheme;
 
     return Container(
@@ -53,7 +55,7 @@ class _VersionSelectorSheetState extends State<_VersionSelectorSheet> {
               children: [
                 Expanded(
                   child: Text(
-                    'የመጽሐፍ ቅዱስ ቅጂዎች',
+                    l10n.bibleVersions,
                     style: tt.titleLarge!.copyWith(
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Noto Serif Ethiopic',
