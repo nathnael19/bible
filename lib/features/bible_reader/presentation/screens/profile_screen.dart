@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/di/injection_container.dart';
+import '../../../../core/services/local_storage.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../cubit/bookmarks_cubit.dart';
 
@@ -138,7 +140,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '15',
+                      '${sl.get<LocalStorage>().calculateStreak()}',
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -165,19 +167,24 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: _InfoCard(
-                      icon: Icons.menu_book_outlined,
-                      value: '1,240',
-                      label: 'የንባብ ምዕራፍ',
-                      color: const Color(0xFFFFF4E0),
+                      icon: Icons.menu_book_rounded,
+                      value: '${sl.get<LocalStorage>().getTotalVersesRead()}',
+                      label: 'ያነበቧቸው ጥቅሶች',
+                      color: Colors.blue,
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: _InfoCard(
-                      icon: Icons.calendar_today_outlined,
-                      value: '3',
-                      label: 'የቃላት ጥናት',
-                      color: const Color(0xFFE5E5E5).withValues(alpha: 0.5),
+                    child: BlocBuilder<BookmarksCubit, BookmarksState>(
+                      builder: (context, state) {
+                        final count = state is BookmarksLoaded ? state.bookmarks.length : 0;
+                        return _InfoCard(
+                          icon: Icons.bookmarks_rounded,
+                          value: '$count',
+                          label: 'የተቀመጡ ጥቅሶች',
+                          color: Colors.orange,
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -242,7 +249,8 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         _MenuTile(
                           icon: Icons.history,
-                          label: 'የንባብ ታሪክ',
+                          label: 'የመጨረሻ ንባብ',
+                          subLabel: '${sl.get<LocalStorage>().getLastReadBook() ?? 'ገና አልተነበበም'} ምዕራፍ ${sl.get<LocalStorage>().getLastReadChapter()}',
                           isLast: true,
                         ),
                       ],
