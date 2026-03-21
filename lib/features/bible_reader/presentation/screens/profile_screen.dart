@@ -1,7 +1,10 @@
 import 'package:bible/features/auth/presentation/screens/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../cubit/bookmarks_cubit.dart';
 
 import 'downloads_screen.dart';
+import 'bookmarked_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -219,6 +222,15 @@ class ProfileScreen extends StatelessWidget {
                         _MenuTile(
                           icon: Icons.bookmark_outline,
                           label: 'ምዕራፍ የተደረገባቸው',
+                          onTap: () {
+                            context.read<BookmarksCubit>().loadBookmarks();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const BookmarkedScreen(),
+                              ),
+                            );
+                          },
                         ),
                         _MenuTile(
                           icon: Icons.history,
