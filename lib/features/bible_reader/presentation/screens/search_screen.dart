@@ -78,14 +78,53 @@ class _SearchScreenState extends State<SearchScreen> {
         backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         title: Text(
-          l10n.appTitle, // Gospel title as per image
+          l10n.appTitle,
           style: tt.headlineSmall!.copyWith(
             fontWeight: FontWeight.bold,
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
+        actions: [
+          BlocBuilder<VersionSelectorCubit, VersionSelectorState>(
+            builder: (context, state) {
+              if (state is VersionSelectorLoaded) {
+                return PopupMenuButton<String>(
+                  icon: Icon(
+                    Icons.language,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  onSelected: (id) {
+                    context.read<VersionSelectorCubit>().selectVersion(id);
+                  },
+                  itemBuilder: (context) {
+                    return state.versions.map((v) {
+                      return PopupMenuItem(
+                        value: v.id,
+                        child: Text(
+                          v.name,
+                          style: TextStyle(
+                            fontWeight: state.selectedId == v.id
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                          ),
+                        ),
+                      );
+                    }).toList();
+                  },
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
+      body: BlocListener<VersionSelectorCubit, VersionSelectorState>(
+        listener: (context, state) {
+          if (state is VersionSelectorLoaded) {
+            _onSearchChanged();
+          }
+        },
+        child: SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: 16),
@@ -302,8 +341,9 @@ class _SearchScreenState extends State<SearchScreen> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 // ── Components ──────────────────────────────────────────────────────────────
