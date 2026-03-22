@@ -1,86 +1,103 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bible/l10n/app_localizations.dart';
+import '../cubit/audio_reader_cubit.dart';
+import '../../../../core/services/audio_streaming_service.dart';
+import '../../../../core/di/injection_container.dart';
 
-class AudioPlayerScreen extends StatefulWidget {
+class AudioPlayerScreen extends StatelessWidget {
   const AudioPlayerScreen({super.key});
-
-  @override
-  State<AudioPlayerScreen> createState() => _AudioPlayerScreenState();
-}
-
-class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
-  bool _isPlaying = false;
-  final double _progress = 0.35;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.keyboard_arrow_down_rounded, color: theme.colorScheme.onSurface, size: 32),
-          onPressed: () => Navigator.pop(context),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.more_horiz_rounded, color: theme.colorScheme.onSurface),
-            onPressed: () {},
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      extendBodyBehindAppBar: true,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: kToolbarHeight + 40),
-            // --- Artwork Section ---
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: _PlayerArtwork(),
+    return BlocBuilder<AudioReaderCubit, AudioReaderState>(
+      builder: (context, state) {
+        if (state is AudioReaderInitial) {
+          return const Scaffold(
+            body: Center(child: Text('No Audio Loaded')),
+          );
+        }
+
+        if (state is AudioReaderLoading) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (state is AudioReaderError) {
+          return Scaffold(
+            body: Center(child: Text('Error: ${state.message}')),
+          );
+        }
+
+        if (state is AudioReaderLoaded) {
+          return Scaffold(
+            backgroundColor: theme.colorScheme.surface,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                icon: Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: theme.colorScheme.onSurface,
+                  size: 32,
+                ),
+                onPressed: () => Navigator.pop(context),
+              ),
+              actions: [
+                IconButton(
+                  icon: Icon(
+                    Icons.more_horiz_rounded,
+                    color: theme.colorScheme.onSurface,
+                  ),
+                  onPressed: () {},
+                ),
+                const SizedBox(width: 8),
+              ],
             ),
-
-            const SizedBox(height: 32),
-            // --- Metadata Section ---
-            _PlayerMetadata(),
-
-            const SizedBox(height: 32),
-            // --- Progress Section ---
-            _PlayerProgressBar(progress: _progress),
-
-            const SizedBox(height: 32),
-            // --- Primary Controls ---
-            _PlayerPrimaryControls(
-              isPlaying: _isPlaying,
-              onToggle: () => setState(() => _isPlaying = !_isPlaying),
+            extendBodyBehindAppBar: true,
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: kToolbarHeight + 40),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: _PlayerArtwork(state: state),
+                  ),
+                  const SizedBox(height: 32),
+                  _PlayerMetadata(state: state),
+                  const SizedBox(height: 32),
+                  _PlayerProgressBar(),
+                  const SizedBox(height: 32),
+                  _PlayerPrimaryControls(state: state),
+                  const SizedBox(height: 32),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24),
+                    child: _PlayerSecondaryControls(),
+                  ),
+                  const SizedBox(height: 48),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24),
+                    child: _PlaylistSection(),
+                  ),
+                  const SizedBox(height: 40),
+                ],
+              ),
             ),
-
-            const SizedBox(height: 32),
-            // --- Secondary Controls ---
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: _PlayerSecondaryControls(),
-            ),
-
-            const SizedBox(height: 48),
-            // --- Playlist Section ---
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: _PlaylistSection(),
-            ),
-            const SizedBox(height: 40),
-          ],
-        ),
-      ),
+          );
+        }
+        return const SizedBox.shrink();
+      },
     );
   }
 }
 
 class _PlayerArtwork extends StatelessWidget {
+  final AudioReaderLoaded state;
+  const _PlayerArtwork({required this.state});
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -91,7 +108,9 @@ class _PlayerArtwork extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32),
         image: const DecorationImage(
-          image: NetworkImage('https://images.unsplash.com/photo-1519781542704-957ff19eff00?w=800'),
+          image: NetworkImage(
+            'https://images.unsplash.com/photo-1519781542704-957ff19eff00?w=800',
+          ),
           fit: BoxFit.cover,
         ),
         boxShadow: [
@@ -104,7 +123,6 @@ class _PlayerArtwork extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // Overlay for manual "Logos" feel
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(32),
@@ -135,7 +153,7 @@ class _PlayerArtwork extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  l10n.johnGospel,
+                  'Book ${state.bookId}',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 28,
@@ -153,6 +171,9 @@ class _PlayerArtwork extends StatelessWidget {
 }
 
 class _PlayerMetadata extends StatelessWidget {
+  final AudioReaderLoaded state;
+  const _PlayerMetadata({required this.state});
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -161,7 +182,7 @@ class _PlayerMetadata extends StatelessWidget {
     return Column(
       children: [
         Text(
-          '${l10n.chapterLabel} ፩ (1)',
+          '${l10n.chapterLabel} ${state.chapter}',
           style: tt.headlineSmall!.copyWith(
             fontWeight: FontWeight.bold,
             fontFamily: 'Noto Serif Ethiopic',
@@ -181,75 +202,108 @@ class _PlayerMetadata extends StatelessWidget {
 }
 
 class _PlayerProgressBar extends StatelessWidget {
-  final double progress;
-  const _PlayerProgressBar({required this.progress});
+  const _PlayerProgressBar();
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: progress,
-              minHeight: 4,
-              backgroundColor: theme.colorScheme.surfaceContainerHighest,
-              valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '04:12',
-                style: TextStyle(
-                  fontSize: 11,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
+    final audioService = sl<AudioStreamingService>();
+
+    return StreamBuilder<Duration>(
+      stream: audioService.positionStream,
+      builder: (context, snapshot) {
+        final position = snapshot.data ?? Duration.zero;
+        return StreamBuilder<Duration?>(
+          stream: audioService.durationStream,
+          builder: (context, dSnapshot) {
+            final duration = dSnapshot.data ?? Duration.zero;
+            final progress = duration.inMilliseconds > 0
+                ? position.inMilliseconds / duration.inMilliseconds
+                : 0.0;
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: progress,
+                      minHeight: 4,
+                      backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        theme.colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _formatDuration(position),
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      Text(
+                        _formatDuration(duration),
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              Text(
-                '12:45',
-                style: TextStyle(
-                  fontSize: 11,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+            );
+          },
+        );
+      },
     );
+  }
+
+  String _formatDuration(Duration d) {
+    final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$minutes:$seconds';
   }
 }
 
 class _PlayerPrimaryControls extends StatelessWidget {
-  final bool isPlaying;
-  final VoidCallback onToggle;
-
-  const _PlayerPrimaryControls({required this.isPlaying, required this.onToggle});
+  final AudioReaderLoaded state;
+  const _PlayerPrimaryControls({required this.state});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final cubit = context.read<AudioReaderCubit>();
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
-          icon: Icon(Icons.shuffle_rounded, color: theme.colorScheme.onSurfaceVariant, size: 24),
+          icon: Icon(
+            Icons.shuffle_rounded,
+            color: theme.colorScheme.onSurfaceVariant,
+            size: 24,
+          ),
           onPressed: () {},
         ),
         const SizedBox(width: 8),
         IconButton(
-          icon: Icon(Icons.replay_10_rounded, color: theme.colorScheme.primary, size: 32),
+          icon: Icon(
+            Icons.replay_10_rounded,
+            color: theme.colorScheme.primary,
+            size: 32,
+          ),
           onPressed: () {},
         ),
         const SizedBox(width: 24),
         GestureDetector(
-          onTap: onToggle,
+          onTap: () => state.isPlaying ? cubit.pause() : cubit.play(),
           child: Container(
             width: 72,
             height: 72,
@@ -265,7 +319,7 @@ class _PlayerPrimaryControls extends StatelessWidget {
               ],
             ),
             child: Icon(
-              isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+              state.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
               color: theme.colorScheme.onPrimary,
               size: 40,
             ),
@@ -273,12 +327,20 @@ class _PlayerPrimaryControls extends StatelessWidget {
         ),
         const SizedBox(width: 24),
         IconButton(
-          icon: Icon(Icons.forward_30_rounded, color: theme.colorScheme.primary, size: 32),
+          icon: Icon(
+            Icons.forward_30_rounded,
+            color: theme.colorScheme.primary,
+            size: 32,
+          ),
           onPressed: () {},
         ),
         const SizedBox(width: 8),
         IconButton(
-          icon: Icon(Icons.repeat_rounded, color: theme.colorScheme.onSurfaceVariant, size: 24),
+          icon: Icon(
+            Icons.repeat_rounded,
+            color: theme.colorScheme.onSurfaceVariant,
+            size: 24,
+          ),
           onPressed: () {},
         ),
       ],
