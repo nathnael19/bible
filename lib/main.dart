@@ -10,6 +10,7 @@ import 'features/bible_reader/presentation/cubit/library_cubit.dart';
 import 'features/bible_reader/presentation/cubit/search_cubit.dart';
 import 'features/bible_reader/presentation/cubit/theme_cubit.dart';
 import 'features/bible_reader/presentation/cubit/bookmarks_cubit.dart';
+import 'features/bible_reader/presentation/cubit/audio_reader_cubit.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/auth/presentation/screens/login_screen.dart';
 import 'features/bible_reader/presentation/screens/app_shell.dart';
@@ -50,6 +51,7 @@ class BibleApp extends StatelessWidget {
         BlocProvider(create: (_) => sl<SearchCubit>()),
         BlocProvider(create: (_) => sl<ThemeCubit>()),
         BlocProvider(create: (_) => sl<BookmarksCubit>()..loadBookmarks()),
+        BlocProvider(create: (_) => sl<AudioReaderCubit>()),
         BlocProvider(create: (_) => sl<AuthCubit>()..checkAuthStatus()),
         BlocProvider(create: (_) => sl<LocaleCubit>()),
         BlocProvider(create: (_) => sl<OnboardingCubit>()),
