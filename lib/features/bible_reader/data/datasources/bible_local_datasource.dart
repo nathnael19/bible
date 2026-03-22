@@ -4,6 +4,7 @@ import '../models/bible_version_model.dart';
 import '../models/verse_model.dart';
 import '../models/book_model.dart';
 import '../../domain/entities/search_filter.dart';
+import '../../domain/entities/search_mode.dart';
 
 /// Local data source that loads the Amharic Bible from bundled JSON.
 class BibleLocalDataSource {
@@ -181,6 +182,7 @@ class BibleLocalDataSource {
   Future<List<VerseModel>> searchVerses(String query, {
     String versionId = 'amh_standard',
     SearchFilter filter = SearchFilter.all,
+    SearchMode mode = SearchMode.contains,
   }) async {
     await _init(versionId);
     final bible = _cachedBibles[versionId];
@@ -203,7 +205,18 @@ class BibleLocalDataSource {
         final chapterNum = chapter['chapter'] as int;
         for (final verse in chapter['verses']) {
           final text = verse['text'] as String;
-          if (text.toLowerCase().contains(queryLower)) {
+          final textLower = text.toLowerCase();
+          
+          bool isMatch;
+          if (mode == SearchMode.exact) {
+            // Split by non-word characters (including Amharic punctuation and spaces)
+            final words = textLower.split(RegExp(r'[^\u1200-\u137F\u1380-\u139F\u2D80-\u2DDFa-zA-Z0-9]+'));
+            isMatch = words.contains(queryLower);
+          } else {
+            isMatch = textLower.contains(queryLower);
+          }
+
+          if (isMatch) {
             results.add(
               VerseModel(
                 number: verse['verse'] as int,
