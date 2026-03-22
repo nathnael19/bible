@@ -5,6 +5,8 @@ import '../../domain/entities/verse.dart';
 import '../../domain/usecases/search_verses.dart';
 import '../../domain/entities/search_filter.dart';
 
+import '../../domain/entities/search_mode.dart';
+
 abstract class SearchState extends Equatable {
   const SearchState();
 
@@ -18,11 +20,12 @@ class SearchLoading extends SearchState {}
 
 class SearchLoaded extends SearchState {
   final List<Verse> results;
+  final SearchMode mode;
 
-  const SearchLoaded(this.results);
+  const SearchLoaded(this.results, {this.mode = SearchMode.contains});
 
   @override
-  List<Object?> get props => [results];
+  List<Object?> get props => [results, mode];
 }
 
 class SearchError extends SearchState {
@@ -39,7 +42,11 @@ class SearchCubit extends Cubit<SearchState> {
 
   SearchCubit(this._searchVerses) : super(SearchInitial());
 
-  Future<void> search(String query, {SearchFilter filter = SearchFilter.all, String? versionId}) async {
+  Future<void> search(String query, {
+    SearchFilter filter = SearchFilter.all,
+    SearchMode mode = SearchMode.contains,
+    String? versionId,
+  }) async {
     if (query.trim().isEmpty) {
       emit(SearchInitial());
       return;
@@ -47,8 +54,13 @@ class SearchCubit extends Cubit<SearchState> {
 
     emit(SearchLoading());
     try {
-      final results = await _searchVerses(query, filter: filter, versionId: versionId ?? 'amh_standard');
-      emit(SearchLoaded(results));
+      final results = await _searchVerses(
+        query,
+        filter: filter,
+        mode: mode,
+        versionId: versionId ?? 'amh_standard',
+      );
+      emit(SearchLoaded(results, mode: mode));
     } catch (e) {
       emit(SearchError(e.toString()));
     }
