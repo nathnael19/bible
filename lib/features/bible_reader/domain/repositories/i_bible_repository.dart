@@ -2,6 +2,7 @@ import '../entities/bible_version.dart';
 import '../entities/verse.dart';
 import '../entities/book.dart';
 import '../entities/search_filter.dart';
+import '../entities/search_mode.dart';
 
 abstract class IBibleRepository {
   Future<List<BibleVersion>> getBibleVersions();
@@ -15,5 +16,6 @@ abstract class IBibleRepository {
   Future<List<Verse>> searchVerses(String query, {
     String versionId = 'amh_standard',
     SearchFilter filter = SearchFilter.all,
+    SearchMode mode = SearchMode.contains,
   });
 }
