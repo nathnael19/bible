@@ -14,14 +14,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Install Flutter (fixed)
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.6'   # ✅ use a real version
-          cache: true                # ⚡ speeds up builds
+          flutter-version: '3.29.0'   # ✅ upgraded
+          cache: true
 
-      # Optional but useful for debugging CI issues
       - name: Flutter version
         run: flutter --version
 
