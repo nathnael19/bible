@@ -8,6 +8,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../cubit/bible_reader_cubit.dart';
+import '../cubit/audio_reader_cubit.dart';
 import '../cubit/navigation_cubit.dart';
 import '../cubit/theme_cubit.dart';
 import 'library_screen.dart';
@@ -89,141 +90,162 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<BibleReaderCubit, BibleReaderState>(
-      listenWhen: (prev, curr) {
-        if (prev is BibleReaderLoaded && curr is BibleReaderLoaded) {
-          // Scroll if verse changed OR if it's the same chapter initial load
-          return prev.activeVerseNumber != curr.activeVerseNumber ||
-              prev.chapter != curr.chapter;
-        }
-        return curr is BibleReaderLoaded;
-      },
-      listener: (context, state) {
-        if (state is BibleReaderLoaded) {
-          // If chapter/book changed, clear keys to prevent element tree corruption
-          if (state.book != _currentBook || state.chapter != _currentChapter) {
-            _verseKeys.clear();
-            _currentBook = state.book;
-            _currentChapter = state.chapter;
-          }
-
-          if (state.activeVerseNumber != null) {
-            // Wait for builder to finish before scrolling
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted) _scrollToVerse(state.activeVerseNumber!);
-            });
-          } else if (state.book != _currentBook ||
-              state.chapter != _currentChapter) {
-            // Scroll to top on chapter change if no verse targeted
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted && _scrollController.hasClients) {
-                _scrollController.jumpTo(0);
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<BibleReaderCubit, BibleReaderState>(
+          listenWhen: (prev, curr) {
+            if (prev is BibleReaderLoaded && curr is BibleReaderLoaded) {
+              return prev.activeVerseNumber != curr.activeVerseNumber ||
+                  prev.chapter != curr.chapter;
+            }
+            return curr is BibleReaderLoaded;
+          },
+          listener: (context, state) {
+            if (state is BibleReaderLoaded) {
+              if (state.book != _currentBook || state.chapter != _currentChapter) {
+                _verseKeys.clear();
+                _currentBook = state.book;
+                _currentChapter = state.chapter;
               }
-            });
-          }
-        }
-      },
-      builder: (context, state) {
-        return Scaffold(
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          extendBodyBehindAppBar: true,
-          body: GestureDetector(
-            onScaleStart: (details) {
-              _baseFontSizeFactor = _fontSizeFactor;
-            },
-            onScaleUpdate: (details) {
-              setState(() {
-                _fontSizeFactor = (_baseFontSizeFactor * details.scale).clamp(
-                  0.8,
-                  3.0,
-                );
-              });
-            },
-            child: Stack(
-              children: [
-                _buildContent(context, state),
 
-                // ── Hiding AppBar ──────────────────────────────────────────
-                BlocBuilder<NavigationCubit, NavigationState>(
-                  builder: (context, navState) {
-                    return AnimatedPositioned(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                      top: navState.isBottomNavVisible
-                          ? 0
-                          : -(kToolbarHeight + 50),
-                      left: 0,
-                      right: 0,
-                      child: _CustomReaderAppBar(state: state),
-                    );
-                  },
-                ),
-                // ── Side Floating Buttons ─────────────────────────────────
-                BlocBuilder<NavigationCubit, NavigationState>(
-                  builder: (context, navState) {
-                    return AnimatedPositioned(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                      right: 20,
-                      bottom: navState.isBottomNavVisible ? 105 : 40,
-                      child: Column(
-                        children: [
-                          _FloatingControl(
-                            iconData: Icons.play_arrow,
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const AudioPlayerScreen(),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          _FloatingControl(
-                            iconData: Icons.dark_mode_outlined,
-                            onTap: () =>
-                                context.read<ThemeCubit>().toggleTheme(),
-                          ),
-                          const SizedBox(height: 12),
-                          _FloatingControl(
-                            iconData: Icons.share_rounded,
-                            isPrimary: true,
-                            onTap: () {
-                              if (state is BibleReaderLoaded) {
-                                final text = state.verses.map((v) => '${v.number}. ${v.text}').join('\n');
-                                final title = '${state.book} ${state.chapter}';
-                                Share.share('$title\n\n$text');
-                              }
-                            },
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-                // ── Verse Action Toolbar ──────────────────────────────────
-                BlocBuilder<NavigationCubit, NavigationState>(
-                  builder: (context, navState) {
-                    if (state is BibleReaderLoaded &&
-                        state.activeVerseNumber != null) {
+              if (state.activeVerseNumber != null) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) _scrollToVerse(state.activeVerseNumber!);
+                });
+              } else if (state.book != _currentBook ||
+                  state.chapter != _currentChapter) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted && _scrollController.hasClients) {
+                    _scrollController.jumpTo(0);
+                  }
+                });
+              }
+            }
+          },
+        ),
+        BlocListener<AudioReaderCubit, AudioReaderState>(
+          listener: (context, state) {
+            if (state is AudioReaderLoaded && state.activeVerseNumber != null) {
+              // Auto-scroll when audio advances to a new verse
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) _scrollToVerse(state.activeVerseNumber!);
+              });
+            }
+          },
+        ),
+      ],
+      child: BlocBuilder<BibleReaderCubit, BibleReaderState>(
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            extendBodyBehindAppBar: true,
+            body: GestureDetector(
+              onScaleStart: (details) {
+                _baseFontSizeFactor = _fontSizeFactor;
+              },
+              onScaleUpdate: (details) {
+                setState(() {
+                  _fontSizeFactor = (_baseFontSizeFactor * details.scale).clamp(
+                    0.8,
+                    3.0,
+                  );
+                });
+              },
+              child: Stack(
+                children: [
+                  _buildContent(context, state),
+
+                  // ── Hiding AppBar ──────────────────────────────────────────
+                  BlocBuilder<NavigationCubit, NavigationState>(
+                    builder: (context, navState) {
                       return AnimatedPositioned(
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeInOut,
-                        left: 20,
+                        top: navState.isBottomNavVisible
+                            ? 0
+                            : -(kToolbarHeight + 50),
+                        left: 0,
+                        right: 0,
+                        child: _CustomReaderAppBar(state: state),
+                      );
+                    },
+                  ),
+                  // ── Side Floating Buttons ─────────────────────────────────
+                  BlocBuilder<NavigationCubit, NavigationState>(
+                    builder: (context, navState) {
+                      return AnimatedPositioned(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
                         right: 20,
                         bottom: navState.isBottomNavVisible ? 105 : 40,
-                        child: _VerseActionToolbar(
-                          verseNumber: state.activeVerseNumber!,
+                        child: Column(
+                          children: [
+                            _FloatingControl(
+                              iconData: Icons.play_arrow,
+                              onTap: () {
+                                if (state is BibleReaderLoaded) {
+                                  // Trigger audio load before navigating
+                                  context.read<AudioReaderCubit>().loadChapter(
+                                        bookId: state.book,
+                                        chapter: state.chapter,
+                                      );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const AudioPlayerScreen(),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                            const SizedBox(height: 12),
+                            _FloatingControl(
+                              iconData: Icons.dark_mode_outlined,
+                              onTap: () =>
+                                  context.read<ThemeCubit>().toggleTheme(),
+                            ),
+                            const SizedBox(height: 12),
+                            _FloatingControl(
+                              iconData: Icons.share_rounded,
+                              isPrimary: true,
+                              onTap: () {
+                                if (state is BibleReaderLoaded) {
+                                  final text = state.verses.map((v) => '${v.number}. ${v.text}').join('\n');
+                                  final title = '${state.book} ${state.chapter}';
+                                  Share.share('$title\n\n$text');
+                                }
+                              },
+                            ),
+                          ],
                         ),
                       );
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
-              ],
+                    },
+                  ),
+                  // ── Verse Action Toolbar ──────────────────────────────────
+                  BlocBuilder<NavigationCubit, NavigationState>(
+                    builder: (context, navState) {
+                      if (state is BibleReaderLoaded &&
+                          state.activeVerseNumber != null) {
+                        return AnimatedPositioned(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                          left: 20,
+                          right: 20,
+                          bottom: navState.isBottomNavVisible ? 105 : 40,
+                          child: _VerseActionToolbar(
+                            verseNumber: state.activeVerseNumber!,
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -252,62 +274,72 @@ class _BibleReaderScreenState extends State<BibleReaderScreen> {
         },
         child: CustomScrollView(
           controller: _scrollController,
-        cacheExtent: 4000,
-        // Using a key that changes with book/chapter forces a fresh tree for the list
-        key: PageStorageKey('reader_${state.book}_${state.chapter}'),
-        slivers: [
-          SliverToBoxAdapter(
-            child: _ChapterHeader(
-              state: state,
-              fontSizeFactor: _fontSizeFactor,
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, i) {
-                  final verse = state.verses[i];
-                  final isBookmarked = state.bookmarks.contains(verse.number);
-                  final highlightColorValue = state.highlights[verse.number];
-                  final highlightColor = highlightColorValue != null
-                      ? Color(highlightColorValue)
-                      : null;
-
-                  return VerseCard(
-                    key: _verseKeys[verse.number],
-                    verse: verse,
-                    isActive: state.activeVerseNumber == verse.number,
-                    fontSizeFactor: _fontSizeFactor,
-                    isBookmarked: isBookmarked,
-                    highlightColor: highlightColor,
-                    onTap: () => context.read<BibleReaderCubit>().selectVerse(
-                      state.activeVerseNumber == verse.number
-                          ? null
-                          : verse.number,
-                    ),
-                    onDoubleTap: () =>
-                        context.read<BibleReaderCubit>().selectVerse(null),
-                  );
-                },
-                childCount: state.verses.length,
-                addAutomaticKeepAlives: true,
-                addRepaintBoundaries: true,
+          cacheExtent: 4000,
+          // Using a key that changes with book/chapter forces a fresh tree for the list
+          key: PageStorageKey('reader_${state.book}_${state.chapter}'),
+          slivers: [
+            SliverToBoxAdapter(
+              child: _ChapterHeader(
+                state: state,
+                fontSizeFactor: _fontSizeFactor,
               ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: _buildScrubber(context, state),
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, i) {
+                    final verse = state.verses[i];
+                    final isBookmarked = state.bookmarks.contains(verse.number);
+                    final highlightColorValue = state.highlights[verse.number];
+                    final highlightColor = highlightColorValue != null
+                        ? Color(highlightColorValue)
+                        : null;
+
+                    return BlocBuilder<AudioReaderCubit, AudioReaderState>(
+                      builder: (context, audioState) {
+                        final isAudioActive = audioState is AudioReaderLoaded &&
+                            audioState.activeVerseNumber == verse.number &&
+                            audioState.bookId == state.book &&
+                            audioState.chapter == state.chapter;
+
+                        return VerseCard(
+                          key: _verseKeys[verse.number],
+                          verse: verse,
+                          isActive: state.activeVerseNumber == verse.number,
+                          isAudioActive: isAudioActive,
+                          fontSizeFactor: _fontSizeFactor,
+                          isBookmarked: isBookmarked,
+                          highlightColor: highlightColor,
+                          onTap: () => context.read<BibleReaderCubit>().selectVerse(
+                                state.activeVerseNumber == verse.number
+                                    ? null
+                                    : verse.number,
+                              ),
+                          onDoubleTap: () =>
+                              context.read<BibleReaderCubit>().selectVerse(null),
+                        );
+                      },
+                    );
+                  },
+                  childCount: state.verses.length,
+                  addAutomaticKeepAlives: true,
+                  addRepaintBoundaries: true,
+                ),
+              ),
             ),
-          ),
-          const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
-        ],
-      ),
-    );
-  }
-  return const SizedBox.shrink();
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: _buildScrubber(context, state),
+              ),
+            ),
+            const SliverPadding(padding: EdgeInsets.only(bottom: 100)),
+          ],
+        ),
+      );
+    }
+    return const SizedBox.shrink();
   }
 
   Widget _buildScrubber(BuildContext context, BibleReaderState state) {
