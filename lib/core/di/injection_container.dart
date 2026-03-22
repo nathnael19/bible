@@ -24,6 +24,8 @@ import '../../features/reading_plans/presentation/cubit/reading_plan_cubit.dart'
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/services/local_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../core/services/firebase_sync_service.dart';
 
 final sl = GetIt.instance;
 
@@ -31,7 +33,7 @@ Future<void> initDependencies() async {
   // ── Core Services ────────────────────────────────────────────────────────
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
-  sl.registerLazySingleton<LocalStorage>(() => LocalStorage(sl()));
+  sl.registerLazySingleton<LocalStorage>(() => LocalStorage(sl(), sl()));
 
   // ── Data sources ──────────────────────────────────────────────────────────
   sl.registerLazySingleton<BibleLocalDataSource>(
@@ -60,7 +62,9 @@ Future<void> initDependencies() async {
   sl.registerFactory(() => SearchCubit(sl()));
   sl.registerFactory(() => BookmarksCubit(sl(), sl(), sl()));
   sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
-  sl.registerLazySingleton(() => AuthCubit(sl(), sl()));
+  sl.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
+  sl.registerLazySingleton(() => FirebaseSyncService(sl(), sl()));
+  sl.registerLazySingleton(() => AuthCubit(sl(), sl(), sl()));
   sl.registerLazySingleton(() => ThemeCubit(sl()));
   sl.registerLazySingleton(() => LocaleCubit(sl()));
   sl.registerLazySingleton(() => OnboardingCubit(sl()));
