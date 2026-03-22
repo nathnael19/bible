@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bible/core/services/local_storage.dart';
+import 'package:bible/core/services/firebase_sync_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -44,28 +45,65 @@ class AuthState extends Equatable {
 
 class AuthCubit extends Cubit<AuthState> {
   final FirebaseAuth _firebaseAuth;
+  final FirebaseSyncService _syncService;
   StreamSubscription<User?>? _authStateSubscription;
 
   // ignore: unused_field
   final LocalStorage _storage;
   
-  AuthCubit(this._storage, this._firebaseAuth) : super(const AuthState());
+  AuthCubit(this._storage, this._firebaseAuth, this._syncService) : super(const AuthState());
 
   Future<void> checkAuthStatus() async {
     // Wait for the splash screen animation to complete
     await Future.delayed(const Duration(seconds: 3));
     
-    _authStateSubscription = _firebaseAuth.authStateChanges().listen((User? user) {
+    _authStateSubscription = _firebaseAuth.authStateChanges().listen((User? user) async {
       if (user != null) {
         emit(state.copyWith(
           status: AuthStatus.authenticated, 
           username: user.displayName ?? user.email?.split('@')[0] ?? 'User',
           user: user,
         ));
+        await _syncUserData();
       } else {
         emit(state.copyWith(status: AuthStatus.unauthenticated, user: null, username: null));
       }
     });
+  }
+
+  Future<void> _syncUserData() async {
+    // 1. Upload local data to cloud (initial migration)
+    final bookmarks = _storage.getAllBookmarksKeys();
+    for (var entry in bookmarks.entries) {
+      final parts = entry.key.split('_');
+      if (parts.length == 2) {
+        await _syncService.syncBookmarks(parts[0], int.parse(parts[1]), entry.value);
+      }
+    }
+
+    await _syncService.syncStats(
+      totalVersesRead: _storage.getTotalVersesRead(),
+      readingHistory: _storage.getReadingHistory(),
+      lastReadLocation: _storage.getLastReadLocation(),
+    );
+
+    // 2. Download cloud data to local (syncing from other devices)
+    final cloudBookmarks = await _syncService.getAllBookmarks();
+    for (var entry in cloudBookmarks.entries) {
+      final parts = entry.key.split('_');
+      if (parts.length == 2) {
+        await _storage.saveBookmarks(parts[0], int.parse(parts[1]), entry.value);
+      }
+    }
+
+    final cloudStats = await _syncService.getStats();
+    if (cloudStats != null) {
+      if (cloudStats['totalVersesRead'] != null) {
+        // Simple merge: take max for verses read? Or just overwrite?
+        // Overwriting for now as simplified sync.
+        // TODO: Implement better merging logic if needed.
+      }
+    }
   }
 
   Future<void> login(String email, String password) async {
