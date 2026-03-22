@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 class VerseCard extends StatelessWidget {
   final Verse verse;
   final bool isActive;
+  final bool isAudioActive;
   final VoidCallback? onTap;
   final VoidCallback? onDoubleTap;
   final double fontSizeFactor;
@@ -15,6 +16,7 @@ class VerseCard extends StatelessWidget {
     super.key,
     required this.verse,
     this.isActive = false,
+    this.isAudioActive = false,
     this.onTap,
     this.onDoubleTap,
     this.fontSizeFactor = 1.0,
@@ -24,40 +26,45 @@ class VerseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tt = Theme.of(context).textTheme;
+    final theme = Theme.of(context);
+    final tt = theme.textTheme;
 
     return GestureDetector(
       onTap: onTap,
       onDoubleTap: onDoubleTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        margin: const EdgeInsets.symmetric(vertical: 0.0), // Reduced from 4
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12,
-        ), // Reduced vertical from 12
+        margin: const EdgeInsets.symmetric(vertical: 0.0),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
           color: isActive
-              ? Theme.of(context).colorScheme.surfaceContainerHigh
-              : highlightColor ?? Colors.transparent,
+              ? theme.colorScheme.surfaceContainerHigh
+              : isAudioActive
+                  ? theme.colorScheme.primary.withValues(alpha: 0.1)
+                  : highlightColor ?? Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: isActive
               ? Border.all(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.primary.withValues(alpha: 0.3),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
                 )
-              : null,
+              : isAudioActive
+                  ? Border.all(
+                      color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                    )
+                  : null,
         ),
         child: IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // ── 4px Burgundy accent bar (active only) ─────────────────
+              // ── Accent bar ─────────────────
               AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                width: isActive ? 4 : 0,
+                width: (isActive || isAudioActive) ? 4 : 0,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: isActive
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.primary.withValues(alpha: 0.5),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(4),
                     bottomLeft: Radius.circular(4),
@@ -65,7 +72,7 @@ class VerseCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 4),
-              // ── Verse number (editorial large numeral) ─────────────────
+              // ── Verse number ─────────────────
               SizedBox(
                 width: 36,
                 child: Column(
@@ -76,7 +83,9 @@ class VerseCard extends StatelessWidget {
                         '${verse.number}',
                         style: tt.bodySmall!.copyWith(
                           fontSize: 13 * fontSizeFactor,
-                          color: Theme.of(context).colorScheme.secondary,
+                          color: isAudioActive
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.secondary,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Noto Serif Ethiopic',
                         ),
@@ -87,7 +96,7 @@ class VerseCard extends StatelessWidget {
                       Icon(
                         Icons.bookmark_rounded,
                         size: 14,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: theme.colorScheme.primary,
                       ),
                     ],
                   ],
@@ -103,6 +112,9 @@ class VerseCard extends StatelessWidget {
                     style: tt.bodyLarge!.copyWith(
                       height: 1.7,
                       fontSize: (tt.bodyLarge?.fontSize ?? 16) * fontSizeFactor,
+                      color: isAudioActive
+                          ? theme.colorScheme.onSurface
+                          : null,
                     ),
                   ),
                 ),
