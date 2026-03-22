@@ -213,8 +213,6 @@ class BibleLocalDataSource {
                 text: text,
               ),
             );
-            // Cap results to prevent memory issues and UI stutter
-            if (results.length >= 200) return results;
           }
         }
       }
