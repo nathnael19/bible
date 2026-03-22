@@ -1,3 +1,4 @@
+import 'package:bible/features/bible_reader/domain/entities/search_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bible/l10n/app_localizations.dart';
@@ -21,6 +22,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final _controller = TextEditingController();
   SearchFilter _activeFilter = SearchFilter.all;
+  SearchMode _activeMode = SearchMode.contains;
 
   @override
   void initState() {
@@ -34,7 +36,21 @@ class _SearchScreenState extends State<SearchScreen> {
     if (versionState is VersionSelectorLoaded) {
       versionId = versionState.selectedId;
     }
-    context.read<SearchCubit>().search(_controller.text, filter: _activeFilter, versionId: versionId);
+    context.read<SearchCubit>().search(
+      _controller.text,
+      filter: _activeFilter,
+      mode: _activeMode,
+      versionId: versionId,
+    );
+  }
+
+  void _toggleSearchMode() {
+    setState(() {
+      _activeMode = _activeMode == SearchMode.contains
+          ? SearchMode.exact
+          : SearchMode.contains;
+    });
+    _onSearchChanged();
   }
 
   void _onFilterSelected(SearchFilter filter) {
@@ -95,6 +111,31 @@ class _SearchScreenState extends State<SearchScreen> {
                     prefixIcon: Icon(
                       Icons.search,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    suffixIcon: Padding(
+                      padding: const EdgeInsets.only(right: 5),
+                      child: TextButton(
+                        onPressed: _toggleSearchMode,
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primary.withValues(alpha: 0.1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text(
+                          _activeMode == SearchMode.contains
+                              ? l10n.contains
+                              : l10n.exact,
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ),
                     ),
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,
@@ -226,7 +267,9 @@ class _SearchScreenState extends State<SearchScreen> {
                             child: ElevatedButton(
                               onPressed: () {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Loading more results...')),
+                                  const SnackBar(
+                                    content: Text('Loading more results...'),
+                                  ),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
