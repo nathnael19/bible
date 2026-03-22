@@ -1,4 +1,4 @@
-#ቅዱስ መጽሐፍ  (Holy Bible) 📖✨
+# ቅዱስ መጽሐፍ  (Holy Bible) 📖✨
 
 **ቅዱስ መጽሐፍ** is a premium, high-performance Amharic Bible application built with Flutter. It focuses on delivering a serene and spiritual reading experience combined with professional human-voice audio synchronization.
 
