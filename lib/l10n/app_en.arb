@@ -215,7 +215,9 @@
   "authFailed": "Authentication failed",
   "registrationFailed": "Registration failed",
   "defaultError": "Error occurred",
-  "noSavedVerses": "No saved verses found"
+  "noSavedVerses": "No saved verses found",
+  "contains": "Contains",
+  "exact": "Exact Word"
 }
 
 

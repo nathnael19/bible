@@ -1189,6 +1189,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No saved verses found'**
   String get noSavedVerses;
+
+  /// No description provided for @contains.
+  ///
+  /// In en, this message translates to:
+  /// **'Contains'**
+  String get contains;
+
+  /// No description provided for @exact.
+  ///
+  /// In en, this message translates to:
+  /// **'Exact Word'**
+  String get exact;
 }
 
 class _AppLocalizationsDelegate

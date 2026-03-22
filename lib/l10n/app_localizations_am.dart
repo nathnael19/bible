@@ -575,4 +575,10 @@ class AppLocalizationsAm extends AppLocalizations {
 
   @override
   String get noSavedVerses => 'ምንም የተቀመጡ ጥቅሶች የሉም';
+
+  @override
+  String get contains => 'ያካተተ';
+
+  @override
+  String get exact => 'ሙሉ ቃል';
 }

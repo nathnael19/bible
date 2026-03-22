@@ -215,7 +215,9 @@
   "authFailed": "ማረጋገጥ አልተሳካም",
   "registrationFailed": "ምዝገባው አልተሳካም",
   "defaultError": "ችግር ተከስቷል",
-  "noSavedVerses": "ምንም የተቀመጡ ጥቅሶች የሉም"
+  "noSavedVerses": "ምንም የተቀመጡ ጥቅሶች የሉም",
+  "contains": "ያካተተ",
+  "exact": "ሙሉ ቃል"
 }
 
 

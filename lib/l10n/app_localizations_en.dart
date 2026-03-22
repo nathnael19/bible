@@ -579,4 +579,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noSavedVerses => 'No saved verses found';
+
+  @override
+  String get contains => 'Contains';
+
+  @override
+  String get exact => 'Exact Word';
 }
