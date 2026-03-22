@@ -3,6 +3,7 @@ import '../../domain/entities/verse.dart';
 import '../../domain/entities/book.dart';
 import '../../domain/repositories/i_bible_repository.dart';
 import '../../domain/entities/search_filter.dart';
+import '../../domain/entities/search_mode.dart';
 import '../datasources/bible_local_datasource.dart';
 
 class BibleRepositoryImpl implements IBibleRepository {
@@ -41,7 +42,13 @@ class BibleRepositoryImpl implements IBibleRepository {
   Future<List<Verse>> searchVerses(String query, {
     String versionId = 'amh_standard',
     SearchFilter filter = SearchFilter.all,
+    SearchMode mode = SearchMode.contains,
   }) async {
-    return localDataSource.searchVerses(query, versionId: versionId, filter: filter);
+    return localDataSource.searchVerses(
+      query,
+      versionId: versionId,
+      filter: filter,
+      mode: mode,
+    );
   }
 }
