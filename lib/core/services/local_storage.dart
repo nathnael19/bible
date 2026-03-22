@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:bible/core/services/firebase_sync_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorage {
   final SharedPreferences _prefs;
+  final FirebaseSyncService? _syncService;
 
-  LocalStorage(this._prefs);
+  LocalStorage(this._prefs, [this._syncService]);
 
   static const String _themeKey = 'app_theme_mode';
   static const String _localeKey = 'app_locale';
@@ -47,6 +49,7 @@ class LocalStorage {
     } else {
       await _prefs.setStringList(key, bookmarks.map((e) => e.toString()).toList());
     }
+    await _syncService?.syncBookmarks(bookId, chapter, bookmarks);
   }
 
   Set<int> getBookmarks(String bookId, int chapter) {
@@ -82,6 +85,12 @@ class LocalStorage {
     if (versionId != null) {
       await _prefs.setString(_lastReadVersionKey, versionId);
     }
+    await _syncService?.syncStats(lastReadLocation: {
+      'book': book,
+      'bookId': bookId,
+      'chapter': chapter,
+      'versionId': versionId,
+    });
   }
 
   Map<String, dynamic>? getLastReadLocation() {
@@ -137,7 +146,9 @@ class LocalStorage {
   int getTotalVersesRead() => _prefs.getInt(_totalVersesReadKey) ?? 0;
   Future<void> incrementVersesRead(int count) async {
     final current = getTotalVersesRead();
-    await _prefs.setInt(_totalVersesReadKey, current + count);
+    final newValue = current + count;
+    await _prefs.setInt(_totalVersesReadKey, newValue);
+    await _syncService?.syncStats(totalVersesRead: newValue);
   }
 
   List<String> getReadingHistory() => _prefs.getStringList(_readingHistoryKey) ?? [];
@@ -151,6 +162,7 @@ class LocalStorage {
     log.insert(0, jsonEncode(data));
     if (log.length > 50) log.removeLast();
     _prefs.setStringList(_activityLogKey, log);
+    _syncService?.logActivity(data);
   }
 
   List<Map<String, dynamic>> getActivityLog() {
@@ -195,6 +207,7 @@ class LocalStorage {
       completed.add(taskId);
     }
     await _prefs.setStringList(key, completed);
+    await _syncService?.syncPlanProgress(planId, completed);
   }
 
   List<String> getCompletedTaskIds(String planId) {
